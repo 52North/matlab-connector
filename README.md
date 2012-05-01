@@ -1,3 +1,9 @@
+matlab-connector
+============
+
+Enables function execution on a remote MATLAB instance.
+
+
 Build
 ---------------------
 
