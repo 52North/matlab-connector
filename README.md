@@ -48,3 +48,8 @@ Specification
 
 * TCP sockets.
 * JSON.
+
+
+Acknowledgements
+---------------------
+MATLAB client/server code based on [TCP/IP Socket Communications in MATLAB](http://www.mathworks.com/matlabcentral/fileexchange/21131) by Rodney Thomson.
