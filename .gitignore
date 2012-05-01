@@ -1,6 +1,7 @@
 .DS_store
 .project
 .classpath
+.settings
 src/main/java/org/uncertweb/matlab/server
 src/test/java
 src/main/resources
