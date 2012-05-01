@@ -1,9 +1,3 @@
-matlab-connector
-================
-
-Enables function execution on a remote MATLAB instance.
-
-
 Build
 ---------------------
 
@@ -19,6 +13,22 @@ Usage
 Add matlab_connector.m and compiled JAR to your MATLAB path, then run.
 
 `matlab_connector(44444, false, 0)`
+
+To remotely execute a function in Java.
+
+    // Create handler instance
+    MLHandler handler = new MLHandler();
+
+    // Build request
+    MLRequest request = new MLRequest("do_a_sum");
+    request.addParameter(new MLScalar(2));
+    request.addParameter(new MLScalar(2));
+
+    // Send request
+    MLResult result = handler.sendRequest("localhost", 44444, request)
+
+    // Print result
+    System.out.println(result.toString());
 
 
 Limitations
