@@ -1,6 +1,9 @@
-*.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
+.DS_store
+.project
+.classpath
+src/main/java/org/uncertweb/matlab/server
+src/test/java
+src/main/resources
+lib
+new
+target
