@@ -1,9 +1,9 @@
 Build
 ---------------------
 
-Requires [http://code.google.com/p/matlabcontrol/](matlabcontrol 3.1.0). Install locally using Maven, then build.
+Requires [matlabcontrol 3.1.0](http://code.google.com/p/matlabcontrol/). Install locally using Maven, then build.
 
-    mvn install:install-file -Dfile=<path-to-matlabcontrol-3.1.0.jar> -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=3.1.0 -Dpackaging=jar
+    mvn install:install-file -Dfile=matlabcontrol-3.1.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=3.1.0 -Dpackaging=jar
     mvn clean install
 
 
