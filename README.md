@@ -16,7 +16,7 @@ Requires [matlabcontrol 3.1.0](http://code.google.com/p/matlabcontrol/). Install
 Usage
 ---------------------
 
-Add matlab_connector.m and compiled JAR to your MATLAB path, then run.
+Add matlab_connector.m and compiled JAR to your MATLAB path (using `javaaddpath matlab-connector-0.3-SNAPSHOT-jar-with-dependencies.jar;` or similar), then run.
 
 `matlab_connector(44444, false, 0)`
 

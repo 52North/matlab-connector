@@ -1,7 +1,4 @@
 function [ ] = matlab_connector( port, debug, debug_runs )
-    % add java library to path
-    javaaddpath matlab-connector-0.3-SNAPSHOT-jar-with-dependencies.jar;
-
     % import java classes
     import java.net.ServerSocket
     import java.io.*
