@@ -81,6 +81,14 @@ function [ parsed_value ] = parse_value( value )
             array(i) = parse_value(value{i});
         end
         parsed_value = MLCell(array);
+    elseif isstruct(value)
+        % loop through struct fields, parse result on each value
+        parsed_value = MLStruct();
+        names = fieldnames(value);
+        for i = 1:size(names, 1)
+            name = names{i};
+            parsed_value.setField(name, parse_value(value.(name)));
+        end        
     else
         vsize = size(value);
         rows = vsize(:,1);

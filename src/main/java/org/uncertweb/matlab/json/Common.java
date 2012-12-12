@@ -1,10 +1,13 @@
 package org.uncertweb.matlab.json;
 
+import java.util.Map.Entry;
+
 import org.uncertweb.matlab.value.MLArray;
 import org.uncertweb.matlab.value.MLCell;
 import org.uncertweb.matlab.value.MLMatrix;
 import org.uncertweb.matlab.value.MLScalar;
 import org.uncertweb.matlab.value.MLString;
+import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
 
 import com.google.gson.JsonArray;
@@ -74,6 +77,15 @@ public class Common {
 					cell[i] = Common.deserializeValue(array.get(i));
 				}
 				return new MLCell(cell);
+			}
+			else if (object.has("struct")) {
+				// definitely a struct
+				JsonObject obj = object.get("struct").getAsJsonObject();
+				MLStruct struct = new MLStruct();
+				for (Entry<String, JsonElement> e : obj.entrySet()) {
+					struct.setField(e.getKey(), Common.deserializeValue(e.getValue()));
+				}
+				return struct;
 			}
 		}
 		

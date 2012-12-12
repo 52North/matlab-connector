@@ -1,7 +1,9 @@
 package org.uncertweb.matlab.json;
 
 import java.lang.reflect.Type;
+import java.util.Map.Entry;
 
+import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
 
 import com.google.gson.JsonElement;
@@ -33,6 +35,16 @@ public class MLValueSerializer implements JsonSerializer<MLValue> {
 		else if (src.isCell()) {
 			JsonObject object = new JsonObject();
 			object.add("cell", context.serialize(src.getAsCell().getCell()));
+			return object;
+		}
+		else if (src.isStruct()) {
+			JsonObject object = new JsonObject();
+			JsonObject structobj = new JsonObject();
+			object.add("struct", structobj);
+			MLStruct struct = (MLStruct)src.getAsStruct();
+			for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
+				structobj.add(e.getKey(), this.serialize(e.getValue(), MLValue.class, context));
+			}
 			return object;
 		}
 		

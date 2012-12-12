@@ -64,6 +64,16 @@ public abstract class MLValue {
 	public boolean isCell() {
 		return (this instanceof MLCell);
 	}
+	
+	/**
+	 * Checks if this value is a struct.
+	 * 
+	 * @return <code>true</code> if this value is a struct, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isStruct() {
+		return (this instanceof MLStruct);
+	}
 
 	/**
 	 * Returns this value as a scalar. Will throw a {@link ClassCastException}
@@ -115,6 +125,16 @@ public abstract class MLValue {
 	 */
 	public MLCell getAsCell() {
 		return (MLCell) this;
+	}
+	
+	/**
+	 * Returns this value as a struct. Will throw a {@link ClassCastException}
+	 * if this value is not a struct.
+	 * 
+	 * @return this value as a {@link MLStruct}
+	 */
+	public MLStruct getAsStruct() {
+		return (MLStruct) this;
 	}
 
 }
