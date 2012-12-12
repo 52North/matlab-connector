@@ -3,7 +3,7 @@
 
   <groupId>org.uncertweb</groupId>
   <artifactId>matlab-connector</artifactId>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4</version>
   <packaging>jar</packaging>
   <name>matlab-connector</name>
   <url>http://www.uncertweb.org</url>
