@@ -43,6 +43,7 @@ public class MLHandler {
 	 */
 	public MLHandler() {
 		GsonBuilder builder = new GsonBuilder();
+		builder.serializeSpecialFloatingPointValues();
 		builder.registerTypeAdapter(MLException.class, new MLExceptionDeserializer());
 		builder.registerTypeAdapter(MLException.class, new MLExceptionSerializer());
 		builder.registerTypeAdapter(IOException.class, new IOExceptionDeserializer());
