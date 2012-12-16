@@ -1,7 +1,4 @@
-matlab-connector
-============
-
-Enables function execution on a remote MATLAB instance.
+The matlab-connector library enables function execution on a remote MATLAB instance.
 
 
 Build
