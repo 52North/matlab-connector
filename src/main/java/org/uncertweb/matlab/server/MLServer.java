@@ -66,16 +66,13 @@ public class MLServer {
 				}
 			}
 			catch (IOException e1) {
-				logger.error("Couldn't listen on port " + port + ".");
 				System.err.println("Couldn't listen on port " + port + ".");
 			}
 			catch (MLConnectorException e2) {
-				logger.error("Couldn't setup MATLAB instance pool.", e2);
 				System.err.println("Couldn't setup MATLAB instance pool.");
 			}
 		}
 		else {
-			logger.error("No port specified in program arguments.");
 			System.err.println("Please specify the port you wish to listen on.");
 		}
 	}
