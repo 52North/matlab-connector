@@ -36,10 +36,9 @@ public class MLServer {
 				// handle shutdown gracefully
 				Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 					@Override
-					public void run() {
-						logger.info("Shutting down...");
-						
+					public void run() {						
 						// close socket
+						logger.info("Closing server socket...");
 						try {
 							serverSocket.close();
 						}
@@ -48,9 +47,10 @@ public class MLServer {
 						}
 						
 						// destroy pool
+						logger.info("Destroying MATLAB instance pool...");
 						pool.destroy();
 						
-						logger.info("Bye!");
+						logger.info("Shutdown complete.");
 					}					
 				}));
 
@@ -61,7 +61,10 @@ public class MLServer {
 						new MLServerThread(socket, pool).start();						
 					}
 					catch (IOException e) {
-						logger.error("Could not accept client connection: " + e.getMessage());
+						// this exception will be thrown a few times during shutdown, hence the check here
+						if (!serverSocket.isClosed()) {
+							logger.error("Could not accept client connection: " + e.getMessage());
+						}
 					}
 				}
 			}
