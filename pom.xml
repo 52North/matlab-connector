@@ -26,6 +26,12 @@
       <version>1.6.4</version>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>1.4</version>
@@ -33,7 +39,7 @@
     <dependency>
       <groupId>matlabcontrol</groupId>
       <artifactId>matlabcontrol</artifactId>
-      <version>3.1.0</version>
+      <version>4.0.0</version>
     </dependency>
   </dependencies>
 

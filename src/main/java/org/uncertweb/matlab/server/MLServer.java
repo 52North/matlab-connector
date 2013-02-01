@@ -6,53 +6,73 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncertweb.matlab.MLConnectorException;
+import org.uncertweb.matlab.instance.MLInstancePool;
 
-// FIXME: for 0.2. The server doesn't work properly - it gives you the wrong answers?!
-// FIXME: for 0.2. Missing parsing for MLString?
 public class MLServer {
-	
+
 	public static void main(String[] args) {
 		final Logger logger = LoggerFactory.getLogger(MLServer.class);
-		
-		if (args.length > 0) {
-			int port = Integer.parseInt(args[0]);
-			ServerSocket serverSocket = null;
 
+		if (args.length > 0) {
+			final int port = Integer.parseInt(args[0]);
+			int threads = 1;
+			if (args.length > 1) {
+				threads = Integer.parseInt(args[1]);
+			}
+			String baseDir = System.getProperty("user.dir");
+			if (args.length > 2) {
+				baseDir = args[2];
+			}
+			
 			try {
-				serverSocket = new ServerSocket(port);
+				// create out matlab instance pool
+				final MLInstancePool pool = new MLInstancePool(threads, baseDir);
+
+				// create socket
+				final ServerSocket serverSocket = new ServerSocket(port);
 				logger.info("Listening on port " + port + "...");
+				
+				// handle shutdown gracefully
+				Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+					@Override
+					public void run() {
+						logger.info("Shutting down...");
+						
+						// close socket
+						try {
+							serverSocket.close();
+						}
+						catch (IOException e) {
+							logger.warn("Couldn't close server socket on port " + port + ".");
+						}
+						
+						// destroy pool
+						pool.destroy();
+						
+						logger.info("Bye!");
+					}					
+				}));
 
 				while (true) {
 					try {
 						Socket socket = serverSocket.accept();
 						logger.info("Client " + socket.getRemoteSocketAddress() + " connected.");
-						/**
-						 * If any thread calls the MATLAB computational engine (which is single 
-						 * threaded), they block. The MLServerThread contains calls to the MATLAB
-						 * computational engine. Therefore here we are currently using the 
-						 * non-threaded method run() instead of starting the thread with start().
-						 */
-						new MLServerThread(socket).run();						
+						new MLServerThread(socket, pool).start();						
 					}
 					catch (IOException e) {
 						logger.error("Could not accept client connection: " + e.getMessage());
 					}
 				}
 			}
-			catch (IOException e) {
-				logger.error("Could not listen on port " + port + ".");
-				System.err.println("Could not listen on port " + port + ".");
+			catch (IOException e1) {
+				logger.error("Couldn't listen on port " + port + ".");
+				System.err.println("Couldn't listen on port " + port + ".");
 			}
-			finally {
-				if (serverSocket != null) {
-					try {
-						serverSocket.close();
-					}
-					catch (IOException e) {
-						logger.warn("Could not close server socket on port " + port + ".");
-					}
-				}				
-			}			
+			catch (MLConnectorException e2) {
+				logger.error("Couldn't setup MATLAB instance pool.", e2);
+				System.err.println("Couldn't setup MATLAB instance pool.");
+			}
 		}
 		else {
 			logger.error("No port specified in program arguments.");
