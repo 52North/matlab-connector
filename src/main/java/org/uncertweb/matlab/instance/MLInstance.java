@@ -68,6 +68,7 @@ public class MLInstance {
 		try {
 			if (baseDir != null) {
 				proxy.eval("cd('" + baseDir.replace("\\", "\\\\") + "')"); // matlab needs escaped slashes too
+				proxy.eval("addpath('.')");
 			}
 		}
 		catch (MatlabInvocationException e) {
