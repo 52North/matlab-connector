@@ -3,6 +3,5 @@
 .classpath
 .settings
 src/test/java
-src/main/resources
 lib
 target
