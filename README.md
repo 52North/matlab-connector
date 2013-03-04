@@ -4,13 +4,7 @@ JSON is used as a platform and language independent.
 
 ## Server setup
 
-Add matlab_connector.m and compiled JAR to your MATLAB path (using `javaaddpath matlab-connector-0.4-jar-with-dependencies.jar;` or similar), then run.
-
-`matlab_connector(44444, false, 0)`
-
-## Sending requests
-
-JSON. cells and structs are in this version.
+`java -jar matlab-connector-1.0-SNAPSHOT-with-dependencies.jar <port> <threads> <path>`
 
 ## Using the Java client
 
@@ -37,12 +31,10 @@ The dependency for the connector can then be added.
   <dependency>
     <groupId>org.uncertweb</groupId>
     <artifactId>matlab-connector</artifactId>
-    <version>0.4</version>
+    <version>1.0-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
-
-Alternatively, download the JAR file directly. ***********
 
 ### Evaluating a MATLAB function
 
@@ -66,10 +58,10 @@ System.out.println(result.toString());
 
 ## Build
 
-If you wish to build the project from source, the [matlabcontrol 3.1.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-3.1.0.jar&can=1&q=) and install locally:
+If you wish to build the project from source, the [matlabcontrol 4.0.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-4.0.0.jar&can=1&q=) and install locally:
 
 ```console
-$ mvn install:install-file -Dfile=matlabcontrol-3.1.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=3.1.0 -Dpackaging=jar
+$ mvn install:install-file -Dfile=matlabcontrol-4.0.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=4.0.0 -Dpackaging=jar
 ```
 
 Then build:
@@ -78,14 +70,8 @@ Then build:
 $ mvn clean package
 ```
 
-<!--
-Note that tests will fail unless a local MATLAB installation can be found.
--->
+Tests will fail unless a local MATLAB installation can be found.
 
 ## Limitations
 
-MATLAB is restricted to a single computational thread, preventing the server component from handling simultaneous requests. Security has also been overlooked in the current version, I'd recommended restricting access to the port the server runs on until access control is implemented.
-
-## Acknowledgements
-
-MATLAB client/server code based on [TCP/IP Socket Communications in MATLAB](http://www.mathworks.com/matlabcentral/fileexchange/21131) by Rodney Thomson.
+Security has also been overlooked in the current version, I'd recommended restricting access to the port the server runs on until access control is implemented.
