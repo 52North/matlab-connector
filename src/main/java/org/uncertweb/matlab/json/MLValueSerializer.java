@@ -22,23 +22,23 @@ public class MLValueSerializer implements JsonSerializer<MLValue> {
     public JsonElement serialize(MLValue value, Type type,
                                  JsonSerializationContext ctx) {
         if (value.isScalar()) {
-            return ctx.serialize(value.getAsScalar().getScalar());
+            return ctx.serialize(value.asScalar().getScalar());
         } else if (value.isArray()) {
-            return ctx.serialize(value.getAsArray().getArray());
+            return ctx.serialize(value.asArray().getArray());
         } else if (value.isMatrix()) {
-            return ctx.serialize(value.getAsMatrix().getMatrix());
+            return ctx.serialize(value.asMatrix().getMatrix());
         } else if (value.isString()) {
-            return ctx.serialize(value.getAsString().getString());
+            return ctx.serialize(value.asString().getString());
         } else if (value.isCell()) {
             JsonObject object = new JsonObject();
             object.add(JSONConstants.CELL, 
-                       ctx.serialize(value.getAsCell() .getCell()));
+                       ctx.serialize(value.asCell().getCell()));
             return object;
         } else if (value.isStruct()) {
             JsonObject object = new JsonObject();
             JsonObject structobj = new JsonObject();
             object.add(JSONConstants.STRUCT, structobj);
-            MLStruct struct = value.getAsStruct();
+            MLStruct struct = value.asStruct();
             for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
                 structobj.add(e.getKey(),
                               serialize(e.getValue(), MLValue.class, ctx));

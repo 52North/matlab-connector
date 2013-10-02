@@ -8,7 +8,7 @@ package org.uncertweb.matlab.value;
  */
 public class MLScalar extends MLValue {
 
-	private double scalar;
+	private final double scalar;
 	
 	/**
 	 * Creates a new <code>MLScalar</code> instance from a given <code>double</code> scalar.

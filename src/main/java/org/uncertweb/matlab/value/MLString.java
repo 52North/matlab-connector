@@ -2,7 +2,7 @@ package org.uncertweb.matlab.value;
 
 public class MLString extends MLValue {
 
-	private String string;
+	private final String string;
 	
 	/**
 	 * Creates a new <code>MLString</code> instance from a given <code>String</code>.

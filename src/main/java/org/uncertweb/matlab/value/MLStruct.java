@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class MLStruct extends MLValue {
 
-	private Map<String, MLValue> struct;
+	private final Map<String, MLValue> struct;
 	
 	/**
 	 * Creates a new <code>MLStruct</code> instance.
@@ -32,13 +32,13 @@ public class MLStruct extends MLValue {
 		StringBuilder sb = new StringBuilder();
 		sb.append("struct(");
 		for (String field : struct.keySet()) {
-			sb.append("'").append(field).append("'");
-			sb.append(",");
+			sb.append('\'').append(field).append('\'');
+			sb.append(',');
 			sb.append(struct.get(field).toMLString());
-			sb.append(",");
+			sb.append(',');
 		}
 		sb.deleteCharAt(sb.length() - 1);
-		sb.append(")");
+		sb.append(')');
 		return sb.toString();
 	}
 	

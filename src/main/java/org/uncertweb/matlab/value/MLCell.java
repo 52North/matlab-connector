@@ -7,7 +7,7 @@ package org.uncertweb.matlab.value;
  */
 public class MLCell extends MLValue {
 
-	private MLValue[] cell;
+	private final MLValue[] cell;
 	
 	/**
 	 * Creates a new <code>MLCell</code> instance from the given array of <code>MLValue</code> objects.

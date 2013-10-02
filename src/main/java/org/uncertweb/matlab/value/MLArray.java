@@ -2,6 +2,8 @@ package org.uncertweb.matlab.value;
 
 import java.util.Arrays;
 
+import com.google.common.base.Joiner;
+
 /**
  * Represents a MATLAB array.
  * 
@@ -11,7 +13,7 @@ import java.util.Arrays;
 // TODO: add support for struct
 public class MLArray extends MLValue {
 
-	private double[] array;
+	private final double[] array;
 	
 	/**
 	 * Creates a new <code>MLArray</code> instance from the given <code>double</code> array.
@@ -43,19 +45,12 @@ public class MLArray extends MLValue {
 	public double[] getArray() {
 		return array;
 	}
-	
+
     @Override
-	public String toMLString() {
-		StringBuilder builder = new StringBuilder("[");
-		for (int i = 0; i < array.length; i++) {
-			builder.append(array[i]);
-			if (i < array.length - 1) {
-				builder.append(",");
-			}
-		}
-		builder.append("]");
-		return builder.toString();
-	}
+    public String toMLString() {
+        return Joiner.on(",").appendTo(new StringBuilder('['), Arrays
+                .asList(array)).append(']').toString();
+    }
 	
     @Override
 	public String toString() {

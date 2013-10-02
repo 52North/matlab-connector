@@ -82,7 +82,7 @@ public abstract class MLValue {
 	 * @return this value as a {@link MLScalar}
 	 * @see #isScalar()
 	 */
-	public MLScalar getAsScalar() {
+	public MLScalar asScalar() {
 		return (MLScalar) this;
 	}
 
@@ -93,7 +93,7 @@ public abstract class MLValue {
 	 * @return this value as a {@link MLMatrix}
 	 * @see #isMatrix()
 	 */
-	public MLMatrix getAsMatrix() {
+	public MLMatrix asMatrix() {
 		return (MLMatrix) this;
 	}
 
@@ -103,7 +103,7 @@ public abstract class MLValue {
 	 * 
 	 * @return this value as a {@link MLArray}
 	 */
-	public MLArray getAsArray() {
+	public MLArray asArray() {
 		return (MLArray) this;
 	}
 	
@@ -113,7 +113,7 @@ public abstract class MLValue {
 	 * 
 	 * @return this value as a {@link MLString}
 	 */
-	public MLString getAsString() {
+	public MLString asString() {
 		return (MLString) this;
 	}
 	
@@ -123,7 +123,7 @@ public abstract class MLValue {
 	 * 
 	 * @return this value as a {@link MLCell}
 	 */
-	public MLCell getAsCell() {
+	public MLCell asCell() {
 		return (MLCell) this;
 	}
 	
@@ -133,7 +133,7 @@ public abstract class MLValue {
 	 * 
 	 * @return this value as a {@link MLStruct}
 	 */
-	public MLStruct getAsStruct() {
+	public MLStruct asStruct() {
 		return (MLStruct) this;
 	}
 

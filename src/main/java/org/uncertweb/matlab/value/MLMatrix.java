@@ -2,6 +2,8 @@ package org.uncertweb.matlab.value;
 
 import java.util.Arrays;
 
+import com.google.common.base.Joiner;
+
 /**
  * Represents a MATLAB matrix.
  * 
@@ -10,7 +12,7 @@ import java.util.Arrays;
  */
 public class MLMatrix extends MLValue {
 
-	private double[][] matrix;
+	private final double[][] matrix;
 	
 	/**
 	 * Creates a new <code>MLMatrix</code> instance from the given <code>double</code> matrix.
@@ -47,19 +49,15 @@ public class MLMatrix extends MLValue {
 
     @Override
 	public String toMLString() {
-		StringBuilder builder = new StringBuilder("[");
+        StringBuilder builder = new StringBuilder('[');
+		final Joiner joiner = Joiner.on(",");
 		for (int i = 0; i < matrix.length; i++) {
-			for (int j = 0; j < matrix[i].length; j++) {
-				builder.append(matrix[i][j]);
-				if (j < matrix[i].length - 1) {
-					builder.append(",");
-				}
-			}
+            joiner.appendTo(builder, Arrays.asList(matrix[i]));
 			if (i < matrix.length - 1) {
-				builder.append(";");
+				builder.append(';');
 			}
 		}
-		builder.append("]");
+		builder.append(']');
 		return builder.toString();
 	}
 	

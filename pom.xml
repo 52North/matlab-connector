@@ -45,6 +45,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>matlabcontrol</groupId>
             <artifactId>matlabcontrol</artifactId>
             <version>4.1.0</version>
