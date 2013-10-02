@@ -58,10 +58,19 @@ System.out.println(result.toString());
 
 ## Build
 
-If you wish to build the project from source, the [matlabcontrol 4.0.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-4.0.0.jar&can=1&q=) and install locally:
+If you wish to build the project from source, the [matlabcontrol 4.1.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-4.1.0.jar&can=1&q=) and install locally:
 
 ```console
 $ mvn install:install-file -Dfile=matlabcontrol-4.0.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=4.0.0 -Dpackaging=jar
+```
+
+For development JavaDoc and sources can be helpful:
+
+```console
+$ wget https://matlabcontrol.googlecode.com/files/matlabcontrol-4.1.0{,-sources,-javadoc}.jar
+$ mvn install:install-file -Dfile=matlabcontrol-4.1.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=4.1.0 -Dpackaging=jar
+$ mvn install:install-file -Dfile=matlabcontrol-4.1.0-javadoc.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dclassifier=javadoc -Dversion=4.1.0 -Dpackaging=jar
+$ mvn install:install-file -Dfile=matlabcontrol-4.1.0-sources.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dclassifier=sources -Dversion=4.1.0 -Dpackaging=jar
 ```
 
 Then build:
