@@ -23,7 +23,6 @@ public class MLServerThread extends Thread {
 	private MLInstancePool pool;
 
 	public MLServerThread(Socket socket, MLInstancePool pool) {
-		super();
 		this.socket = socket;
 		this.pool = pool;
 	}
