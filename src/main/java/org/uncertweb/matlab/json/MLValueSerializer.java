@@ -13,46 +13,40 @@ import com.google.gson.JsonSerializer;
 
 /**
  * {@link MLValue} serializer.
- * 
+ *
  * @author Richard Jones
  *
  */
 public class MLValueSerializer implements JsonSerializer<MLValue> {
-
     @Override
-	public JsonElement serialize(MLValue src, Type typeOfSrc, JsonSerializationContext context) {
-		if (src.isScalar()) {
-			return context.serialize(src.getAsScalar().getScalar());
-		}
-		else if (src.isArray()) {
-			return context.serialize(src.getAsArray().getArray());
-		}
-		else if (src.isMatrix()) {
-			return context.serialize(src.getAsMatrix().getMatrix());
-		}
-		else if (src.isString()) {
-			return context.serialize(src.getAsString().getString()); 
-		}
-		else if (src.isCell()) {
-			JsonObject object = new JsonObject();
-			object.add("cell", context.serialize(src.getAsCell().getCell()));
-			return object;
-		}
-		else if (src.isStruct()) {
-			JsonObject object = new JsonObject();
-			JsonObject structobj = new JsonObject();
-			object.add("struct", structobj);
-			MLStruct struct = src.getAsStruct();
-			for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
-				structobj.add(e.getKey(), serialize(e.getValue(), MLValue.class, context));
-			}
-			return object;
-		}
-		
-		// should never get here
-		return null;
-	}
+    public JsonElement serialize(MLValue value, Type type,
+                                 JsonSerializationContext ctx) {
+        if (value.isScalar()) {
+            return ctx.serialize(value.getAsScalar().getScalar());
+        } else if (value.isArray()) {
+            return ctx.serialize(value.getAsArray().getArray());
+        } else if (value.isMatrix()) {
+            return ctx.serialize(value.getAsMatrix().getMatrix());
+        } else if (value.isString()) {
+            return ctx.serialize(value.getAsString().getString());
+        } else if (value.isCell()) {
+            JsonObject object = new JsonObject();
+            object.add(JSONConstants.CELL, 
+                       ctx.serialize(value.getAsCell() .getCell()));
+            return object;
+        } else if (value.isStruct()) {
+            JsonObject object = new JsonObject();
+            JsonObject structobj = new JsonObject();
+            object.add(JSONConstants.STRUCT, structobj);
+            MLStruct struct = value.getAsStruct();
+            for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
+                structobj.add(e.getKey(),
+                              serialize(e.getValue(), MLValue.class, ctx));
+            }
+            return object;
+        }
 
-	
-	
+        // should never get here
+        return null;
+    }
 }

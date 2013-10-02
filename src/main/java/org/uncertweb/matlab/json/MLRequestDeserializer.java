@@ -13,34 +13,33 @@ import com.google.gson.JsonParseException;
 
 /**
  * {@link MLRequest} deserializer.
- *  
+ *
  * @author Richard Jones
  *
  */
-public class MLRequestDeserializer extends AbstractDeserializer implements JsonDeserializer<MLRequest> {
+public class MLRequestDeserializer extends AbstractDeserializer implements
+        JsonDeserializer<MLRequest> {
 
     @Override
-	public MLRequest deserialize(JsonElement arg0, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
-		// get object
-		JsonObject object = arg0.getAsJsonObject();
-		
-		// get function name and create request
-		String function = object.get("function").getAsString();
-		MLRequest request = new MLRequest(function);
-		
-		// add result count if it exists
-		if (object.has("resultCount")) {
-			request.setResultCount(object.get("resultCount").getAsInt());
-		}
-		
-		// add parameters
-		JsonArray parameters = object.get("parameters").getAsJsonArray();
-		for (JsonElement parameter : parameters) {
-			request.addParameter(deserializeValue(parameter));	
-		}
-		
-		// return request
-		return request;
-	}
-	
+    public MLRequest deserialize(JsonElement elem, Type type,
+                                 JsonDeserializationContext ctx)
+            throws JsonParseException {
+        JsonObject json = elem.getAsJsonObject();
+        String function = json.get(JSONConstants.FUNCTION).getAsString();
+        MLRequest request = new MLRequest(function);
+
+        // add result count if it exists
+        if (json.has(JSONConstants.RESULT_COUNT)) {
+            request.setResultCount(json.get(JSONConstants.RESULT_COUNT).getAsInt());
+        }
+
+        // add parameters
+        JsonArray parameters = json.get(JSONConstants.PARAMETERS).getAsJsonArray();
+        for (JsonElement parameter : parameters) {
+            request.addParameter(deserializeValue(parameter));
+        }
+
+        // return request
+        return request;
+    }
 }
