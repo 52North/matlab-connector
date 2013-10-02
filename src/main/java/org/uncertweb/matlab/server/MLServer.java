@@ -50,8 +50,14 @@ public class MLServer {
         }
 
         // create out matlab instance instancePool
-        instancePool = new MLInstancePool(getOptions().getThreads(),
-                                          getOptions().getPath());
+        final MLInstanceConfig instanceConfig = MLInstanceConfig.builder()
+                .withBaseDir(getOptions().getPath())
+                .build();
+        final MLInstancePoolConfig poolConfig = MLInstancePoolConfig.builder()
+                .withMaximalNumInstances(getOptions().getThreads())
+                .withInstanceConfig(instanceConfig)
+                .build();
+        instancePool = new MLInstancePool(poolConfig);
 
         // create socket
         serverSocket = new ServerSocket(getOptions().getPort());

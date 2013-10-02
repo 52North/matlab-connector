@@ -31,14 +31,18 @@ public class MLServerTask implements Runnable {
             final MLRequest request = handler.parseRequest(in);
             logger.info("Received request for function '{}'.",
                         request.getFunction());
+            MLInstance instance = null;
             try {
-                final MLInstance instance = pool.getInstance(); // this will block
+
+                instance = pool.getInstance();
                 final MLResult result = instance.handle(request);
                 logger.info("Handled request successfully.");
                 handler.outputResult(result, out);
             } catch (MLConnectorException e) {
                 logger.error("Caught exception when calling MATLAB.", e);
                 handler.outputException(new MLException(e.getMessage()), out);
+            } finally {
+                pool.returnInstance(instance);
             }
         } catch (IOException e) {
             logger.error("Couldn't handle input/output streams: "
