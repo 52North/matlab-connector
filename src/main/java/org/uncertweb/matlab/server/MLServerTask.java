@@ -7,13 +7,10 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.matlab.MLConnectorException;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLHandler;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
-import org.uncertweb.matlab.instance.MLInstance;
-import org.uncertweb.matlab.instance.MLInstancePool;
 
 public class MLServerTask implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(MLServerTask.class);

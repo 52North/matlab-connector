@@ -1,4 +1,4 @@
-package org.uncertweb.matlab;
+package org.uncertweb.matlab.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
+
+import org.uncertweb.matlab.MLException;
+import org.uncertweb.matlab.MLHandler;
+import org.uncertweb.matlab.MLRequest;
+import org.uncertweb.matlab.MLResult;
 
 /**
  * TODO JavaDoc

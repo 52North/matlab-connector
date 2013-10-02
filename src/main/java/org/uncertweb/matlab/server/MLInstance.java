@@ -1,18 +1,10 @@
-package org.uncertweb.matlab.instance;
+package org.uncertweb.matlab.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import matlabcontrol.MatlabConnectionException;
-import matlabcontrol.MatlabInvocationException;
-import matlabcontrol.MatlabProxy;
-import matlabcontrol.MatlabProxyFactory;
-import matlabcontrol.extensions.MatlabNumericArray;
-import matlabcontrol.extensions.MatlabTypeConverter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.matlab.MLConnectorException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
 import org.uncertweb.matlab.value.MLArray;
@@ -22,6 +14,13 @@ import org.uncertweb.matlab.value.MLScalar;
 import org.uncertweb.matlab.value.MLString;
 import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
+
+import matlabcontrol.MatlabConnectionException;
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+import matlabcontrol.MatlabProxyFactory;
+import matlabcontrol.extensions.MatlabNumericArray;
+import matlabcontrol.extensions.MatlabTypeConverter;
 
 public class MLInstance {
 

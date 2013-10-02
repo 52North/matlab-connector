@@ -10,12 +10,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.matlab.MLConnectorException;
-import org.uncertweb.matlab.instance.MLInstancePool;
 import org.uncertweb.matlab.util.NamedAndGroupedThreadFactory;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 
 public class MLServer {
     private static final Logger log = LoggerFactory.getLogger(MLServer.class);
@@ -78,36 +73,5 @@ public class MLServer {
                           e.getMessage());
             }
         }
-    }
-
-    public static void main(String[] args) {
-        final MLServerOptions options = new MLServerOptions(
-                7000, 5, System.getProperty("user.dir"));
-        final JCommander cli = new JCommander(options);
-        cli.setProgramName("java " + MLServer.class.getName());
-        try {
-            cli.parse(args);
-        } catch (ParameterException e) {
-            cli.usage();
-            errorExit(e.getMessage());
-        }
-        if (options.isHelp()) {
-            cli.usage();
-        } else {
-            try {
-                new MLServer(options).start();
-            } catch (IOException e) {
-                errorExit("Couldn't listen on port %d.\n", options.getPort());
-            } catch (MLConnectorException e) {
-                errorExit("Couldn't setup MatLab instance pool.");
-            }
-        }
-    }
-
-    private static void errorExit(String format, Object... args) {
-        if (format != null) {
-            System.err.printf(format + "\n", args);
-        }
-        System.exit(1);
     }
 }

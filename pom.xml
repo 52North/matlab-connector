@@ -111,7 +111,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>org.uncertweb.matlab.server.MLServer</mainClass>
+                            <mainClass>org.uncertweb.matlab.server.MLServerCLI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

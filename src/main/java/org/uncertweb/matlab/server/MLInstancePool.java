@@ -1,11 +1,10 @@
-package org.uncertweb.matlab.instance;
+package org.uncertweb.matlab.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.matlab.MLConnectorException;
 
 public class MLInstancePool {
 
@@ -24,7 +23,7 @@ public class MLInstancePool {
 		busy = new ArrayList<MLInstance>();
 
 		// create instances
-		logger.info("Creating " + numInstances + " instances for pool...");
+		logger.info("Creating {} instances for pool...", numInstances);
 		for (int i = 0; i < numInstances; i++) {
 			final MLInstance instance = new MLInstance(baseDir);
 			free.add(instance);

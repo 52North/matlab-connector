@@ -1,4 +1,4 @@
-package org.uncertweb.matlab;
+package org.uncertweb.matlab.server;
 
 public class MLConnectorException extends Exception {
 
