@@ -16,46 +16,42 @@ import org.uncertweb.matlab.instance.MLInstance;
 import org.uncertweb.matlab.instance.MLInstancePool;
 
 public class MLServerThread extends Thread {
+    private final Logger logger = LoggerFactory.getLogger(MLServerThread.class);
+    private final Socket socket;
+    private final MLInstancePool pool;
 
-	private final Logger logger = LoggerFactory.getLogger(MLServerThread.class);
-	
-	private Socket socket;
-	private MLInstancePool pool;
-
-	public MLServerThread(Socket socket, MLInstancePool pool) {
-		this.socket = socket;
-		this.pool = pool;
-	}
+    public MLServerThread(Socket socket, MLInstancePool pool) {
+        this.socket = socket;
+        this.pool = pool;
+    }
 
     @Override
-	public void run() {
-		try {
-			MLHandler handler = new MLHandler();
-
-			InputStream inputStream = socket.getInputStream();
-			OutputStream outputStream = socket.getOutputStream();
-
-			MLRequest request = handler.parseRequest(inputStream);
-			logger.info("Received request for function '" + request.getFunction() + "'.");
-
-			try {
-				MLInstance instance = pool.getInstance(); // this will block
-				MLResult result = instance.handle(request);				
-				logger.info("Handled request successfully.");
-				handler.outputResult(result, outputStream);
-			}
-			catch (MLConnectorException e) {
-				logger.error("Caught exception when calling MATLAB.", e);
-				handler.outputException(new MLException(e.getMessage()), outputStream);
-			}
-
-			outputStream.close();
-			inputStream.close();
-			socket.close();
-		}
-		catch (IOException e) {
-			logger.error("Couldn't handle input/output streams: " + e.getMessage(), e);
-		}
-	}
-
+    public void run() {
+        try {
+            final MLHandler handler = new MLHandler();
+            final InputStream in = socket.getInputStream();
+            final OutputStream out = socket.getOutputStream();
+            final MLRequest request = handler.parseRequest(in);
+            logger.info("Received request for function '{}'.",
+                        request.getFunction());
+            try {
+                final MLInstance instance = pool.getInstance(); // this will block
+                final MLResult result = instance.handle(request);
+                logger.info("Handled request successfully.");
+                handler.outputResult(result, out);
+            } catch (MLConnectorException e) {
+                logger.error("Caught exception when calling MATLAB.", e);
+                handler.outputException(new MLException(e.getMessage()), out);
+            }
+        } catch (IOException e) {
+            logger.error("Couldn't handle input/output streams: "
+                         + e.getMessage(), e);
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                logger.error("Couldn't close socket: " + e.getMessage(), e);
+            }
+        }
+    }
 }
