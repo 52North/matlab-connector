@@ -16,12 +16,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 /**
- * Common JSON serializing and deserializing methods.
+ * AbstractDeserializer JSON serializing and deserializing methods.
  * 
  * @author Richard Jones
  *
  */
-public class Common {
+public class AbstractDeserializer {
 
 	/**
 	 * Deserializes an {@link MLValue} from a {@link JsonElement}.
@@ -29,7 +29,7 @@ public class Common {
 	 * @param element the <code>JsonElement</code> containing a serialized <code>MLValue</code>
 	 * @return the deserialized <code>MLValue</code>
 	 */
-	public static MLValue deserializeValue(JsonElement element) {
+	public MLValue deserializeValue(JsonElement element) {
 		if (element.isJsonPrimitive()) {
 			JsonPrimitive primitive = element.getAsJsonPrimitive(); 
 			if (primitive.isString()) {
@@ -74,7 +74,7 @@ public class Common {
 				JsonArray array = object.get("cell").getAsJsonArray();
 				MLValue[] cell = new MLValue[array.size()];
 				for (int i = 0; i < array.size(); i++) {
-					cell[i] = Common.deserializeValue(array.get(i));
+					cell[i] = deserializeValue(array.get(i));
 				}
 				return new MLCell(cell);
 			}
@@ -83,7 +83,7 @@ public class Common {
 				JsonObject obj = object.get("struct").getAsJsonObject();
 				MLStruct struct = new MLStruct();
 				for (Entry<String, JsonElement> e : obj.entrySet()) {
-					struct.setField(e.getKey(), Common.deserializeValue(e.getValue()));
+					struct.setField(e.getKey(), deserializeValue(e.getValue()));
 				}
 				return struct;
 			}

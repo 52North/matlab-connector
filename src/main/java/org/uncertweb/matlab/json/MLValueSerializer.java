@@ -44,7 +44,7 @@ public class MLValueSerializer implements JsonSerializer<MLValue> {
 			object.add("struct", structobj);
 			MLStruct struct = src.getAsStruct();
 			for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
-				structobj.add(e.getKey(), this.serialize(e.getValue(), MLValue.class, context));
+				structobj.add(e.getKey(), serialize(e.getValue(), MLValue.class, context));
 			}
 			return object;
 		}
