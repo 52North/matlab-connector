@@ -15,12 +15,12 @@ import org.uncertweb.matlab.MLResult;
 import org.uncertweb.matlab.instance.MLInstance;
 import org.uncertweb.matlab.instance.MLInstancePool;
 
-public class MLServerThread extends Thread {
-    private final Logger logger = LoggerFactory.getLogger(MLServerThread.class);
+public class MLServerTask implements Runnable {
+    private final Logger logger = LoggerFactory.getLogger(MLServerTask.class);
     private final Socket socket;
     private final MLInstancePool pool;
 
-    public MLServerThread(Socket socket, MLInstancePool pool) {
+    public MLServerTask(Socket socket, MLInstancePool pool) {
         this.socket = socket;
         this.pool = pool;
     }

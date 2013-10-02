@@ -1,10 +1,13 @@
 package org.uncertweb.matlab.server;
 
+import org.uncertweb.matlab.util.NamedAndGroupedThreadFactory;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,8 @@ import com.beust.jcommander.ParameterException;
 public class MLServer {
     private static final Logger log = LoggerFactory.getLogger(MLServer.class);
     private MLInstancePool instancePool;
+    private final ExecutorService threadPool = Executors
+            .newCachedThreadPool(NamedAndGroupedThreadFactory.builder().name("MLServer").build());
     private ServerSocket serverSocket;
     private final MLServerOptions options;
 
@@ -51,7 +56,7 @@ public class MLServer {
 
         // create out matlab instance instancePool
         instancePool = new MLInstancePool(getOptions().getThreads(),
-                                  getOptions().getPath());
+                                          getOptions().getPath());
 
         // create socket
         serverSocket = new ServerSocket(getOptions().getPort());
@@ -65,7 +70,7 @@ public class MLServer {
         try {
             final Socket socket = getServerSocket().accept();
             log.info("Client {} connected.", socket.getRemoteSocketAddress());
-            new MLServerThread(socket, getPool()).start();
+            threadPool.execute(new MLServerTask(socket, getPool()));
         } catch (IOException e) {
             // this exception will be thrown a few times during shutdown, hence the check here
             if (!getServerSocket().isClosed()) {
