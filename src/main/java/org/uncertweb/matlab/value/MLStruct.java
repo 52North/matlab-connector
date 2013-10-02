@@ -3,6 +3,8 @@ package org.uncertweb.matlab.value;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Joiner;
+
 public class MLStruct extends MLValue {
 
 	private final Map<String, MLValue> struct;
@@ -46,11 +48,7 @@ public class MLStruct extends MLValue {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("struct: ");
-		for (String field : struct.keySet()) {
-			sb.append(field);
-			sb.append(",");
-		}
-		sb.deleteCharAt(sb.length() - 1);
+        Joiner.on(",").appendTo(sb, struct.keySet());
 		return sb.toString();
 	}
 	

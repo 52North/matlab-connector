@@ -1,5 +1,7 @@
 package org.uncertweb.matlab.value;
 
+import com.google.common.base.Function;
+
 /**
  * Base class for representing a MATLAB value.
  * 
@@ -7,6 +9,13 @@ package org.uncertweb.matlab.value;
  * 
  */
 public abstract class MLValue {
+    public static final Function<MLValue, String> TO_MATLAB_STRING =
+            new Function<MLValue, String>() {
+        @Override
+        public String apply(MLValue input) {
+            return input == null ? null : input.toMLString();
+        }
+    };
 
 	/**
 	 * Returns a MATLAB string representation of this value.

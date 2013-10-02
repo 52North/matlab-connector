@@ -1,5 +1,10 @@
 package org.uncertweb.matlab.value;
 
+import java.util.Arrays;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+
 /**
  * Represents a MATLAB cell.
  * 
@@ -21,13 +26,9 @@ public class MLCell extends MLValue {
 	@Override
 	public String toMLString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		for (MLValue value : cell) {
-			sb.append(value.toMLString());
-			sb.append(",");
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		sb.append("}");
+		sb.append('{');
+        Joiner.on(",").appendTo(sb, Iterables.transform(Arrays.asList(cell), TO_MATLAB_STRING));
+		sb.append('}');
 		return sb.toString();
 	}
 	

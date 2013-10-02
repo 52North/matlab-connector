@@ -1,6 +1,5 @@
 package org.uncertweb.matlab.server;
 
-import org.uncertweb.matlab.util.NamedAndGroupedThreadFactory;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncertweb.matlab.MLConnectorException;
 import org.uncertweb.matlab.instance.MLInstancePool;
+import org.uncertweb.matlab.util.NamedAndGroupedThreadFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;

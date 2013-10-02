@@ -1,9 +1,12 @@
 package org.uncertweb.matlab;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.uncertweb.matlab.value.MLValue;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 /**
  * Represents a MATLAB function execution request.
@@ -13,9 +16,9 @@ import org.uncertweb.matlab.value.MLValue;
  */
 public class MLRequest {
 
-	private String function;
+	private final String function;
 	private int resultCount;
-	private List<MLValue> parameters;
+	private final List<MLValue> parameters;
 	
 	/**
 	 * Creates a new <code>MLRequest</code> instance for the given function name. This constructor will assume 
@@ -26,8 +29,8 @@ public class MLRequest {
 	 */
 	public MLRequest(String function) {
 		this.function = function;
-		resultCount = 1;
-		parameters = new ArrayList<MLValue>();
+        this.resultCount = 1;
+		this.parameters = new LinkedList<MLValue>();
 	}
 
 	/**
@@ -40,7 +43,7 @@ public class MLRequest {
 	public MLRequest(String function, int resultCount) {
 		this.function = function;
 		this.resultCount = resultCount;
-		parameters = new ArrayList<MLValue>();
+		this.parameters = new LinkedList<MLValue>();
 	}
 
 	/**
@@ -49,7 +52,7 @@ public class MLRequest {
 	 * @param parameter the parameter <code>MLValue</code> to add
 	 */
 	public void addParameter(MLValue parameter) {
-		parameters.add(parameter);
+		this.parameters.add(parameter);
 	}
 	
 	/**
@@ -57,7 +60,7 @@ public class MLRequest {
 	 * 
 	 */
 	public void clearParameters() {
-		parameters.clear();
+		this.parameters.clear();
 	}
 	
 	/**
@@ -66,7 +69,7 @@ public class MLRequest {
 	 * @return the name of the function to execute
 	 */
 	public String getFunction() {
-		return function;
+		return this.function;
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class MLRequest {
 	 * @return the parameter <code>MLValue</code> at the given index
 	 */
 	public MLValue getParameter(int index) {
-		return parameters.get(index);
+		return this.parameters.get(index);
 	}
 	
 	/**
@@ -85,7 +88,7 @@ public class MLRequest {
 	 * @return the number of parameters
 	 */
 	public int getParameterCount() {
-		return parameters.size();
+		return this.parameters.size();
 	}
 	
 	/**
@@ -94,7 +97,7 @@ public class MLRequest {
 	 * @return the number of expected/requested results
 	 */
 	public int getResultCount() {
-		return resultCount;
+		return this.resultCount;
 	}
 
 	/**
@@ -112,26 +115,18 @@ public class MLRequest {
 	 * @return the eval string 
 	 */
 	public String toEvalString() {
-		StringBuilder sb = new StringBuilder("[");
+		StringBuilder sb = new StringBuilder('[');
 		for (int i = 1; i <= resultCount; i++) {
-			sb.append("result" + i);
+			sb.append("result").append(i);
 			if (i < resultCount) {
-				sb.append(",");
+				sb.append(',');
 			}
 		}
-		sb.append("] = feval('" + function + "'");
-		if (parameters.size() > 0) {
-			sb.append(",");
-			for (int i = 0; i < parameters.size(); i++) {
-				// print parameter
-				MLValue parameter = parameters.get(i);
-				sb.append(parameter.toMLString());
-				if (i < parameters.size() - 1) {
-					sb.append(",");
-				}
-			}			
-		}
-		sb.append(")");
+		sb.append("] = feval('");
+        sb.append(getFunction());
+        sb.append('\'');
+        Joiner.on(",").appendTo(sb, Iterables.transform(parameters, MLValue.TO_MATLAB_STRING));
+		sb.append(')');
 		return sb.toString();
 	}
 }

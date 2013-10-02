@@ -1,6 +1,7 @@
 package org.uncertweb.matlab;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.uncertweb.matlab.value.MLValue;
@@ -11,9 +12,9 @@ import org.uncertweb.matlab.value.MLValue;
  * @author Richard Jones
  *
  */
-public class MLResult {
+public class MLResult implements Iterable<MLValue> {
 
-	private List<MLValue> results;
+	private final List<MLValue> results;
 
 	/**
 	 * Creates a new <code>MLResult</code> instance.
@@ -54,9 +55,14 @@ public class MLResult {
 	public String toString() {
 		StringBuilder builder = new StringBuilder("results = ");
 		for (int i = 0; i < results.size(); i++) {
-			builder.append("\n  " + results.get(i).toString());
+			builder.append("\n  ").append(results.get(i).toString());
 		}
 		return builder.toString();
 	}
+
+    @Override
+    public Iterator<MLValue> iterator() {
+        return this.results.iterator();
+    }
 	
 }
