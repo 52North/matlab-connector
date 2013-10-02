@@ -17,6 +17,7 @@ import com.google.gson.JsonSerializer;
  */
 public class MLExceptionSerializer implements JsonSerializer<MLException> {
 
+    @Override
 	public JsonElement serialize(MLException arg0, Type arg1, JsonSerializationContext arg2) {
 		JsonObject object = new JsonObject();
 		object.add("exception", arg2.serialize(arg0.getMessage()));

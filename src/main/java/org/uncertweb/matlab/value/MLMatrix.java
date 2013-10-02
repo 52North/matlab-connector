@@ -45,6 +45,7 @@ public class MLMatrix extends MLValue {
 		return matrix;
 	}
 
+    @Override
 	public String toMLString() {
 		StringBuilder builder = new StringBuilder("[");
 		for (int i = 0; i < matrix.length; i++) {
@@ -62,6 +63,7 @@ public class MLMatrix extends MLValue {
 		return builder.toString();
 	}
 	
+    @Override
 	public String toString() {
 		return Arrays.deepToString(matrix);
 	}

@@ -17,6 +17,7 @@ import com.google.gson.JsonParseException;
  */
 public class IOExceptionDeserializer implements JsonDeserializer<IOException> {
 
+    @Override
 	public IOException deserialize(JsonElement arg0, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
 		// get object
 		JsonObject object = arg0.getAsJsonObject();

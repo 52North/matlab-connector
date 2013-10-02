@@ -19,6 +19,7 @@ import com.google.gson.JsonSerializer;
  */
 public class MLValueSerializer implements JsonSerializer<MLValue> {
 
+    @Override
 	public JsonElement serialize(MLValue src, Type typeOfSrc, JsonSerializationContext context) {
 		if (src.isScalar()) {
 			return context.serialize(src.getAsScalar().getScalar());
@@ -41,7 +42,7 @@ public class MLValueSerializer implements JsonSerializer<MLValue> {
 			JsonObject object = new JsonObject();
 			JsonObject structobj = new JsonObject();
 			object.add("struct", structobj);
-			MLStruct struct = (MLStruct)src.getAsStruct();
+			MLStruct struct = src.getAsStruct();
 			for (Entry<String, MLValue> e : struct.getStruct().entrySet()) {
 				structobj.add(e.getKey(), this.serialize(e.getValue(), MLValue.class, context));
 			}

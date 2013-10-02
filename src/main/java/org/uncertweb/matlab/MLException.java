@@ -25,6 +25,7 @@ public class MLException extends Exception {
 	 * 
 	 * @return the exception message
 	 */
+    @Override
 	public String getMessage() {
 		return message;
 	}

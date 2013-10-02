@@ -22,10 +22,12 @@ public class MLString extends MLValue {
 		return string;
 	}
 	
+    @Override
 	public String toMLString() {
 		return "'" + string + "'";
 	}
 	
+    @Override
 	public String toString() {
 		return string;
 	}

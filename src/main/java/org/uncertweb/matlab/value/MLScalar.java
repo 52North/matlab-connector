@@ -37,10 +37,12 @@ public class MLScalar extends MLValue {
 		return scalar;
 	}
 	
+    @Override
 	public String toMLString() {
 		return String.valueOf(scalar);
 	}
 	
+    @Override
 	public String toString() {
 		return String.valueOf(scalar);
 	}

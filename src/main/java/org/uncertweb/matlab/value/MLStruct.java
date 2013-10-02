@@ -32,7 +32,7 @@ public class MLStruct extends MLValue {
 		StringBuilder sb = new StringBuilder();
 		sb.append("struct(");
 		for (String field : struct.keySet()) {
-			sb.append("'" + field + "'");
+			sb.append("'").append(field).append("'");
 			sb.append(",");
 			sb.append(struct.get(field).toMLString());
 			sb.append(",");

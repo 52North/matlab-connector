@@ -19,6 +19,7 @@ import com.google.gson.JsonParseException;
  */
 public class MLResultDeserializer implements JsonDeserializer<MLResult> {
 
+    @Override
 	public MLResult deserialize(JsonElement arg0, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
 		// get object
 		JsonObject object = arg0.getAsJsonObject();
