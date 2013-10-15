@@ -12,5 +12,5 @@ for c in "" "javadoc" "sources"; do
 	wget "$base_url${c:+-$c}.jar" -O "$file"
 	mvn install:install-file \
 		-D "groupId=$group"  -D "artifactId=$artifact"  -D "version=$version" \
-        -D "packaging=jar" -D "file=$file" -D "classifier=$c"
+		-D "packaging=jar" -D "file=$file" -D "classifier=$c"
 done
