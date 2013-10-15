@@ -4,7 +4,22 @@ JSON is used as a platform and language independent.
 
 ## Server setup
 
-`java -jar matlab-connector-2.0-SNAPSHOT-with-dependencies.jar <port> <threads> <path>`
+```
+Usage: java -jar matlab-connector-2.0-SNAPSHOT-with-dependencies.jar [options]
+  Options:
+    -b, --base-dir
+       The base directory.
+       Default: current directory
+    -h, --help
+       Display this help message.
+    -p, --port
+       The port to listen on.
+       Default: 7000
+    -t, --threads
+       The amount of server threads.
+       Default: 5
+
+```
 
 ## Using the Java client
 
