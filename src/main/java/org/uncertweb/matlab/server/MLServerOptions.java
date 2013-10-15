@@ -23,6 +23,8 @@
  */
 package org.uncertweb.matlab.server;
 
+import java.io.IOException;
+
 import com.beust.jcommander.Parameter;
 
 /**
@@ -40,6 +42,9 @@ public class MLServerOptions {
     @Parameter(names = { "-b", "--base-dir" },
                description = "The base directory.")
     private String path;
+    @Parameter(names = { "--ssl" },
+               description = "Path to the SSL config file.")
+    private String sslConfigPath;
     @Parameter(names = { "-h", "--help" }, help = true,
                description = "Display this help message.")
     private Boolean help;
@@ -76,5 +81,21 @@ public class MLServerOptions {
 
     public boolean isHelp() {
         return help;
+    }
+
+    public boolean isSSL() {
+        return sslConfigPath != null;
+    }
+
+    public SSLOptions getSSLOptions() throws IOException {
+        if (isSSL()) {
+            return SSLOptions.builder().load(sslConfigPath).build();
+        } else {
+            return null;
+        }
+    }
+
+    public void setSSLConfigPath(String sslConfigPath) {
+        this.sslConfigPath = sslConfigPath;
     }
 }
