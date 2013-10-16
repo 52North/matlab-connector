@@ -51,7 +51,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>matlabcontrol</groupId>
+            <groupId>com.googlecode.matlabcontrol</groupId>
             <artifactId>matlabcontrol</artifactId>
             <version>4.1.0</version>
             <scope>compile</scope>

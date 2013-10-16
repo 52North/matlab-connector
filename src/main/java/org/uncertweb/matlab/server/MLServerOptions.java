@@ -80,7 +80,7 @@ public class MLServerOptions {
     }
 
     public boolean isHelp() {
-        return help;
+        return help != null && help;
     }
 
     public boolean isSSL() {

@@ -4,7 +4,22 @@ JSON is used as a platform and language independent.
 
 ## Server setup
 
-`java -jar matlab-connector-1.0-SNAPSHOT-with-dependencies.jar <port> <threads> <path>`
+```
+Usage: java -jar matlab-connector-2.0-SNAPSHOT-with-dependencies.jar [options]
+  Options:
+    -b, --base-dir
+       The base directory.
+       Default: current directory
+    -h, --help
+       Display this help message.
+    -p, --port
+       The port to listen on.
+       Default: 7000
+    -t, --threads
+       The amount of server threads.
+       Default: 5
+
+```
 
 ## Using the Java client
 
@@ -31,7 +46,7 @@ The dependency for the connector can then be added.
   <dependency>
     <groupId>org.uncertweb</groupId>
     <artifactId>matlab-connector</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -60,23 +75,14 @@ System.out.println(result.toString());
 
 If you wish to build the project from source, the [matlabcontrol 4.1.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-4.1.0.jar&can=1&q=) and install locally:
 
-```console
-$ mvn install:install-file -Dfile=matlabcontrol-4.0.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=4.0.0 -Dpackaging=jar
-```
-
-For development JavaDoc and sources can be helpful:
-
-```console
-$ wget https://matlabcontrol.googlecode.com/files/matlabcontrol-4.1.0{,-sources,-javadoc}.jar
-$ mvn install:install-file -Dfile=matlabcontrol-4.1.0.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dversion=4.1.0 -Dpackaging=jar
-$ mvn install:install-file -Dfile=matlabcontrol-4.1.0-javadoc.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dclassifier=javadoc -Dversion=4.1.0 -Dpackaging=jar
-$ mvn install:install-file -Dfile=matlabcontrol-4.1.0-sources.jar -DgroupId=matlabcontrol -DartifactId=matlabcontrol -Dclassifier=sources -Dversion=4.1.0 -Dpackaging=jar
+```bash
+chmod +x deps.sh && ./deps.sh
 ```
 
 Then build:
 
-```console
-$ mvn clean package
+```bash
+mvn clean package
 ```
 
 Tests will fail unless a local MATLAB installation can be found.
