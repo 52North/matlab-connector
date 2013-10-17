@@ -25,7 +25,6 @@ package org.uncertweb.matlab.server;
 
 import java.io.IOException;
 
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
@@ -35,34 +34,40 @@ import com.beust.jcommander.ParameterException;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class MLServerCLI {
+    public static final int DEFAULT_PORT = 7000;
+    public static final int DEFAULT_THREADS = 5;
+    public static final String DEFAULT_BASE_DIR = System.getProperty("user.dir");
+
     public static void main(String[] args) {
         final MLServerOptions options = new MLServerOptions(
-                7000, 5, System.getProperty("user.dir"));
+                DEFAULT_PORT, DEFAULT_THREADS, DEFAULT_BASE_DIR);
         final JCommander cli = new JCommander(options);
         cli.setProgramName("java " + MLServer.class.getName());
         try {
             cli.parse(args);
         } catch (ParameterException e) {
             cli.usage();
-            errorExit(e.getMessage());
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
         if (options.isHelp()) {
             cli.usage();
         } else {
             try {
                 new MLServer(options).start();
-            } catch (IOException e) {
-                errorExit("Couldn't listen on port %d.\n", options.getPort());
-            } catch (MLConnectorException e) {
-                errorExit("Couldn't setup MatLab instance pool.");
+            } catch (IOException ex) {
+                System.err.printf("Couldn't listen on port %d.\n", options.getPort());
+                if (options.isDebug()) {
+                    ex.printStackTrace(System.err);
+                }
+                System.exit(1);
+            } catch (MLConnectorException ex) {
+                System.err.println("Couldn't setup MatLab instance pool.");
+                if (options.isDebug()) {
+                    ex.printStackTrace(System.err);
+                }
+                System.exit(1);
             }
         }
-    }
-
-    private static void errorExit(String format, Object... args) {
-        if (format != null) {
-            System.err.printf(format + "\n", args);
-        }
-        System.exit(1);
     }
 }

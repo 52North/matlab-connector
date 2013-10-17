@@ -25,7 +25,11 @@ package org.uncertweb.matlab.server;
 
 import java.io.IOException;
 
+import org.uncertweb.matlab.socket.ssl.KeyStoreSSLConfiguration;
+import org.uncertweb.matlab.socket.ssl.SSLConfiguration;
+
 import com.beust.jcommander.Parameter;
+import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc
@@ -45,9 +49,13 @@ public class MLServerOptions {
     @Parameter(names = { "--ssl" },
                description = "Path to the SSL config file.")
     private String sslConfigPath;
+    @Parameter(names = { "--debug" },
+               description = "Show debug output.")
+    private boolean debug = false;
     @Parameter(names = { "-h", "--help" }, help = true,
                description = "Display this help message.")
     private Boolean help;
+
 
     public MLServerOptions(int port, int threads, String path) {
         this.port = port;
@@ -83,19 +91,23 @@ public class MLServerOptions {
         return help != null && help;
     }
 
-    public boolean isSSL() {
-        return sslConfigPath != null;
-    }
-
-    public SSLOptions getSSLOptions() throws IOException {
-        if (isSSL()) {
-            return SSLOptions.builder().load(sslConfigPath).build();
+    public Optional<SSLConfiguration> getSSLConfiguration() throws IOException {
+        if (sslConfigPath != null) {
+            return Optional.of(KeyStoreSSLConfiguration.load(sslConfigPath));
         } else {
-            return null;
+            return Optional.absent();
         }
     }
 
     public void setSSLConfigPath(String sslConfigPath) {
         this.sslConfigPath = sslConfigPath;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }
