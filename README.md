@@ -37,7 +37,7 @@ Usage: java -jar matlab-connector-2.0-SNAPSHOT-with-dependencies.jar [options]
 
 ## Using the Java client
 
-## Evaluating a MATLAB function
+### Evaluating a MATLAB function
 
 To execute a function in Java. Host can be localhost, or remote.
 
@@ -56,6 +56,8 @@ MLResult result = client.sendRequest("localhost", 44444, request);
 // Print result
 System.out.println(result.toString());
 ```
+
+### Use SSL client authentication
 
 To enable SSL encryption of the connection you can use the following example:
 ```java
