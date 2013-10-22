@@ -37,35 +37,7 @@ Usage: java -jar matlab-connector-2.0-SNAPSHOT-with-dependencies.jar [options]
 
 ## Using the Java client
 
-### Getting started
-
-The connector is available on the UncertWeb Maven repository, hosted at the [University of Münster](http://www.uni-muenster.de/). Adding the following snippet to your `pom.xml` file will include the repository in your project.
-
-```xml
-<repositories>
-  <!-- Other repositories may be here too -->
-  <repository>
-    <id>UncertWebMavenRepository</id>
-    <name>UncertWeb Maven Repository</name>
-    <url>http://giv-uw.uni-muenster.de/m2/repo</url>
-  </repository>
-</repositories>
-```
-
-The dependency for the connector can then be added.
-
-```xml
-<dependencies>
-  <!-- Other dependencies may be here too -->
-  <dependency>
-    <groupId>org.uncertweb</groupId>
-    <artifactId>matlab-connector</artifactId>
-    <version>2.0-SNAPSHOT</version>
-  </dependency>
-</dependencies>
-```
-
-### Evaluating a MATLAB function
+## Evaluating a MATLAB function
 
 To execute a function in Java. Host can be localhost, or remote.
 
@@ -125,11 +97,6 @@ chmod +x deps.sh && ./deps.sh
 Then build:
 
 ```bash
-mvn clean package
+mvn clean install
 ```
 
-Tests will fail unless a local MATLAB installation can be found.
-
-## Limitations
-
-Security has also been overlooked in the current version, I'd recommended restricting access to the port the server runs on until access control is implemented.
