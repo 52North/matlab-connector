@@ -43,16 +43,19 @@ import com.google.common.base.Preconditions;
  */
 public class SSLSocketFactory implements SocketFactory, ServerSocketFactory {
     private final SSLFactory delegate;
+    private final SSLConfiguration options;
 
     public SSLSocketFactory(SSLConfiguration options) {
-        this.delegate = new SSLFactory(Preconditions.checkNotNull(options));
+        this.options = Preconditions.checkNotNull(options);
+        this.delegate = new SSLFactory(options);
     }
 
     @Override
     public SSLServerSocket createServerSocket(int port)
             throws IOException, SocketException {
         try {
-            return delegate.createServerSocket(port);
+            SSLServerSocket socket = delegate.createServerSocket(port);
+            return socket;
         } catch (GeneralSecurityException ex) {
             throw new SSLSocketCreationException(ex);
         }

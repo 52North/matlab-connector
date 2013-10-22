@@ -49,12 +49,15 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
     public static final String TRUST_STORE_PATH = "trustStore.path";
     public static final String TRUST_STORE_PASS = "trustStore.pass";
     public static final String TRUST_STORE_TYPE = "trustStore.type";
+    public static final String CLIENT_AUTH = "clientAuth";
     
     private final KeyStoreOptions trustStoreOptions;
     private final KeyStoreOptions keyStoreOptions;
 
     public KeyStoreSSLConfiguration(KeyStoreOptions trustStoreOptions,
-                              KeyStoreOptions keyStoreOptions) {
+                                    KeyStoreOptions keyStoreOptions,
+                                    boolean requireClientAuth) {
+        super(requireClientAuth);
         this.trustStoreOptions = Preconditions.checkNotNull(trustStoreOptions);
         this.keyStoreOptions = Preconditions.checkNotNull(keyStoreOptions);
     }
@@ -87,13 +90,16 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
         String trustStorePath = emptyToNull(p.getProperty(TRUST_STORE_PATH, null));
         String trustStorePass = emptyToNull(p.getProperty(TRUST_STORE_PASS, null));
         String trustStoreType = emptyToNull(p.getProperty(TRUST_STORE_TYPE, null));
+        String clientAuth = emptyToNull(p.getProperty(CLIENT_AUTH, "true"));
+
         return new KeyStoreSSLConfiguration(
                 new KeyStoreOptions(checkNotNull(trustStorePath, TRUST_STORE_PATH),
                                     checkNotNull(trustStorePass, KEY_STORE_PASS),
                                     trustStoreType),
                 new KeyStoreOptions(checkNotNull(keyStorePath, KEY_STORE_PATH),
                                     checkNotNull(keyStorePass, keyStorePass),
-                                    keyStoreType));
+                                    keyStoreType),
+                Boolean.parseBoolean(clientAuth));
     }
 
     public static SSLConfiguration load(String path) throws IOException {
@@ -117,6 +123,5 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
         } finally {
             Closeables.close(in, true);
         }
-
     }
 }

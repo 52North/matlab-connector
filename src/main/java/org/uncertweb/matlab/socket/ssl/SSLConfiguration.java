@@ -16,6 +16,11 @@ import java.security.KeyStore;
 public abstract class SSLConfiguration {
     private KeyStore keyStore;
     private KeyStore trustStore;
+    private final boolean requireClientAuth;
+
+    public SSLConfiguration(boolean requireClientAuth) {
+        this.requireClientAuth = requireClientAuth;
+    }
 
     public KeyStore getKeyStore()
             throws IOException, GeneralSecurityException {
@@ -42,4 +47,8 @@ public abstract class SSLConfiguration {
     public abstract char[] getKeyStorePass();
 
     public abstract char[] getTrustStorePass();
+
+    public boolean isRequireClientAuth() {
+        return requireClientAuth;
+    }
 }

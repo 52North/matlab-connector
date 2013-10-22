@@ -59,7 +59,9 @@ public class SSLFactory {
             throws GeneralSecurityException, IOException {
         SSLServerSocket socket = (SSLServerSocket) getContext()
                 .getServerSocketFactory().createServerSocket(port);
-        socket.setNeedClientAuth(true);
+        if (getOptions().isRequireClientAuth()) {
+            socket.setNeedClientAuth(true);
+        }
         socket.setEnabledProtocols(new String[] {
             SSLConstants.PROTOCOL_TLS_V1 });
         return socket;

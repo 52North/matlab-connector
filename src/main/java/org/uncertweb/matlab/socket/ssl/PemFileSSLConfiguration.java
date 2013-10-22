@@ -45,11 +45,14 @@ public class PemFileSSLConfiguration extends SSLConfiguration {
     private final String key;
     private final String certificate;
 
-    public PemFileSSLConfiguration(String key, String certificate,
-                                   String trusted) {
-        this.key = Preconditions.checkNotNull(key);
-        this.certificate = Preconditions.checkNotNull(certificate);
-        this.trusted = Preconditions.checkNotNull(trusted);
+    public PemFileSSLConfiguration(String keyFile,
+                                   String certificateFile,
+                                   String trustedFile,
+                                   boolean requireClientAuth) {
+        super(requireClientAuth);
+        this.key = Preconditions.checkNotNull(keyFile);
+        this.certificate = Preconditions.checkNotNull(certificateFile);
+        this.trusted = Preconditions.checkNotNull(trustedFile);
     }
 
     @Override

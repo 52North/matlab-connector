@@ -23,13 +23,12 @@
  */
 package org.uncertweb.matlab.server;
 
-import java.io.IOException;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import org.uncertweb.matlab.socket.ssl.KeyStoreSSLConfiguration;
 import org.uncertweb.matlab.socket.ssl.SSLConfiguration;
 
-import com.beust.jcommander.Parameter;
 import com.google.common.base.Optional;
+
 
 /**
  * TODO JavaDoc
@@ -37,77 +36,58 @@ import com.google.common.base.Optional;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class MLServerOptions {
-    @Parameter(names = { "-p", "--port" },
-               description = "The port to listen on.")
     private int port;
-    @Parameter(names = { "-t", "--threads" },
-               description = "The amount of server threads.")
     private int threads;
-    @Parameter(names = { "-b", "--base-dir" },
-               description = "The base directory.")
     private String path;
-    @Parameter(names = { "--ssl" },
-               description = "Path to the SSL config file.")
-    private String sslConfigPath;
-    @Parameter(names = { "--debug" },
-               description = "Show debug output.")
-    private boolean debug = false;
-    @Parameter(names = { "-h", "--help" }, help = true,
-               description = "Display this help message.")
-    private Boolean help;
-
-
-    public MLServerOptions(int port, int threads, String path) {
-        this.port = port;
-        this.threads = threads;
-        this.path = path;
-    }
+    private SSLConfiguration sslConfiguration;
+    private boolean debug;
 
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     public int getThreads() {
-        return threads;
+        return this.threads;
     }
 
     public String getPath() {
-        return path;
+        return this.path;
     }
 
-    public void setPort(int port) {
+    public MLServerOptions setPort(int port) {
+        checkArgument(port > 0);
         this.port = port;
+        return this;
     }
 
-    public void setThreads(int threads) {
+    public MLServerOptions setThreads(int threads) {
+        checkArgument(threads > 0);
         this.threads = threads;
+        return this;
     }
 
-    public void setPath(String path) {
+    public MLServerOptions setPath(String path) {
+        checkArgument(path != null && !path.isEmpty());
         this.path = path;
+        return this;
     }
 
-    public boolean isHelp() {
-        return help != null && help;
+    public Optional<SSLConfiguration> getSSLConfiguration() {
+        return Optional.fromNullable(this.sslConfiguration);
     }
 
-    public Optional<SSLConfiguration> getSSLConfiguration() throws IOException {
-        if (sslConfigPath != null) {
-            return Optional.of(KeyStoreSSLConfiguration.load(sslConfigPath));
-        } else {
-            return Optional.absent();
-        }
-    }
-
-    public void setSSLConfigPath(String sslConfigPath) {
-        this.sslConfigPath = sslConfigPath;
+    public MLServerOptions setSSLConfiguration(SSLConfiguration c) {
+        this.sslConfiguration = sslConfiguration;
+        return this;
     }
 
     public boolean isDebug() {
         return debug;
     }
 
-    public void setDebug(boolean debug) {
+    public MLServerOptions setDebug(boolean debug) {
         this.debug = debug;
+        return this;
     }
+
 }
