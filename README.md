@@ -1,3 +1,5 @@
+# Matlab Connector [![Build Status](https://travis-ci.org/autermann/matlab-connector.png?branch=master)](https://travis-ci.org/autermann/matlab-connector)
+
 The matlab-connector library enables function execution on a remote MATLAB instance.
 
 JSON is used as a platform and language independent.
