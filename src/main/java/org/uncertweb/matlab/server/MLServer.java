@@ -1,5 +1,7 @@
 package org.uncertweb.matlab.server;
 
+import org.uncertweb.matlab.socket.DefaultSocketFactory;
+import org.uncertweb.matlab.socket.ServerSocketFactory;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
@@ -10,13 +12,16 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncertweb.matlab.socket.ssl.SSLSocketCreationException;
+import org.uncertweb.matlab.socket.ssl.SSLSocketFactory;
 import org.uncertweb.matlab.util.NamedAndGroupedThreadFactory;
 
 public class MLServer {
     private static final Logger log = LoggerFactory.getLogger(MLServer.class);
     private MLInstancePool instancePool;
     private final ExecutorService threadPool = Executors
-            .newCachedThreadPool(NamedAndGroupedThreadFactory.builder().name("MLServer").build());
+            .newCachedThreadPool(NamedAndGroupedThreadFactory.builder()
+            .name("MLServer").build());
     private ServerSocket serverSocket;
     private final MLServerOptions options;
 
@@ -36,35 +41,33 @@ public class MLServer {
         return serverSocket;
     }
 
-    public void start() throws IOException, MLConnectorException {
+    public void start() throws IOException, MLConnectorException, SSLSocketCreationException {
         setup();
         while (true) {
             awaitConnection();
         }
     }
 
-    private void setup() throws IOException, MLConnectorException {
-
+    private void setup() throws IOException, MLConnectorException, SSLSocketCreationException {
         synchronized (this) {
             checkState(getPool() == null, "Server already started.");
         }
-
         // create out matlab instance instancePool
         final MLInstanceConfig instanceConfig = MLInstanceConfig.builder()
                 .withBaseDir(getOptions().getPath())
                 .build();
-        final MLInstancePoolConfig poolConfig = MLInstancePoolConfig.builder()
+        final MLInstancePoolConfig poolConfig = MLInstancePoolConfig
+                .builder()
                 .withMaximalNumInstances(getOptions().getThreads())
                 .withInstanceConfig(instanceConfig)
                 .build();
         instancePool = new MLInstancePool(poolConfig);
-
-        // create socket
-        serverSocket = new ServerSocket(getOptions().getPort());
+        this.serverSocket = getServerSocketFactory()
+                .createServerSocket(getOptions().getPort());
         log.info("Listening on port {}...", getOptions().getPort());
+                        Runtime.getRuntime()
+                        .addShutdownHook(new MLServerShutdownHook(this));
 
-        // handle shutdown gracefully
-        Runtime.getRuntime().addShutdownHook(new MLServerShutdownHook(this));
     }
 
     private void awaitConnection() {
@@ -78,6 +81,15 @@ public class MLServer {
                 log.error("Could not accept client connection: {}",
                           e.getMessage());
             }
+        }
+    }
+
+    private ServerSocketFactory getServerSocketFactory()
+            throws IOException, SSLSocketCreationException {
+        if (getOptions().getSSLConfiguration().isPresent()) {
+            return new SSLSocketFactory(getOptions().getSSLConfiguration().get());
+        } else {
+            return new DefaultSocketFactory();
         }
     }
 }
