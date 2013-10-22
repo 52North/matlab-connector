@@ -7,12 +7,45 @@
     <packaging>jar</packaging>
     <name>matlab-connector</name>
     <url>http://www.uncertweb.org</url>
+    <inceptionYear>2012</inceptionYear>
     <description>Provides the ability to run MATLAB functions remotely.</description>
-
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) v3</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>itszootime</id>
+            <name>Richard Jones</name>
+            <roles>
+                <role>Initial Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>autermann</id>
+            <name>Christian Autermann</name>
+            <email>autermann@uni-muenster.de</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/autermann/matlab-connector.git</connection>
+        <developerConnection>scm:git:https://github.com/autermann/matlab-connector.git</developerConnection>
+        <url>https://github.com/autermann/matlab-connector</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issue Management</system>
+        <url>https://github.com/autermann/matlab-connector/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/autermann/matlab-connector</url>
+    </ciManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
