@@ -3,7 +3,6 @@ package org.uncertweb.matlab.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
@@ -11,16 +10,18 @@ import java.net.URLConnection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
-
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLHandler;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
+import org.uncertweb.matlab.socket.DefaultSocketFactory;
+import org.uncertweb.matlab.socket.SocketFactory;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
+import com.google.common.io.OutputSupplier;
 
 /**
  * TODO JavaDoc
@@ -31,6 +32,15 @@ public class MLClient {
     private static final Logger log = LoggerFactory.getLogger(MLClient.class);
     private static final int CONNECT_TIMEOUT = 10 * 1000; // 10s to connect
     private final MLHandler handler = new MLHandler();
+    private final SocketFactory socketFactory;
+
+    public MLClient(SocketFactory socketFactory) {
+        this.socketFactory = Preconditions.checkNotNull(socketFactory);
+    }
+
+    public MLClient() {
+        this(new DefaultSocketFactory());
+    }
 
     /**
      * Sends a request to a MATLAB server. The server must be using the supplied
@@ -53,7 +63,7 @@ public class MLClient {
         SocketException thrown = null;
         for (int attempt = 0; attempt < 3; attempt++) {
             try {
-                return _sendRequest(connect(host, port), request);
+                return _sendRequest(new SocketConnection(host, port), request);
             } catch (SocketException e) {
                 thrown = e;
             }
@@ -63,51 +73,9 @@ public class MLClient {
 
     public MLResult sendRequest(String mlProxyURL, MLRequest request) throws
             MLException, IOException {
-        Connection connection = connect(mlProxyURL);
+        Connection connection = new ProxyUrlConnection(mlProxyURL);
         connection.getOutput().write("request=".getBytes());
         return _sendRequest(connection, request);
-    }
-
-    private Connection connect(String host, int port) throws IOException {
-        final Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(host, port), CONNECT_TIMEOUT);
-        return new Connection() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return socket.getInputStream();
-            }
-
-            @Override
-            public OutputStream getOutput() throws IOException {
-                return socket.getOutputStream();
-            }
-
-            @Override
-            public void close() {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    log.error("Error closing socket", e);
-                }
-            }
-        };
-    }
-
-    private Connection connect(String mlProxyURL) throws IOException {
-        final URLConnection connection = new URL(mlProxyURL).openConnection();
-        connection.setDoOutput(true);
-        connection.setDoInput(true);
-        return new Connection() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return connection.getInputStream();
-            }
-
-            @Override
-            public OutputStream getOutput() throws IOException {
-                return connection.getOutputStream();
-            }
-        };
     }
 
     private MLResult _sendRequest(Connection con, MLRequest request)
@@ -124,18 +92,6 @@ public class MLClient {
             throws IOException, MLException {
         String response = CharStreams.toString(CharStreams
                 .newReaderSupplier(in, Charsets.UTF_8));
-
-//        try {
-//            throw handler.parse(response, MLException.class);
-//        } catch (JsonParseException e1) {
-//            try {
-//                throw handler.parse(response, IOException.class);
-//            } catch (JsonParseException e2) {
-//                return handler.parse(response, MLResult.class);
-//            }
-//        }
-        // parse
-        // try for exception
         // FIXME speedup, not the best
         if (response.startsWith("{\"exception\"")) {
             throw handler.parseException(response);
@@ -158,6 +114,54 @@ public class MLClient {
             } catch (IOException e) {
                 log.error("Error closing output stream", e);
             }
+        }
+    }
+
+    private class SocketConnection extends Connection {
+        private final Socket socket;
+
+        SocketConnection(String host, int port) throws IOException {
+            this.socket = socketFactory
+                    .createSocket(host, port, CONNECT_TIMEOUT);
+        }
+
+        @Override
+        public InputStream getInput() throws IOException {
+            return socket.getInputStream();
+        }
+
+        @Override
+        public OutputStream getOutput() throws IOException {
+            return socket.getOutputStream();
+        }
+
+        @Override
+        public void close() {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                log.error("Error closing socket", e);
+            }
+        }
+    }
+
+    private class ProxyUrlConnection extends Connection {
+        private final URLConnection connection;
+
+        ProxyUrlConnection(String mlProxyURL) throws IOException {
+            connection = new URL(mlProxyURL).openConnection();
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+        }
+
+        @Override
+        public InputStream getInput() throws IOException {
+            return connection.getInputStream();
+        }
+
+        @Override
+        public OutputStream getOutput() throws IOException {
+            return connection.getOutputStream();
         }
     }
 }
