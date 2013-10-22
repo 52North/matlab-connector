@@ -63,7 +63,7 @@ public class SSLFactory {
     public SSLSocket createSocket(InetSocketAddress address, int timeout)
             throws GeneralSecurityException, IOException {
         SSLSocket socket = (SSLSocket) getContext()
-                    .getSocketFactory().createSocket();
+                .getSocketFactory().createSocket();
         socket.connect(address, timeout);
         return socket;
     }

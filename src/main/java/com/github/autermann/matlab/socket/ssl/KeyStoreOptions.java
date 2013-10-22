@@ -41,7 +41,7 @@ public class KeyStoreOptions {
     public KeyStoreOptions(String path, String pass, String type) {
         this.path = Preconditions.checkNotNull(path);
         this.pass = Preconditions.checkNotNull(pass);
-        this.type = Objects.firstNonNull(Strings.emptyToNull(type), 
+        this.type = Objects.firstNonNull(Strings.emptyToNull(type),
                                          SSLConstants.KEYSTORE_TYPE_JKS);
     }
 

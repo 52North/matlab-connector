@@ -16,8 +16,6 @@
  */
 package com.github.autermann.matlab.server;
 
-import com.github.autermann.matlab.socket.DefaultSocketFactory;
-import com.github.autermann.matlab.socket.ServerSocketFactory;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
@@ -29,6 +27,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.autermann.matlab.socket.DefaultSocketFactory;
+import com.github.autermann.matlab.socket.ServerSocketFactory;
 import com.github.autermann.matlab.socket.ssl.SSLSocketCreationException;
 import com.github.autermann.matlab.socket.ssl.SSLSocketFactory;
 import com.github.autermann.matlab.util.NamedAndGroupedThreadFactory;
@@ -38,7 +38,7 @@ public class MLServer {
     private MLInstancePool instancePool;
     private final ExecutorService threadPool = Executors
             .newCachedThreadPool(NamedAndGroupedThreadFactory.builder()
-            .name("MLServer").build());
+                    .name("MLServer").build());
     private ServerSocket serverSocket;
     private final MLServerOptions options;
 
@@ -58,14 +58,16 @@ public class MLServer {
         return serverSocket;
     }
 
-    public void start() throws IOException, MLConnectorException, SSLSocketCreationException {
+    public void start() throws IOException, MLConnectorException,
+                               SSLSocketCreationException {
         setup();
         while (true) {
             awaitConnection();
         }
     }
 
-    private void setup() throws IOException, MLConnectorException, SSLSocketCreationException {
+    private void setup() throws IOException, MLConnectorException,
+                                SSLSocketCreationException {
         synchronized (this) {
             checkState(getPool() == null, "Server already started.");
         }
@@ -82,8 +84,8 @@ public class MLServer {
         this.serverSocket = getServerSocketFactory()
                 .createServerSocket(getOptions().getPort());
         log.info("Listening on port {}...", getOptions().getPort());
-                        Runtime.getRuntime()
-                        .addShutdownHook(new MLServerShutdownHook(this));
+        Runtime.getRuntime()
+                .addShutdownHook(new MLServerShutdownHook(this));
 
     }
 

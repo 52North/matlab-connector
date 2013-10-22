@@ -46,7 +46,7 @@ public class MLValueSerializer implements JsonSerializer<MLValue> {
             return ctx.serialize(value.asString().getString());
         } else if (value.isCell()) {
             JsonObject object = new JsonObject();
-            object.add(JSONConstants.CELL, 
+            object.add(JSONConstants.CELL,
                        ctx.serialize(value.asCell().getCell()));
             return object;
         } else if (value.isStruct()) {

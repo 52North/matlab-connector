@@ -62,8 +62,8 @@ public class MLServerTask implements Runnable {
                 pool.returnInstance(instance);
             }
         } catch (IOException e) {
-            logger.error("Couldn't handle input/output streams: "
-                         + e.getMessage(), e);
+            logger.error("Couldn't handle input/output streams: " +
+                     e.getMessage(), e);
         } finally {
             try {
                 socket.close();

@@ -60,6 +60,7 @@ import com.google.common.io.InputSupplier;
  */
 public class SSLUtils {
     private static final Logger log = LoggerFactory.getLogger(SSLUtils.class);
+
     private SSLUtils() {
     }
 
@@ -162,7 +163,8 @@ public class SSLUtils {
             CertificateFactory cf = CertificateFactory
                     .getInstance(SSLConstants.CERTIFICATE_TYPE_X509);
             while (is.available() > 0) {
-                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+                X509Certificate cert = (X509Certificate) cf
+                        .generateCertificate(is);
                 certs.add(cert);
                 log.info("Read {}", cert.getSubjectX500Principal().getName());
             }
@@ -177,7 +179,8 @@ public class SSLUtils {
                    NoSuchAlgorithmException {
         AlgorithmIdentifier algId = new AlgorithmIdentifier(
                 PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE);
-        RSAPrivateKey instance = RSAPrivateKey.getInstance(privatePemObject.getContent());
+        RSAPrivateKey instance = RSAPrivateKey.getInstance(privatePemObject
+                .getContent());
         PrivateKeyInfo privateKeyInfo = new PrivateKeyInfo(algId, instance);
         return createKeyFromDER(privateKeyInfo.toASN1Primitive().getEncoded());
     }

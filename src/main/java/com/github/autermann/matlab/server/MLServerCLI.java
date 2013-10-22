@@ -19,13 +19,12 @@ package com.github.autermann.matlab.server;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.github.autermann.matlab.socket.ssl.KeyStoreSSLConfiguration;
 import com.github.autermann.matlab.socket.ssl.PemFileSSLConfiguration;
 import com.github.autermann.matlab.socket.ssl.SSLConfiguration;
 import com.github.autermann.matlab.util.Optionals;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 import com.google.common.base.Optional;
 
 /**
@@ -36,7 +35,8 @@ import com.google.common.base.Optional;
 public class MLServerCLI {
     private static final int DEFAULT_PORT = 7000;
     private static final int DEFAULT_THREADS = 5;
-    private static final String DEFAULT_BASE_DIR = System.getProperty("user.dir");
+    private static final String DEFAULT_BASE_DIR = System
+            .getProperty("user.dir");
     private static final PrintStream ERR = System.err;
 
     public static void main(String[] args) throws IOException {
@@ -80,13 +80,12 @@ public class MLServerCLI {
         }
     }
 
-
     private static MLServerOptions createConfig(MLServerCLIOptions options)
             throws ParameterException {
         SSLConfiguration sslConfig;
         try {
             sslConfig = createSSLConfiguration(options);
-        } catch(IOException e){
+        } catch (IOException e) {
             return printAndExit(e);
         }
         return new MLServerOptions()
@@ -126,5 +125,5 @@ public class MLServerCLI {
             }
         }
     }
-    
+
 }

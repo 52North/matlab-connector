@@ -45,11 +45,13 @@ public class MLRequestDeserializer extends AbstractDeserializer implements
 
         // add result count if it exists
         if (json.has(JSONConstants.RESULT_COUNT)) {
-            request.setResultCount(json.get(JSONConstants.RESULT_COUNT).getAsInt());
+            request.setResultCount(json.get(JSONConstants.RESULT_COUNT)
+                    .getAsInt());
         }
 
         // add parameters
-        JsonArray parameters = json.get(JSONConstants.PARAMETERS).getAsJsonArray();
+        JsonArray parameters = json.get(JSONConstants.PARAMETERS)
+                .getAsJsonArray();
         for (JsonElement parameter : parameters) {
             request.addParameter(deserializeValue(parameter));
         }

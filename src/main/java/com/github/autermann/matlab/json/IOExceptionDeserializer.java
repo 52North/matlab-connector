@@ -36,7 +36,8 @@ public class IOExceptionDeserializer implements JsonDeserializer<IOException> {
     public IOException deserialize(JsonElement elem, Type type,
                                    JsonDeserializationContext ctx)
             throws JsonParseException {
-        return new IOException(elem.getAsJsonObject().get(JSONConstants.IOEXCEPTION)
+        return new IOException(elem.getAsJsonObject()
+                .get(JSONConstants.IOEXCEPTION)
                 .getAsString());
     }
 }

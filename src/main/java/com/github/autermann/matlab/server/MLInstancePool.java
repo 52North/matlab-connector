@@ -26,8 +26,10 @@ public class MLInstancePool {
             .getLogger(MLInstancePool.class);
     private GenericObjectPool<MLInstance> pool;
 
-    public MLInstancePool(MLInstancePoolConfig config) throws MLConnectorException {
-        final InstanceFactory factory = new InstanceFactory(config.getInstanceConfig());
+    public MLInstancePool(MLInstancePoolConfig config) throws
+            MLConnectorException {
+        final InstanceFactory factory = new InstanceFactory(config
+                .getInstanceConfig());
         this.pool = new GenericObjectPool<MLInstance>(factory);
         this.pool.setMaxActive(config.getNumThreads());
         this.pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
@@ -37,8 +39,8 @@ public class MLInstancePool {
         try {
             return pool.borrowObject();
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to borrow instance from pool" 
-                                       + ex .toString(), ex);
+            throw new RuntimeException("Unable to borrow instance from pool" +
+                     ex.toString(), ex);
         }
     }
 

@@ -29,7 +29,7 @@ import com.google.common.collect.Iterables;
  */
 public class Optionals {
 
-    private  Optionals() {
+    private Optionals() {
     }
 
     public static <T> Predicate<Optional<? extends T>> isPresent() {

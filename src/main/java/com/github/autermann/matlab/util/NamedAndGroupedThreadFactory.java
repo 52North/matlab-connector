@@ -54,8 +54,8 @@ public class NamedAndGroupedThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        final String name =
-                String.format(nameFormat, threadNumber.getAndIncrement());
+        final String name = String.format(nameFormat, threadNumber
+                .getAndIncrement());
         final Thread t = new Thread(group, r, name, stackSize);
         t.setDaemon(daemon);
         t.setPriority(priority);

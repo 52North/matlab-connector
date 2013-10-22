@@ -43,7 +43,7 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
     public static final String TRUST_STORE_PASS = "trustStore.pass";
     public static final String TRUST_STORE_TYPE = "trustStore.type";
     public static final String CLIENT_AUTH = "clientAuth";
-    
+
     private final KeyStoreOptions trustStoreOptions;
     private final KeyStoreOptions keyStoreOptions;
 
@@ -56,7 +56,8 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
     }
 
     @Override
-    protected KeyStore createKeyStore() throws IOException, GeneralSecurityException {
+    protected KeyStore createKeyStore() throws IOException,
+                                               GeneralSecurityException {
         return this.keyStoreOptions.read();
     }
 
@@ -66,7 +67,8 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
     }
 
     @Override
-    protected KeyStore createTrustStore() throws IOException, GeneralSecurityException {
+    protected KeyStore createTrustStore() throws IOException,
+                                                 GeneralSecurityException {
         return this.trustStoreOptions.read();
     }
 
@@ -75,14 +77,17 @@ public class KeyStoreSSLConfiguration extends SSLConfiguration {
         return this.trustStoreOptions.getPass().toCharArray();
     }
 
-     public static SSLConfiguration load(Properties p) {
+    public static SSLConfiguration load(Properties p) {
         checkNotNull(p);
         String keyStorePath = emptyToNull(p.getProperty(KEY_STORE_PATH, null));
         String keyStorePass = emptyToNull(p.getProperty(KEY_STORE_PASS, null));
         String keyStoreType = emptyToNull(p.getProperty(KEY_STORE_TYPE, null));
-        String trustStorePath = emptyToNull(p.getProperty(TRUST_STORE_PATH, null));
-        String trustStorePass = emptyToNull(p.getProperty(TRUST_STORE_PASS, null));
-        String trustStoreType = emptyToNull(p.getProperty(TRUST_STORE_TYPE, null));
+        String trustStorePath = emptyToNull(p
+                .getProperty(TRUST_STORE_PATH, null));
+        String trustStorePass = emptyToNull(p
+                .getProperty(TRUST_STORE_PASS, null));
+        String trustStoreType = emptyToNull(p
+                .getProperty(TRUST_STORE_TYPE, null));
         String clientAuth = emptyToNull(p.getProperty(CLIENT_AUTH, "true"));
 
         return new KeyStoreSSLConfiguration(

@@ -21,7 +21,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.github.autermann.matlab.socket.ssl.SSLConfiguration;
 import com.google.common.base.Optional;
 
-
 /**
  * TODO JavaDoc
  *

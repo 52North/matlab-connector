@@ -32,7 +32,8 @@ import com.google.common.base.Preconditions;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class PemFileSSLConfiguration extends SSLConfiguration {
-    private static final Logger log = LoggerFactory.getLogger(PemFileSSLConfiguration.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(PemFileSSLConfiguration.class);
     private static final String PASSWORD = "password";
     private final String trusted;
     private final String key;
