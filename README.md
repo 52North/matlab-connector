@@ -93,10 +93,10 @@ boolean requireClientAuth = true;
 
 // create a SSL Configuration from key, certificate and trusted certificates
 SSLConfiguration config = new PemFileSSLConfiguration(
-"/path/to/the/key/file.pem",
-"/path/to/the/certificate/file.pem",
-"/path/to/the/trust/file.pem",
-requireClientAuth);
+    "/path/to/the/key/file.pem",
+    "/path/to/the/certificate/file.pem",
+    "/path/to/the/trust/file.pem",
+    requireClientAuth);
 
 // Create client instance
 MLClient client = new MLClient(new SSLSocketFactory(config));
