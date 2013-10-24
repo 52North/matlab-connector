@@ -46,7 +46,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <modules>
+	<modules>
+		<module>sockets</module>
         <module>common</module>
         <module>client</module>
         <module>server</module>
