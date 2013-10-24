@@ -18,13 +18,13 @@ package com.github.autermann.matlab.json;
 
 import java.util.Map.Entry;
 
-import com.github.autermann.matlab.value.MLArray;
-import com.github.autermann.matlab.value.MLCell;
-import com.github.autermann.matlab.value.MLMatrix;
-import com.github.autermann.matlab.value.MLScalar;
-import com.github.autermann.matlab.value.MLString;
-import com.github.autermann.matlab.value.MLStruct;
-import com.github.autermann.matlab.value.MLValue;
+import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabMatrix;
+import com.github.autermann.matlab.value.MatlabScalar;
+import com.github.autermann.matlab.value.MatlabString;
+import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.value.MatlabValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,22 +38,22 @@ import com.google.gson.JsonPrimitive;
  */
 public class AbstractDeserializer {
     /**
-     * Deserializes an {@link MLValue} from a {@link JsonElement}.
+     * Deserializes an {@link MatlabValue} from a {@link JsonElement}.
      *
      * @param element the <code>JsonElement</code> containing a
-     *                serialized <code>MLValue</code>
+     *                serialized <code>MatlabValue</code>
      *
-     * @return the deserialized <code>MLValue</code>
+     * @return the deserialized <code>MatlabValue</code>
      */
-    public MLValue deserializeValue(JsonElement element) {
+    public MatlabValue deserializeValue(JsonElement element) {
         if (element.isJsonPrimitive()) {
             JsonPrimitive primitive = element.getAsJsonPrimitive();
             if (primitive.isString()) {
                 // string
-                return new MLString(primitive.getAsString());
+                return new MatlabString(primitive.getAsString());
             } else {
                 // scalar
-                return new MLScalar(primitive.getAsDouble());
+                return new MatlabScalar(primitive.getAsDouble());
             }
         } else if (element.isJsonArray()) {
             // array or matrix
@@ -70,31 +70,32 @@ public class AbstractDeserializer {
                         values[i][j] = innerArray.get(j).getAsDouble();
                     }
                 }
-                return new MLMatrix(values);
+                return new MatlabMatrix(values);
             } else {
                 // array
                 double[] values = new double[array.size()];
                 for (int i = 0; i < array.size(); i++) {
                     values[i] = array.get(i).getAsDouble();
                 }
-                return new MLArray(values);
+                return new MatlabArray(values);
             }
         } else if (element.isJsonObject()) {
             // potential cell
             JsonObject json = element.getAsJsonObject();
-            if (json.has(JSONConstants.CELL)) {
+            if (json.has(MatlabJSONConstants.CELL)) {
                 // definitely a cell
-                JsonArray array = json.get(JSONConstants.CELL).getAsJsonArray();
-                MLValue[] cell = new MLValue[array.size()];
+                JsonArray array = json.get(MatlabJSONConstants.CELL)
+                        .getAsJsonArray();
+                MatlabValue[] cell = new MatlabValue[array.size()];
                 for (int i = 0; i < array.size(); i++) {
                     cell[i] = deserializeValue(array.get(i));
                 }
-                return new MLCell(cell);
-            } else if (json.has(JSONConstants.STRUCT)) {
+                return new MatlabCell(cell);
+            } else if (json.has(MatlabJSONConstants.STRUCT)) {
                 // definitely a struct
-                JsonObject obj = json.get(JSONConstants.STRUCT)
+                JsonObject obj = json.get(MatlabJSONConstants.STRUCT)
                         .getAsJsonObject();
-                MLStruct struct = new MLStruct();
+                MatlabStruct struct = new MatlabStruct();
                 for (Entry<String, JsonElement> e : obj.entrySet()) {
                     struct.setField(e.getKey(), deserializeValue(e.getValue()));
                 }

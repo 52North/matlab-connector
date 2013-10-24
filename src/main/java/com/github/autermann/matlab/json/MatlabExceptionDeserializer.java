@@ -16,28 +16,28 @@
  */
 package com.github.autermann.matlab.json;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 
+import com.github.autermann.matlab.MatlabException;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 /**
- * {@link MLProxyException} deserializer.
+ * {@link MatlabException} deserializer.
  *
  * @author Richard Jones
  *
  */
-public class IOExceptionDeserializer implements JsonDeserializer<IOException> {
+public class MatlabExceptionDeserializer implements
+        JsonDeserializer<MatlabException> {
 
     @Override
-    public IOException deserialize(JsonElement elem, Type type,
-                                   JsonDeserializationContext ctx)
+    public MatlabException deserialize(JsonElement elem, Type type,
+                                       JsonDeserializationContext ctx)
             throws JsonParseException {
-        return new IOException(elem.getAsJsonObject()
-                .get(MatlabJSONConstants.IOEXCEPTION)
-                .getAsString());
+        return new MatlabException(elem.getAsJsonObject()
+                .get(MatlabJSONConstants.EXCEPTION).getAsString());
     }
 }

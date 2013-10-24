@@ -14,30 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.json;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+package com.github.autermann.matlab;
 
 /**
- * {@link MLProxyException} deserializer.
+ * Represents an exception returned by MATLAB during function execution.
  *
  * @author Richard Jones
  *
  */
-public class IOExceptionDeserializer implements JsonDeserializer<IOException> {
+public class MatlabException extends Exception implements MatlabResponse {
 
-    @Override
-    public IOException deserialize(JsonElement elem, Type type,
-                                   JsonDeserializationContext ctx)
-            throws JsonParseException {
-        return new IOException(elem.getAsJsonObject()
-                .get(MatlabJSONConstants.IOEXCEPTION)
-                .getAsString());
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Creates a new <code>MLException</code> instance with the given message.
+     *
+     * @param message the exception message
+     */
+    public MatlabException(String message) {
+        super(message);
+    }
+
+    public MatlabException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
