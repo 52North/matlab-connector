@@ -30,7 +30,7 @@ import com.google.common.io.OutputSupplier;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 class MatlabClientRequestHandler implements
         RequestSocketClientHandler<MatlabRequest, MatlabResponse> {

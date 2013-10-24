@@ -28,7 +28,7 @@ import com.github.autermann.sockets.client.RequestSocketClient;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabClient {
     private final RequestSocketClient<MatlabRequest, MatlabResponse> client;
