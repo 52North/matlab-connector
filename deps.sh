@@ -22,10 +22,11 @@ function install_github {
 	local slug="$1"
 	local branch="${2:-master}"
 	git clone --recursive -q -b "$branch" https://github.com/$slug.git "$tmp/$slug"
-	mvn -q -f "$tmp/$slug" -D skipTests clean source:jar javadoc:jar install
+	mvn -q -f "$tmp/$slug/pom.xml" -D skipTests clean source:jar javadoc:jar install
 }
 
 # sockets
 
 install_matlab_connector
-install_github "autermann/sockets"
+install_github "autermann/java-utils"
+install_github "autermann/java-sockets"

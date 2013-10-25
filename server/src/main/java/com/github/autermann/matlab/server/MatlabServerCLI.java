@@ -25,10 +25,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.github.autermann.matlab.MatlabException;
-import com.github.autermann.matlab.util.Optionals;
 import com.github.autermann.sockets.ssl.KeyStoreSSLConfiguration;
 import com.github.autermann.sockets.ssl.PemFileSSLConfiguration;
 import com.github.autermann.sockets.ssl.SSLConfiguration;
+import com.github.autermann.utils.Optionals;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
