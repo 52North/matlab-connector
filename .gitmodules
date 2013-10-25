@@ -1,3 +1,0 @@
-[submodule "sockets"]
-	path = sockets
-	url = https://github.com/autermann/sockets.git

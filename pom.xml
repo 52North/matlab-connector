@@ -47,7 +47,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
-        <module>sockets</module>
         <module>common</module>
         <module>client</module>
         <module>server</module>
@@ -193,9 +192,6 @@
                         <includes>
                             <include>**/*.java</include>
                         </includes>
-                        <excludes>
-                            <exclude>sockets/**/*</exclude>
-                        </excludes>
                         <strictCheck>true</strictCheck>
                         <properties>
                             <year>${project.inceptionYear}-2013</year>
