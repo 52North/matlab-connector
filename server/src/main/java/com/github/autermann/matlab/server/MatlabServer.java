@@ -21,11 +21,14 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.IOException;
 
 import com.github.autermann.matlab.MatlabException;
+import com.github.autermann.matlab.MatlabRequest;
+import com.github.autermann.matlab.MatlabResponse;
+import com.github.autermann.sockets.server.RequestSocketServer;
 import com.github.autermann.sockets.server.SocketServerBuilder;
 import com.github.autermann.sockets.server.StreamingSocketServer;
 
 public class MatlabServer {
-    private StreamingSocketServer server;
+    private RequestSocketServer<MatlabRequest,MatlabResponse> server;
     private final MatlabServerConfiguration options;
 
     public MatlabServer(MatlabServerConfiguration options) {
@@ -51,7 +54,7 @@ public class MatlabServer {
                 .withShutdownHook(destroyer)
                 .atPort(getOptions().getPort())
                 .withSSL(getOptions().getSSLConfiguration().orNull())
-                .build(handler);
+                .build(handler,handler);
     }
 
     private MatlabInstancePool createInstancePool() throws

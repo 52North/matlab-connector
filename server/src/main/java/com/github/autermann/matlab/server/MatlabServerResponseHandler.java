@@ -27,14 +27,17 @@ import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.json.MatlabGSON;
-import com.github.autermann.sockets.server.StreamingSocketServerHandler;
+import com.github.autermann.sockets.server.RequestSocketServerCoder;
+import com.github.autermann.sockets.server.RequestSocketServerHandler;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autexceptionrmann <c.autexceptionrmann@52north.org>
  */
-class MatlabServerResponseHandler implements StreamingSocketServerHandler {
+class MatlabServerResponseHandler implements
+        RequestSocketServerHandler<MatlabRequest, MatlabResponse>,
+        RequestSocketServerCoder<MatlabRequest, MatlabResponse> {
     private static final Logger log = LoggerFactory
             .getLogger(MatlabServerResponseHandler.class);
     private final MatlabInstancePool pool;
@@ -44,28 +47,33 @@ class MatlabServerResponseHandler implements StreamingSocketServerHandler {
         this.pool = pool;
     }
 
+    @Override
     public MatlabResponse handle(MatlabRequest request) {
         log.info("Received request for function '{}'.", request.getFunction());
         MatlabInstance instance = null;
         MatlabResponse response;
         try {
-            instance = pool.getInstance();
+            instance = this.pool.getInstance();
             response = instance.handle(request);
             log.info("Handled request successfully.");
         } catch (MatlabException exception) {
             log.error("Caught exception when calling Matlab.", exception);
             response = exception;
         } finally {
-            pool.returnInstance(instance);
+            this.pool.returnInstance(instance);
         }
         return response;
     }
 
     @Override
-    public void handle(InputStream in, OutputStream out) throws IOException {
-        MatlabRequest request = delegate.decodeRequest(in);
-        MatlabResponse response = handle(request);
-        delegate.encodeResponse(response, out);
+    public MatlabRequest decode(InputStream in) throws IOException {
+        return this.delegate.decodeRequest(in);
+    }
+
+    @Override
+    public void encode(MatlabResponse response, OutputStream out)
+            throws IOException {
+        this.delegate.encodeResponse(response, out);
     }
 
 }
