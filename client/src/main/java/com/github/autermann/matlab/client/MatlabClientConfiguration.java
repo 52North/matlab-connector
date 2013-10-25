@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.net.InetSocketAddress;
 
-import com.github.autermann.sockets.ClientSocketFactory;
+import com.github.autermann.sockets.client.ClientSocketFactory;
 import com.github.autermann.sockets.ssl.SSLClientSocketFactory;
 import com.github.autermann.sockets.ssl.SSLConfiguration;
 

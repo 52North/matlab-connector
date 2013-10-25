@@ -26,7 +26,7 @@ import com.github.autermann.matlab.MatlabException;
 public class MatlabInstancePool {
     private static final Logger log = LoggerFactory
             .getLogger(MatlabInstancePool.class);
-    private GenericObjectPool<MatlabInstance> pool;
+    private final GenericObjectPool<MatlabInstance> pool;
 
     public MatlabInstancePool(MatlabInstancePoolConfiguration config) throws
             MatlabException {
