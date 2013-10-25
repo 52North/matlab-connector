@@ -47,6 +47,10 @@
             <groupId>com.github.autermann</groupId>
             <artifactId>sockets</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.autermann</groupId>
+            <artifactId>utils</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

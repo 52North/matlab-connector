@@ -28,4 +28,5 @@ function install_github {
 # sockets
 
 install_matlab_connector
-install_github "autermann/sockets"
+install_github "autermann/java-utils"
+install_github "autermann/java-sockets"
