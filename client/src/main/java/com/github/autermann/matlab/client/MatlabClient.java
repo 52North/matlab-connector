@@ -22,8 +22,8 @@ import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
-import com.github.autermann.sockets.client.SocketClientBuilder;
 import com.github.autermann.sockets.client.RequestSocketClient;
+import com.github.autermann.sockets.client.SocketClientBuilder;
 
 /**
  * TODO JavaDoc
@@ -39,7 +39,7 @@ public class MatlabClient {
                 .withAttempts(options.getAttempts())
                 .withSocketFactory(options.getSocketFactory())
                 .withTimeout(options.getTimeOut())
-                .<MatlabRequest, MatlabResponse>build(new MatlabClientRequestHandler());
+                .build(new MatlabClientRequestHandler());
     }
 
     public MatlabResult exec(MatlabRequest request) throws IOException,
