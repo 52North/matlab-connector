@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.autermann.matlab.MatlabEncoding;
 import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
@@ -41,7 +42,7 @@ class MatlabServerResponseHandler implements
     private static final Logger log = LoggerFactory
             .getLogger(MatlabServerResponseHandler.class);
     private final MatlabInstancePool pool;
-    private final MatlabGSON delegate = new MatlabGSON();
+    private final MatlabEncoding delegate = new MatlabGSON();
 
     MatlabServerResponseHandler(MatlabInstancePool pool) {
         this.pool = pool;

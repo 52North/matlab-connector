@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.github.autermann.matlab.MatlabEncoding;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.json.MatlabGSON;
@@ -35,7 +36,7 @@ import com.google.common.io.OutputSupplier;
 class MatlabClientRequestHandler implements
         RequestSocketClientHandler<MatlabRequest, MatlabResponse> {
 
-    private final MatlabGSON delegate = new MatlabGSON();
+    private final MatlabEncoding delegate = new MatlabGSON();
 
     @Override
     public void encode(MatlabRequest request,

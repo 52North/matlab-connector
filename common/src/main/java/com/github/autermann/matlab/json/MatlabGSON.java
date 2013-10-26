@@ -16,6 +16,7 @@
  */
 package com.github.autermann.matlab.json;
 
+import com.github.autermann.matlab.MatlabEncoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,19 +43,14 @@ import com.google.gson.JsonParser;
  * @author Richard Jones
  *
  */
-public class MatlabGSON  {
+public class MatlabGSON implements MatlabEncoding {
 
-    /**
-     * Parses a {@link MatlabRequest} from an {@link InputStream}.
-     *
-     * @param is the <code>InputStream</code> to parse from
-     *
-     * @return the parsed <code>MatlabRequest</code>
-     */
+    @Override
     public MatlabRequest decodeRequest(InputStream is) {
         return getGson().fromJson(decode(is), MatlabRequest.class);
     }
 
+    @Override
     public MatlabResponse decodeResponse(InputStream is) {
         JsonElement json = decode(is);
         try {
@@ -68,22 +64,18 @@ public class MatlabGSON  {
         }
     }
 
-    private JsonElement decode(InputStream is) throws JsonParseException {
-        return new JsonParser().parse(new InputStreamReader(is, Charsets.UTF_8));
-    }
-
-    /**
-     * Outputs a {@link MatlabRequest} to an {@link OutputStream}.
-     *
-     * @param request the <code>MatlabRequest</code> to output
-     * @param os      the <code>OutputStream</code> to output to
-     */
+    @Override
     public void encodeRequest(MatlabRequest request, OutputStream os) {
         print(request, os);
     }
 
+    @Override
     public void encodeResponse(MatlabResponse response, OutputStream out) {
         print(response, out);
+    }
+
+    private JsonElement decode(InputStream is) throws JsonParseException {
+        return new JsonParser().parse(new InputStreamReader(is, Charsets.UTF_8));
     }
 
     private void print(Object o, OutputStream os) {
