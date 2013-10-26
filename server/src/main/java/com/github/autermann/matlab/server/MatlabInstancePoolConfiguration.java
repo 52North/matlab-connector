@@ -16,7 +16,8 @@
  */
 package com.github.autermann.matlab.server;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * TODO JavaDoc
@@ -52,14 +53,14 @@ public class MatlabInstancePoolConfiguration {
         private MatlabInstanceConfiguration instanceConfig;
 
         public Builder withMaximalNumInstances(int numThreads) {
-            Preconditions.checkArgument(numThreads >= 0);
+            checkArgument(numThreads >= 0);
             this.numThreads = numThreads;
             return this;
         }
 
         public Builder withInstanceConfig(
                 MatlabInstanceConfiguration instanceConfig) {
-            this.instanceConfig = Preconditions.checkNotNull(instanceConfig);
+            this.instanceConfig = checkNotNull(instanceConfig);
             return this;
         }
 

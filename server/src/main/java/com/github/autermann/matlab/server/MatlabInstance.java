@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.server;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +31,12 @@ import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
-import com.google.common.base.Preconditions;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
+import matlabcontrol.MatlabProxyFactoryOptions;
 import matlabcontrol.extensions.MatlabNumericArray;
 import matlabcontrol.extensions.MatlabTypeConverter;
 
@@ -44,8 +46,8 @@ public class MatlabInstance {
     private static final String DOUBLE_TYPE = "double";
     private static final String STRUCT_TYPE = "struct";
     private final Logger logger = LoggerFactory.getLogger(MatlabInstance.class);
-    private MatlabProxy proxy;
-    private MatlabTypeConverter processor;
+    private final MatlabProxy proxy;
+    private final MatlabTypeConverter processor;
     private final MatlabInstanceConfiguration config;
 
     public MatlabInstance() throws MatlabException {
@@ -54,15 +56,25 @@ public class MatlabInstance {
 
     public MatlabInstance(MatlabInstanceConfiguration config) throws
             MatlabException {
-        this.config = Preconditions.checkNotNull(config);
-        MatlabProxyFactory factory = new MatlabProxyFactory();
+        this.config = checkNotNull(config);
         try {
-            proxy = factory.getProxy();
+            proxy = createProxyFactory(config).getProxy();
             processor = new MatlabTypeConverter(proxy);
         } catch (MatlabConnectionException e) {
             throw new MatlabException("Unable to connect to MATLAB.", e);
         }
+    }
 
+    private MatlabProxyFactory createProxyFactory(
+            MatlabInstanceConfiguration config) {
+        MatlabProxyFactoryOptions.Builder builder
+                = new MatlabProxyFactoryOptions.Builder()
+                        .setHidden(config.isHidden())
+                        .setPort(config.getPort());
+        if (config.getBaseDir().isPresent()) {
+            builder.setMatlabStartingDirectory(config.getBaseDir().get());
+        }
+        return new MatlabProxyFactory(builder.build());
     }
 
     public void destroy() throws MatlabException {
@@ -75,8 +87,8 @@ public class MatlabInstance {
 
     private void preHandle() throws MatlabException {
         try {
-            if (config.getBaseDir() != null) {
-                changeDir(config.getBaseDir());
+            if (config.getBaseDir().isPresent()) {
+                changeDir(config.getBaseDir().get().getAbsolutePath());
                 proxy.eval("addpath('.')");
             }
         } catch (MatlabInvocationException e) {

@@ -16,7 +16,12 @@
  */
 package com.github.autermann.matlab.server;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.File;
+
+import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc
@@ -24,14 +29,26 @@ import com.google.common.base.Preconditions;
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabInstanceConfiguration {
-    private final String baseDir;
+    private final File baseDir;
+    private final int port;
+    private final boolean hidden;
 
-    private MatlabInstanceConfiguration(String baseDir) {
+    private MatlabInstanceConfiguration(File baseDir, int port, boolean hidden) {
         this.baseDir = baseDir;
+        this.port = port;
+        this.hidden = hidden;
     }
 
-    public String getBaseDir() {
-        return baseDir;
+    public Optional<File> getBaseDir() {
+        return Optional.fromNullable(this.baseDir);
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public boolean isHidden() {
+        return this.hidden;
     }
 
     public static Builder builder() {
@@ -39,16 +56,37 @@ public class MatlabInstanceConfiguration {
     }
 
     public static class Builder {
-        private String baseDir;
+        public static final int DEFAULT_PORT = 2100;
+        private int port = DEFAULT_PORT;
+        private File baseDir;
+        private boolean hidden = false;
 
         public Builder withBaseDir(String baseDir) {
-            Preconditions.checkNotNull(baseDir);
+            return withBaseDir(new File(checkNotNull(baseDir)));
+        }
+
+        public Builder withBaseDir(File baseDir) {
+            checkNotNull(baseDir);
+            checkArgument(baseDir.exists());
+            checkArgument(baseDir.isDirectory());
+            checkArgument(baseDir.canRead());
             this.baseDir = baseDir;
             return this;
         }
 
+        public Builder atPort(int port) {
+            checkArgument(port > 0);
+            this.port = port;
+            return this;
+        }
+
+        public Builder hidden() {
+            this.hidden = true;
+            return this;
+        }
+
         public MatlabInstanceConfiguration build() {
-            return new MatlabInstanceConfiguration(baseDir);
+            return new MatlabInstanceConfiguration(baseDir, port, hidden);
         }
     }
 }

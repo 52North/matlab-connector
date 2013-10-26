@@ -58,19 +58,16 @@ public class MatlabServer {
                 .build(handler,handler);
     }
 
-    private MatlabInstancePool createInstancePool() throws
-            MatlabException {
+    private MatlabInstancePool createInstancePool() throws MatlabException {
         // create out matlab instance instancePool
-        final MatlabInstanceConfiguration instanceConfig
-                = MatlabInstanceConfiguration.builder()
-                .withBaseDir(getOptions().getPath())
-                .build();
-        final MatlabInstancePoolConfiguration poolConfig
-                = MatlabInstancePoolConfiguration.builder()
-                .withMaximalNumInstances(getOptions().getThreads())
-                .withInstanceConfig(instanceConfig)
-                .build();
-        final MatlabInstancePool pool = new MatlabInstancePool(poolConfig);
-        return pool;
+        MatlabInstanceConfiguration instanceConfig = MatlabInstanceConfiguration.builder()
+                    .withBaseDir(getOptions().getPath())
+                    .hidden()
+                    .build();
+        MatlabInstancePoolConfiguration poolConfig = MatlabInstancePoolConfiguration.builder()
+                    .withMaximalNumInstances(getOptions().getThreads())
+                    .withInstanceConfig(instanceConfig)
+                    .build();
+        return new MatlabInstancePool(poolConfig);
     }
 }
