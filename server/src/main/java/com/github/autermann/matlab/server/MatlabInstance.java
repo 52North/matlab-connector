@@ -99,8 +99,10 @@ public class MatlabInstance {
 
         // eval request
         try {
-            logger.info("Evaluating function " + request.getFunction() + "...");
-            proxy.eval(request.toEvalString());
+            logger.info("Evaluating function {}...", request.getFunction());
+            String evalString = request.toEvalString();
+            logger.debug("Evaluation: {}", evalString);
+            proxy.eval(evalString);
 
             // get results
             logger.info("Evaluation complete, parsing results...");
