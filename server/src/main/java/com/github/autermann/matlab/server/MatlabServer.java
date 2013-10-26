@@ -50,6 +50,7 @@ public class MatlabServer {
         final MatlabInstancePool pool = createInstancePool();
         final MatlabInstancePoolDestroyer destroyer = new MatlabInstancePoolDestroyer(pool);
         final MatlabServerResponseHandler handler = new MatlabServerResponseHandler(pool);
+        Runtime.getRuntime().addShutdownHook(new Thread(destroyer));
         return this.server = SocketServerBuilder.create()
                 .withShutdownHook(destroyer)
                 .atPort(getOptions().getPort())
