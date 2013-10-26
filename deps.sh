@@ -3,7 +3,7 @@
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-function install_matlab_connector {
+function install_matlab_control {
 	local group="com.googlecode.matlabcontrol"
 	local artifact="matlabcontrol"
 	local version="4.1.0"
@@ -27,6 +27,6 @@ function install_github {
 
 # sockets
 
-install_matlab_connector
+install_matlab_control
 install_github "autermann/java-utils"
 install_github "autermann/java-sockets"
