@@ -137,16 +137,14 @@ public class MatlabRequest {
      * @return the eval string
      */
     public String toEvalString() {
-        StringBuilder sb = new StringBuilder('[');
+        StringBuilder sb = new StringBuilder().append('[');
         for (int i = 1; i <= resultCount; i++) {
             sb.append("result").append(i);
             if (i < resultCount) {
                 sb.append(',');
             }
         }
-        sb.append("] = feval('");
-        sb.append(getFunction());
-        sb.append('\'');
+        sb.append("] = feval('").append(getFunction()).append("',");
         Joiner.on(",").appendTo(sb, Iterables
                 .transform(parameters, MatlabValue.TO_MATLAB_STRING));
         sb.append(')');
