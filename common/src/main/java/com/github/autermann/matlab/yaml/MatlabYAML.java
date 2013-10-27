@@ -39,6 +39,8 @@ import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.yaml.construct.MatlabConstructor;
+import com.github.autermann.matlab.yaml.represent.MatlabRepresenter;
 import com.google.common.base.Charsets;
 
 /**
@@ -94,7 +96,8 @@ public class MatlabYAML implements MatlabEncoding {
         options.setAllowUnicode(true);
         options.setExplicitStart(true);
         return new Yaml(new MatlabConstructor(),
-                        new MatlabRepresenter(), options);
+                        new MatlabRepresenter(),
+                        options);
     }
 
     public static void main(String[] args) {
@@ -104,9 +107,9 @@ public class MatlabYAML implements MatlabEncoding {
 
         MatlabResult response = new MatlabResult();
         response.addResult(new MatlabArray(new double[] { 1.2, 1.3 }));
-        response
-                .addResult(new MatlabCell(new MatlabString("value"), new MatlabArray(new double[] {
-                    1.2, 1.3 })));
+        response.addResult(new MatlabCell(
+                new MatlabString("value"),
+                new MatlabArray(new double[] { 1.2, 1.3 })));
         MatlabStruct struct = new MatlabStruct();
         struct.setField("field1", new MatlabString("value1"));
         struct.setField("field2", new MatlabString("value2"));
