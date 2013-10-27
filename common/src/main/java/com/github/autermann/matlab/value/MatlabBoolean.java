@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
+import com.google.common.base.Objects;
+
 /**
  * TODO JavaDoc
  *
@@ -39,6 +41,16 @@ public class MatlabBoolean extends MatlabValue {
     @Override
     public String toMatlabString() {
         return this.string;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value());
     }
 
     public static MatlabBoolean yes() {

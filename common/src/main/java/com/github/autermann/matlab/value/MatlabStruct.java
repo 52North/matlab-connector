@@ -18,6 +18,7 @@ package com.github.autermann.matlab.value;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -66,5 +67,19 @@ public class MatlabStruct extends MatlabValue {
         StringBuilder sb = new StringBuilder().append("struct(");
         JOINER.appendTo(sb, Iterables.transform(fields.entrySet(), TRANSFORMER));
         return sb.append(')').toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabStruct) {
+            MatlabStruct other = (MatlabStruct) o;
+            return Objects.equals(getFields(), other.getFields());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFields());
     }
 }

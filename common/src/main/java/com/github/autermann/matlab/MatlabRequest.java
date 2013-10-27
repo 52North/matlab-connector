@@ -23,6 +23,7 @@ import java.util.List;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Iterables;
@@ -173,5 +174,21 @@ public class MatlabRequest {
     @Override
     public String toString() {
         return "MatlabRequest[" + toEvalString() + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFunction(), getParameters());
+
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabRequest) {
+            MatlabRequest other = (MatlabRequest) o;
+            return Objects.equal(getFunction(), other.getFunction()) &&
+                   Objects.equal(getParameters(), other.getParameters());
+        }
+        return false;
+
     }
 }

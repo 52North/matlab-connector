@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
+import java.util.Arrays;
+
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Doubles;
 
@@ -76,5 +78,19 @@ public class MatlabMatrix extends MatlabValue {
         }
         builder.append(" ]");
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabMatrix) {
+            MatlabMatrix other = (MatlabMatrix) o;
+            return Arrays.deepEquals(getMatrix(), other.getMatrix());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(getMatrix());
     }
 }

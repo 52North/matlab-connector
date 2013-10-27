@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents a MATLAB scalar.
  *
@@ -58,5 +60,19 @@ public class MatlabScalar extends MatlabValue {
     @Override
     public String toMatlabString() {
         return String.valueOf(scalar);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabScalar) {
+            MatlabScalar other = (MatlabScalar) o;
+            return Objects.equal(getScalar(), other.getScalar());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getScalar());
     }
 }

@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
+import java.util.Arrays;
+
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Doubles;
 
@@ -69,5 +71,19 @@ public class MatlabArray extends MatlabValue {
         Joiner joiner = Joiner.on(",");
         joiner.appendTo(sb, Doubles.asList(array));
         return sb.append(']').toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabArray) {
+            MatlabArray other = (MatlabArray) o;
+            return Arrays.equals(getArray(), other.getArray());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getArray());
     }
 }

@@ -59,4 +59,18 @@ public class MatlabCell extends MatlabValue {
     public MatlabValue[] getCell() {
         return cell;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabCell) {
+            MatlabCell other = (MatlabCell) o;
+            return Arrays.equals(getCell(), other.getCell());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getCell());
+    }
 }

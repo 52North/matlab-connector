@@ -16,12 +16,13 @@
  */
 package com.github.autermann.matlab;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * Represents the result of a MATLAB function execution.
@@ -38,7 +39,7 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
      *
      */
     public MatlabResult() {
-        results = new ArrayList<MatlabValue>();
+        this.results = Lists.newArrayList();
     }
 
     /**
@@ -47,7 +48,11 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
      * @param result the result <code>MatlabValue</code>
      */
     public void addResult(MatlabValue result) {
-        results.add(result);
+        getResults().add(result);
+    }
+
+    protected List<MatlabValue> getResults() {
+        return results;
     }
 
     /**
@@ -58,7 +63,7 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
      * @return the result <code>MatlabValue</code> at the given index
      */
     public MatlabValue getResult(int index) {
-        return results.get(index);
+        return getResults().get(index);
     }
 
     /**
@@ -67,19 +72,33 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
      * @return the number of result values
      */
     public int getResultCount() {
-        return results.size();
+        return getResults().size();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("MatlabResult[");
-        JOINER.appendTo(sb, results);
+        JOINER.appendTo(sb, getResults());
         return sb.append(']').toString();
     }
 
     @Override
     public Iterator<MatlabValue> iterator() {
-        return this.results.iterator();
+        return getResults().iterator();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResults());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MatlabResult) {
+            MatlabResult other = (MatlabResult) o;
+            return Objects.equals(getResults(), other.getResults());
+        }
+        return false;
     }
 
 }
