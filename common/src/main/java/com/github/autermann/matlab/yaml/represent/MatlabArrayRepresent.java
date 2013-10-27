@@ -16,7 +16,10 @@
  */
 package com.github.autermann.matlab.yaml.represent;
 
+
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
@@ -33,7 +36,11 @@ public class MatlabArrayRepresent extends TypeSafeRepresent<MatlabArray> {
 
     @Override
     protected Node represent(MatlabArray t) {
-        return delegate(MatlabYAMLConstants.MATLAB_ARRAY_TAG, t.getArray());
+        Node node = delegate(MatlabYAMLConstants.MATLAB_ARRAY_TAG, t.getArray());
+        if (node instanceof SequenceNode) {
+            ((SequenceNode) node).setFlowStyle(FlowStyle.FLOW.getStyleBoolean());
+        }
+        return node;
     }
 
 }

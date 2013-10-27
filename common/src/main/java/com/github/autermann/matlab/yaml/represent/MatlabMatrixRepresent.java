@@ -16,7 +16,9 @@
  */
 package com.github.autermann.matlab.yaml.represent;
 
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
@@ -33,7 +35,11 @@ public class MatlabMatrixRepresent extends TypeSafeRepresent<MatlabMatrix> {
 
     @Override
     protected Node represent(MatlabMatrix t) {
-        return delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.getMatrix());
+        Node node = delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.getMatrix());
+        if (node instanceof SequenceNode) {
+            ((SequenceNode) node).setFlowStyle(FlowStyle.FLOW.getStyleBoolean());
+        }
+        return node;
     }
 
 }

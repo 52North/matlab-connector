@@ -115,10 +115,21 @@ public class MatlabYAML implements MatlabEncoding {
         struct.setField("field2", new MatlabString("value2"));
         response.addResult(struct);
         response.addResult(new MatlabScalar(2.2));
-        response.addResult(new MatlabMatrix(new double[][] { new double[] { 1.2,
-                                                                            1.3 },
-                                                             new double[] { 1.2,
-                                                                            1.3 } }));
+        response.addResult(new MatlabMatrix(new double[][] {
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 },
+            new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,
+                           1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3 }, }));
         StringWriter w = new StringWriter();
         MatlabYAML matlabYAML = new MatlabYAML();
         matlabYAML.createYAML().dump(request, w);
