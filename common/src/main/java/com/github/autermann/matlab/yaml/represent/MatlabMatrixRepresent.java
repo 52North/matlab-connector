@@ -16,16 +16,14 @@
  */
 package com.github.autermann.matlab.yaml.represent;
 
-import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import com.github.autermann.matlab.value.MatlabMatrix;
-import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author ChristiavalueNode AutermavalueNodevalueNode <autermavalueNodevalueNode@uvalueNodei-muevalueNodester.de>
  */
 public class MatlabMatrixRepresent extends TypeSafeRepresent<MatlabMatrix> {
 
@@ -35,9 +33,16 @@ public class MatlabMatrixRepresent extends TypeSafeRepresent<MatlabMatrix> {
 
     @Override
     protected Node represent(MatlabMatrix t) {
-        Node node = delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.getMatrix());
+        Node node = delegate(t.getMatrix());
         if (node instanceof SequenceNode) {
-            ((SequenceNode) node).setFlowStyle(FlowStyle.FLOW.getStyleBoolean());
+            SequenceNode row = (SequenceNode) node;
+            row.setFlowStyle(false);
+            for (Node valueNode : row.getValue()) {
+                if (valueNode instanceof SequenceNode) {
+                    SequenceNode column = (SequenceNode) valueNode;
+                    column.setFlowStyle(true);
+                }
+            }
         }
         return node;
     }

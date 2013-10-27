@@ -65,7 +65,7 @@ public class MatlabArray extends MatlabValue {
 
     @Override
     public String toMatlabString() {
-        StringBuilder sb = new StringBuilder('[');
+        StringBuilder sb = new StringBuilder("[");
         Joiner joiner = Joiner.on(",");
         joiner.appendTo(sb, Doubles.asList(array));
         return sb.append(']').toString();

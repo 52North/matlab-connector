@@ -24,6 +24,7 @@ import org.yaml.snakeyaml.nodes.Tag;
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public interface MatlabYAMLConstants {
+    public static final String CELL_KEY = "cell";
     Tag MATLAB_MATRIX_TAG = new Tag("!matlab-matrix");
     Tag MATLAB_SCALAR_TAG = new Tag("!matlab-scalar");
     Tag MATLAB_EXCEPTION_TAG = new Tag("!matlab-exception");

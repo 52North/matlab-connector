@@ -17,8 +17,10 @@
 package com.github.autermann.matlab.yaml.construct;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Construct;
@@ -28,6 +30,13 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabMatrix;
+import com.github.autermann.matlab.value.MatlabScalar;
+import com.github.autermann.matlab.value.MatlabString;
+import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.collect.Lists;
 
@@ -146,12 +155,45 @@ public abstract class MatlabConstruct extends AbstractConstruct {
         throw new IllegalArgumentException();
     }
 
+    @SuppressWarnings("unchecked")
     protected MatlabValue constructValue(Object o) {
         if (o instanceof MatlabValue) {
             return (MatlabValue) o;
+        } else if (o instanceof String) {
+            return new MatlabString((String) o);
+        } else if (o instanceof Double) {
+            return new MatlabScalar((Double) o);
+        } else if (o instanceof Boolean) {
+            return MatlabBoolean.fromBoolean((Boolean) o);
+        } else if (o instanceof double[]) {
+            return new MatlabArray((double[]) o);
+        } else if (o instanceof Double[]) {
+            return new MatlabArray((Double[]) o);
+        } else if (o instanceof double[][]) {
+            return new MatlabMatrix((double[][]) o);
+        } else if (o instanceof Double[][]) {
+            return new MatlabMatrix((Double[][]) o);
+        } else if (o instanceof MatlabValue[]) {
+            return new MatlabCell((MatlabValue[]) o);
+        } else if (o instanceof Map) {
+            return constructStruct((Map<Object,Object>) o);
+        } else if (o instanceof List) {
+            return new MatlabCell(constructValueArray(o));
+        } else if (o instanceof Object[]) {
+            return new MatlabCell(constructValueArray(o));
         }
         throw new IllegalArgumentException();
     }
+
+    protected MatlabStruct constructStruct(Map<Object, Object> map) {
+        MatlabStruct struct = new MatlabStruct();
+        for (Entry<Object, Object> e : map.entrySet()) {
+            struct.setField(constructString(e.getKey()),
+                            constructValue(e.getValue()));
+        }
+        return struct;
+    }
+
 
     protected List<MatlabValue> constructValueList(Node node) {
         List<? extends Object> seq = constructSequence(node);
@@ -169,6 +211,8 @@ public abstract class MatlabConstruct extends AbstractConstruct {
     protected List<MatlabValue> constructValueList(Object o) {
         if (o instanceof List) {
             return constructValueList((List<? extends Object>) o);
+        } else if (o instanceof Object[]) {
+            return constructValueList(Arrays.asList((Object[]) o));
         }
         throw new IllegalArgumentException();
     }
@@ -178,4 +222,13 @@ public abstract class MatlabConstruct extends AbstractConstruct {
         return values.toArray(new MatlabValue[values.size()]);
     }
 
+    protected MatlabValue[] constructValueArray(Object node) {
+        List<MatlabValue> values = constructValueList(node);
+        return values.toArray(new MatlabValue[values.size()]);
+    }
+
+    protected MatlabValue[] constructValueArray(Object[] node) {
+        List<MatlabValue> values = constructValueList(node);
+        return values.toArray(new MatlabValue[values.size()]);
+    }
 }

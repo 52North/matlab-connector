@@ -16,8 +16,6 @@
  */
 package com.github.autermann.matlab.yaml.construct;
 
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.yaml.snakeyaml.nodes.Node;
 
@@ -35,13 +33,6 @@ public class MatlabStructConstruct extends MatlabConstruct {
 
     @Override
     public MatlabStruct construct(Node node) {
-        Map<Object, Object> map = constructMapping(node);
-        MatlabStruct struct = new MatlabStruct();
-        for (Entry<Object, Object> e : map.entrySet()) {
-            struct.setField(constructString(e.getKey()),
-                            constructValue(e.getValue()));
-        }
-        return struct;
+        return constructStruct(constructMapping(node));
     }
-
 }

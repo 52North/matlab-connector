@@ -19,7 +19,6 @@ package com.github.autermann.matlab.yaml.represent;
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
@@ -33,7 +32,7 @@ public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
 
     @Override
     protected Node represent(MatlabScalar t) {
-        return delegate(MatlabYAMLConstants.MATLAB_SCALAR_TAG, t.getScalar());
+        return delegate(t.getScalar());
     }
 
 }

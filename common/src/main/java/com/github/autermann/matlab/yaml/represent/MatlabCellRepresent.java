@@ -23,6 +23,7 @@ import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabCellRepresent extends TypeSafeRepresent<MatlabCell> {
@@ -35,5 +36,4 @@ public class MatlabCellRepresent extends TypeSafeRepresent<MatlabCell> {
     protected Node represent(MatlabCell t) {
         return delegate(MatlabYAMLConstants.MATLAB_CELL_TAG, t.getCell());
     }
-
 }
