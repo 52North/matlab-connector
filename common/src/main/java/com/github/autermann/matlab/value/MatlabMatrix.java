@@ -16,9 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
-import java.util.Arrays;
-
 import com.google.common.base.Joiner;
+import com.google.common.primitives.Doubles;
 
 /**
  * Represents a MATLAB matrix.
@@ -67,21 +66,15 @@ public class MatlabMatrix extends MatlabValue {
 
     @Override
     public String toMatlabString() {
-        StringBuilder builder = new StringBuilder('[');
-        final Joiner joiner = Joiner.on(",");
+        StringBuilder builder = new StringBuilder("[ ");
+        final Joiner joiner = Joiner.on(", ");
         for (int i = 0; i < matrix.length; i++) {
-            joiner.appendTo(builder, Arrays.asList(matrix[i]));
+            joiner.appendTo(builder, Doubles.asList(matrix[i]));
             if (i < matrix.length - 1) {
-                builder.append(';');
+                builder.append("; ");
             }
         }
-        builder.append(']');
+        builder.append(" ]");
         return builder.toString();
     }
-
-    @Override
-    public String toString() {
-        return Arrays.deepToString(matrix);
-    }
-
 }

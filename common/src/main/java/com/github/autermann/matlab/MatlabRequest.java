@@ -16,12 +16,17 @@
  */
 package com.github.autermann.matlab;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Range;
 
 /**
  * Represents a MATLAB function execution request.
@@ -30,7 +35,14 @@ import com.google.common.collect.Iterables;
  *
  */
 public class MatlabRequest {
-
+    private static final Function<Integer, String> RESULT_FUNCTION
+            = new Function<Integer, String>() {
+                @Override
+                public String apply(Integer input) {
+                    return "result" + input;
+                }
+            };
+    private static final Joiner JOINER = Joiner.on(", ");
     private final String function;
     private int resultCount;
     private final List<MatlabValue> parameters;
@@ -101,6 +113,10 @@ public class MatlabRequest {
         return this.parameters.get(index);
     }
 
+    public List<MatlabValue> getParameters() {
+        return Collections.unmodifiableList(parameters);
+    }
+
     /**
      * Returns the number of parameters.
      *
@@ -138,16 +154,24 @@ public class MatlabRequest {
      */
     public String toEvalString() {
         StringBuilder sb = new StringBuilder().append('[');
-        for (int i = 1; i <= resultCount; i++) {
-            sb.append("result").append(i);
-            if (i < resultCount) {
-                sb.append(',');
-            }
+        JOINER.appendTo(sb, Iterables.transform(resultRange(), RESULT_FUNCTION));
+        sb.append("] = feval('").append(getFunction());
+        sb.append('\'');
+        if (!parameters.isEmpty()) {
+            JOINER.appendTo(sb.append(", "), Iterables
+                    .transform(parameters, MatlabValue.TO_MATLAB_STRING));
         }
-        sb.append("] = feval('").append(getFunction()).append("',");
-        Joiner.on(",").appendTo(sb, Iterables
-                .transform(parameters, MatlabValue.TO_MATLAB_STRING));
         sb.append(')');
         return sb.toString();
+    }
+
+    private ContiguousSet<Integer> resultRange() {
+        return ContiguousSet.create(Range.closed(1, getResultCount()),
+                                    DiscreteDomain.integers());
+    }
+
+    @Override
+    public String toString() {
+        return "MatlabRequest[" + toEvalString() + "]";
     }
 }

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
+import com.google.common.base.Joiner;
 
 /**
  * Represents the result of a MATLAB function execution.
@@ -29,7 +30,7 @@ import com.github.autermann.matlab.value.MatlabValue;
  *
  */
 public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
-
+    private static final Joiner JOINER = Joiner.on(", ");
     private final List<MatlabValue> results;
 
     /**
@@ -71,11 +72,9 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("results = ");
-        for (int i = 0; i < results.size(); i++) {
-            builder.append("\n  ").append(results.get(i).toString());
-        }
-        return builder.toString();
+        StringBuilder sb = new StringBuilder().append("MatlabResult[");
+        JOINER.appendTo(sb, results);
+        return sb.append(']').toString();
     }
 
     @Override

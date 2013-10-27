@@ -59,10 +59,4 @@ public class MatlabScalar extends MatlabValue {
     public String toMatlabString() {
         return String.valueOf(scalar);
     }
-
-    @Override
-    public String toString() {
-        return String.valueOf(scalar);
-    }
-
 }

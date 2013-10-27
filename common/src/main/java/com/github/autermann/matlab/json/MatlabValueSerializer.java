@@ -54,7 +54,7 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
             JsonObject structobj = new JsonObject();
             object.add(MatlabJSONConstants.STRUCT, structobj);
             MatlabStruct struct = value.asStruct();
-            for (Entry<String, MatlabValue> e : struct.getStruct().entrySet()) {
+            for (Entry<String, MatlabValue> e : struct.getFields().entrySet()) {
                 structobj.add(e.getKey(),
                               serialize(e.getValue(), MatlabValue.class, ctx));
             }

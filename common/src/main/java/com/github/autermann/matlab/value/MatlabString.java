@@ -43,10 +43,4 @@ public class MatlabString extends MatlabValue {
     public String toMatlabString() {
         return "'" + string + "'";
     }
-
-    @Override
-    public String toString() {
-        return string;
-    }
-
 }

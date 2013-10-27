@@ -164,4 +164,9 @@ public abstract class MatlabValue {
         return (MatlabStruct) this;
     }
 
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s]", getClass().getSimpleName(), toMatlabString());
+    }
 }
