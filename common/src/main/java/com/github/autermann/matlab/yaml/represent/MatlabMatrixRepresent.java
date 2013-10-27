@@ -20,6 +20,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import com.github.autermann.matlab.value.MatlabMatrix;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
@@ -33,7 +34,7 @@ public class MatlabMatrixRepresent extends TypeSafeRepresent<MatlabMatrix> {
 
     @Override
     protected Node represent(MatlabMatrix t) {
-        Node node = delegate(t.getMatrix());
+        Node node = delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.getMatrix());
         if (node instanceof SequenceNode) {
             SequenceNode row = (SequenceNode) node;
             row.setFlowStyle(false);
