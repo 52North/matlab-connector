@@ -17,34 +17,23 @@
 package com.github.autermann.matlab.yaml.represent;
 
 import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.representer.Representer;
 
+import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
-public class MatlabRepresenter extends Representer {
+public class MatlabBooleanRepresent extends TypeSafeRepresent<MatlabBoolean> {
 
-    public MatlabRepresenter() {
-        register(new MatlabStructRepresent(this));
-        register(new MatlabStringRepresent(this));
-        register(new MatlabScalarRepresent(this));
-        register(new MatlabCellRepresent(this));
-        register(new MatlabArrayRepresent(this));
-        register(new MatlabMatrixRepresent(this));
-        register(new MatlabRequestRepresent(this));
-        register(new MatlabResultRepresent(this));
-        register(new MatlabExceptionRepresent(this));
-        register(new MatlabBooleanRepresent(this));
+    public MatlabBooleanRepresent(MatlabRepresenter delegate) {
+        super(delegate, MatlabBoolean.class);
     }
 
-    public Node delegate(Object data) {
-        return super.representData(data);
-    }
-
-    private void register(TypeSafeRepresent<?> represent) {
-        this.representers.put(represent.getType(), represent);
+    @Override
+    protected Node represent(MatlabBoolean t) {
+        return delegate(MatlabYAMLConstants.MATLAB_BOOLEAN_TAG, t.value());
     }
 }

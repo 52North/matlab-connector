@@ -34,6 +34,7 @@ import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
@@ -114,6 +115,8 @@ public class MatlabYAML implements MatlabEncoding {
         struct.setField("field1", new MatlabString("value1"));
         struct.setField("field2", new MatlabString("value2"));
         response.addResult(struct);
+        response.addResult(MatlabBoolean.fromBoolean(true));
+        response.addResult(MatlabBoolean.fromBoolean(false));
         response.addResult(new MatlabScalar(2.2));
         response.addResult(new MatlabMatrix(new double[][] {
             new double[] { 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2,

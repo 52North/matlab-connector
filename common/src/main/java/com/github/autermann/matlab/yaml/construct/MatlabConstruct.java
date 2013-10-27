@@ -79,6 +79,27 @@ public abstract class MatlabConstruct extends AbstractConstruct {
         throw new IllegalArgumentException();
     }
 
+    protected boolean constructBoolean(Node node) {
+        return constructBoolean(constructScalar(node));
+    }
+
+    protected boolean constructBoolean(Object o) {
+        if (o instanceof Boolean) {
+            return ((Boolean) o).booleanValue();
+        } else if (o instanceof Double || o instanceof Float) {
+            return ((Number) o).doubleValue() > 0;
+        } else if (o instanceof Number) {
+            return ((Number) o).longValue() > 0;
+        } else if (o instanceof String) {
+            try {
+                return Double.parseDouble((String) o) > 0;
+            } catch(NumberFormatException e) {
+                return Boolean.valueOf((String) o).booleanValue();
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
     protected Double constructDouble(Node node) {
         return constructDouble(constructScalar(node));
     }
