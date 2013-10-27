@@ -18,10 +18,10 @@ package com.github.autermann.matlab;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -96,7 +96,7 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
     public boolean equals(Object o) {
         if (o instanceof MatlabResult) {
             MatlabResult other = (MatlabResult) o;
-            return Objects.equals(getResults(), other.getResults());
+            return Objects.equal(getResults(), other.getResults());
         }
         return false;
     }
