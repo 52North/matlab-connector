@@ -101,6 +101,16 @@ public abstract class MatlabValue {
     }
 
     /**
+     * Checks if this value is a boolean.
+     *
+     * @return <code>true</code> if this value is a boolean, <code>false</code>
+     *         otherwise
+     */
+    public boolean isBoolean() {
+        return (this instanceof MatlabBoolean);
+    }
+
+    /**
      * Returns this value as a scalar. Will throw a {@link ClassCastException}
      * if this value is not a scalar.
      *
@@ -164,4 +174,13 @@ public abstract class MatlabValue {
         return (MatlabStruct) this;
     }
 
+    /**
+     * Returns this value as a boolean. Will throw a {@link ClassCastException}
+     * if this value is not a boolean.
+     *
+     * @return this value as a {@link MatlabBoolean}
+     */
+    public MatlabBoolean asBoolean() {
+        return (MatlabBoolean) this;
+    }
 }

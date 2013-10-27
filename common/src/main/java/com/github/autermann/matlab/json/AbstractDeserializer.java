@@ -19,6 +19,7 @@ package com.github.autermann.matlab.json;
 import java.util.Map.Entry;
 
 import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
@@ -49,10 +50,10 @@ public class AbstractDeserializer {
         if (element.isJsonPrimitive()) {
             JsonPrimitive primitive = element.getAsJsonPrimitive();
             if (primitive.isString()) {
-                // string
                 return new MatlabString(primitive.getAsString());
+            } else if (primitive.isBoolean()) {
+                return MatlabBoolean.fromBoolean(primitive.getAsBoolean());
             } else {
-                // scalar
                 return new MatlabScalar(primitive.getAsDouble());
             }
         } else if (element.isJsonArray()) {
@@ -104,6 +105,6 @@ public class AbstractDeserializer {
         }
 
         // should never get here
-        return null;
+        throw new IllegalArgumentException();
     }
 }
