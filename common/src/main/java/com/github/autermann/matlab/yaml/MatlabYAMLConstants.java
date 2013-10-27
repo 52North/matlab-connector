@@ -21,7 +21,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public interface MatlabYAMLConstants {
     Tag MATLAB_MATRIX_TAG = new Tag("!matlab-matrix");

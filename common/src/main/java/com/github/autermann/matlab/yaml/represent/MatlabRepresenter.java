@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.representer.Representer;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabRepresenter extends Representer {
 

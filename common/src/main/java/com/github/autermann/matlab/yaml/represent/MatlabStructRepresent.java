@@ -23,7 +23,7 @@ import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabStructRepresent extends TypeSafeRepresent<MatlabStruct> {
 

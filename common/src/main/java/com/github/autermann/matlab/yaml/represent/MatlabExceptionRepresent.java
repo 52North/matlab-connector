@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabExceptionRepresent extends TypeSafeRepresent<MatlabException> {
 

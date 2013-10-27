@@ -30,7 +30,7 @@ import com.google.common.collect.Iterables;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public abstract class TypeSafeRepresent<T> implements Represent {
 
