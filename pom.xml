@@ -136,11 +136,19 @@
                 <groupId>com.github.autermann</groupId>
                 <artifactId>sockets</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.autermann</groupId>
                 <artifactId>utils</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.13</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

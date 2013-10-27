@@ -37,17 +37,17 @@ public class MatlabCell extends MatlabValue {
      * @param cell the cell, given as an array of <code>MatlabValue</code>
      *             objects
      */
-    public MatlabCell(MatlabValue[] cell) {
+    public MatlabCell(MatlabValue... cell) {
         this.cell = cell;
     }
 
     @Override
     public String toMatlabString() {
         StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        Joiner.on(",").appendTo(sb, Iterables
+        sb.append("{ ");
+        Joiner.on(", ").appendTo(sb, Iterables
                 .transform(Arrays.asList(cell), TO_MATLAB_STRING));
-        sb.append('}');
+        sb.append(" }");
         return sb.toString();
     }
 
@@ -61,20 +61,16 @@ public class MatlabCell extends MatlabValue {
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        for (MatlabValue value : cell) {
-            if (value.isCell()) {
-                sb.append(value.toString());
-            } else {
-                sb.append(value.toString());
-            }
-            sb.append(",");
+    public boolean equals(Object o) {
+        if (o instanceof MatlabCell) {
+            MatlabCell other = (MatlabCell) o;
+            return Arrays.equals(getCell(), other.getCell());
         }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append("}");
-        return sb.toString();
+        return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getCell());
+    }
 }

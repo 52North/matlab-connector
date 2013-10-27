@@ -40,6 +40,12 @@ public abstract class MatlabValue {
      */
     public abstract String toMatlabString();
 
+    @Override
+    public abstract boolean equals(Object o);
+
+    @Override
+    public abstract int hashCode();
+
     /**
      * Checks if this value is a scalar.
      *
@@ -182,5 +188,11 @@ public abstract class MatlabValue {
      */
     public MatlabBoolean asBoolean() {
         return (MatlabBoolean) this;
+    }
+
+    @Override
+    public String toString() {
+        return String
+                .format("%s[%s]", getClass().getSimpleName(), toMatlabString());
     }
 }

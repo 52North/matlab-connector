@@ -16,6 +16,8 @@
  */
 package com.github.autermann.matlab.value;
 
+import com.google.common.base.Objects;
+
 public class MatlabString extends MatlabValue {
 
     private final String string;
@@ -45,8 +47,16 @@ public class MatlabString extends MatlabValue {
     }
 
     @Override
-    public String toString() {
-        return string;
+    public boolean equals(Object o) {
+        if (o instanceof MatlabString) {
+            MatlabString other = (MatlabString) o;
+            return Objects.equal(getString(), other.getString());
+        }
+        return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getString());
+    }
 }

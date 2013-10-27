@@ -16,56 +16,70 @@
  */
 package com.github.autermann.matlab.value;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Joiner.MapJoiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class MatlabStruct extends MatlabValue {
+    private static final MapJoiner JOINER
+            = Joiner.on(", ").withKeyValueSeparator(", ");
+    private static final Function<Entry<String, MatlabValue>, Entry<String, String>> TRANSFORMER
+            = new Function<Entry<String, MatlabValue>, Entry<String, String>>() {
+                @Override
+                public Entry<String, String> apply(
+                        Entry<String, MatlabValue> input) {
+                    return Maps.immutableEntry(
+                            "'" + input.getKey() + "'",
+                            input.getValue().toMatlabString());
+                }
+            };
 
-    private final Map<String, MatlabValue> struct;
+    private final Map<String, MatlabValue> fields;
 
     /**
      * Creates a new <code>MLStruct</code> instance.
      *
      */
     public MatlabStruct() {
-        this.struct = new HashMap<String, MatlabValue>();
+        this.fields = Maps.newHashMap();
     }
 
     public void setField(String field, MatlabValue value) {
-        struct.put(field, value);
+        fields.put(field, value);
     }
 
     public MatlabValue getField(String field) {
-        return struct.get(field);
+        return fields.get(field);
     }
 
-    public Map<String, MatlabValue> getStruct() {
-        return struct;
+    public Map<String, MatlabValue> getFields() {
+        return fields;
     }
 
     @Override
     public String toMatlabString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("struct(");
-        for (String field : struct.keySet()) {
-            sb.append('\'').append(field).append('\'');
-            sb.append(',');
-            sb.append(struct.get(field).toMatlabString());
-            sb.append(',');
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append(')');
-        return sb.toString();
+        StringBuilder sb = new StringBuilder().append("struct(");
+        JOINER.appendTo(sb, Iterables.transform(fields.entrySet(), TRANSFORMER));
+        return sb.append(')').toString();
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("struct: ");
-        Joiner.on(",").appendTo(sb, struct.keySet());
-        return sb.toString();
+    public boolean equals(Object o) {
+        if (o instanceof MatlabStruct) {
+            MatlabStruct other = (MatlabStruct) o;
+            return Objects.equals(getFields(), other.getFields());
+        }
+        return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFields());
+    }
 }
