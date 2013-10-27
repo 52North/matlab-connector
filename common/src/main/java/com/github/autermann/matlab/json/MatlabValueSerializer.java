@@ -38,6 +38,8 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
                                  JsonSerializationContext ctx) {
         if (value.isScalar()) {
             return ctx.serialize(value.asScalar().getScalar());
+        } else if (value.isBoolean()) {
+            return ctx.serialize(value.asBoolean().value());
         } else if (value.isArray()) {
             return ctx.serialize(value.asArray().getArray());
         } else if (value.isMatrix()) {
