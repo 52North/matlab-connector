@@ -14,18 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.autermann.matlab;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.github.autermann.matlab.MatlabRequest;
-import com.github.autermann.matlab.MatlabResponse;
 
 /**
  * TODO JavaDoc
