@@ -23,18 +23,18 @@ package com.github.autermann.matlab.value;
  */
 public interface MatlabValueVisitor {
 
-    void visitArray(MatlabArray value);
+    void visitArray(MatlabArray array);
 
-    void visitBoolean(MatlabBoolean value);
+    void visitBoolean(MatlabBoolean bool);
 
-    void visitCell(MatlabCell value);
+    void visitCell(MatlabCell cell);
 
-    void visitMatrix(MatlabMatrix value);
+    void visitMatrix(MatlabMatrix matrix);
 
-    void visitScalar(MatlabScalar value);
+    void visitScalar(MatlabScalar scalar);
 
-    void visitString(MatlabString value);
+    void visitString(MatlabString string);
 
-    void visitStruct(MatlabStruct value);
+    void visitStruct(MatlabStruct struct);
 
 }
