@@ -16,6 +16,7 @@
  */
 package com.github.autermann.matlab.yaml;
 
+import com.github.autermann.matlab.values.MatlabValues;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

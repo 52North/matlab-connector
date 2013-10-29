@@ -34,7 +34,7 @@ public class MatlabMatrixRepresent extends TypeSafeRepresent<MatlabMatrix> {
 
     @Override
     protected Node represent(MatlabMatrix t) {
-        Node node = delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.getMatrix());
+        Node node = delegate(MatlabYAMLConstants.MATLAB_MATRIX_TAG, t.value());
         if (node instanceof SequenceNode) {
             SequenceNode row = (SequenceNode) node;
             row.setFlowStyle(false);

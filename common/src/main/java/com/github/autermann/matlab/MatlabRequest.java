@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
+import com.github.autermann.matlab.value.StringVisitor;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
@@ -159,8 +160,9 @@ public class MatlabRequest {
         sb.append("] = feval('").append(getFunction());
         sb.append('\'');
         if (!parameters.isEmpty()) {
-            JOINER.appendTo(sb.append(", "), Iterables
-                    .transform(parameters, MatlabValue.TO_MATLAB_STRING));
+            JOINER.appendTo(sb.append(", "),
+                            Iterables.transform(parameters,
+                                                StringVisitor.create()));
         }
         sb.append(')');
         return sb.toString();

@@ -19,6 +19,7 @@ package com.github.autermann.matlab.json;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
+import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.gson.JsonElement;
@@ -37,27 +38,27 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
     public JsonElement serialize(MatlabValue value, Type type,
                                  JsonSerializationContext ctx) {
         if (value.isScalar()) {
-            return ctx.serialize(value.asScalar().getScalar());
+            return ctx.serialize(value.asScalar().value());
         } else if (value.isBoolean()) {
             return ctx.serialize(value.asBoolean().value());
         } else if (value.isArray()) {
-            return ctx.serialize(value.asArray().getArray());
+            return ctx.serialize(value.asArray().value());
         } else if (value.isMatrix()) {
-            return ctx.serialize(value.asMatrix().getMatrix());
+            return ctx.serialize(value.asMatrix().value());
         } else if (value.isString()) {
-            return ctx.serialize(value.asString().getString());
+            return ctx.serialize(value.asString().value());
         } else if (value.isCell()) {
             JsonObject object = new JsonObject();
             object.add(MatlabJSONConstants.CELL,
-                       ctx.serialize(value.asCell().getCell()));
+                       ctx.serialize(value.asCell().value()));
             return object;
         } else if (value.isStruct()) {
             JsonObject object = new JsonObject();
             JsonObject structobj = new JsonObject();
             object.add(MatlabJSONConstants.STRUCT, structobj);
             MatlabStruct struct = value.asStruct();
-            for (Entry<String, MatlabValue> e : struct.getFields().entrySet()) {
-                structobj.add(e.getKey(),
+            for (Entry<MatlabString, MatlabValue> e : struct.value().entrySet()) {
+                structobj.add(e.getKey().value(),
                               serialize(e.getValue(), MatlabValue.class, ctx));
             }
             return object;

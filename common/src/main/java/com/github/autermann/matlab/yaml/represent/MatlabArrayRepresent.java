@@ -36,7 +36,7 @@ public class MatlabArrayRepresent extends TypeSafeRepresent<MatlabArray> {
 
     @Override
     protected Node represent(MatlabArray t) {
-        Node node = delegate(MatlabYAMLConstants.MATLAB_ARRAY_TAG, t.getArray());
+        Node node = delegate(MatlabYAMLConstants.MATLAB_ARRAY_TAG, t.value());
         if (node instanceof SequenceNode) {
             ((SequenceNode) node).setFlowStyle(FlowStyle.FLOW.getStyleBoolean());
         }

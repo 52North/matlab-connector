@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml;
+package com.github.autermann.matlab.values;
 
 import java.math.BigInteger;
 import java.util.Random;
@@ -79,28 +79,28 @@ public class MatlabValues {
 
     public static MatlabStruct randomStruct() {
         MatlabStruct struct = new MatlabStruct();
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabArray(3));
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabBoolean.fromBoolean(true));
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabBoolean.fromBoolean(false));
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         new MatlabCell(MatlabValues.randomMatlabArray(3),
                                        MatlabBoolean.fromBoolean(true),
                                        MatlabBoolean.fromBoolean(false),
                                        MatlabValues.randomMatlabMatrix(5, 5),
                                        MatlabValues.randomMatlabScalar(),
                                        MatlabValues.randomMatlabString()));
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabMatrix(5, 5));
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabScalar());
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabString());
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabString());
-        struct.setField(MatlabValues.randomString(),
+        struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabString());
         return struct;
     }

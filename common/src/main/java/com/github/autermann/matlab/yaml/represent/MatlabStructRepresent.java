@@ -32,7 +32,7 @@ public class MatlabStructRepresent extends TypeSafeRepresent<MatlabStruct> {
 
     @Override
     protected Node represent(MatlabStruct struct) {
-        return delegate(struct.getFields());
+        return delegate(struct.value());
     }
 
 }

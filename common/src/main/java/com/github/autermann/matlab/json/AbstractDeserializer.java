@@ -98,7 +98,7 @@ public class AbstractDeserializer {
                         .getAsJsonObject();
                 MatlabStruct struct = new MatlabStruct();
                 for (Entry<String, JsonElement> e : obj.entrySet()) {
-                    struct.setField(e.getKey(), deserializeValue(e.getValue()));
+                    struct.set(e.getKey(), deserializeValue(e.getValue()));
                 }
                 return struct;
             }

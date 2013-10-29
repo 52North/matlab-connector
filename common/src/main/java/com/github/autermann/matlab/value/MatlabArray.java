@@ -16,10 +16,9 @@
  */
 package com.github.autermann.matlab.value;
 
-import java.util.Arrays;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Joiner;
-import com.google.common.primitives.Doubles;
+import java.util.Arrays;
 
 /**
  * Represents a MATLAB array.
@@ -39,7 +38,7 @@ public class MatlabArray extends MatlabValue {
      * @param array the <code>double</code> array
      */
     public MatlabArray(double[] array) {
-        this.array = array;
+        this.array = checkNotNull(array);
     }
 
     /**
@@ -49,9 +48,10 @@ public class MatlabArray extends MatlabValue {
      * @param array the <code>Double</code> array
      */
     public MatlabArray(Double[] array) {
+        checkNotNull(array);
         double[] values = new double[array.length];
         for (int i = 0; i < array.length; i++) {
-            values[i] = array[i];
+            values[i] = checkNotNull(array[i]).doubleValue();
         }
         this.array = values;
     }
@@ -61,29 +61,27 @@ public class MatlabArray extends MatlabValue {
      *
      * @return the array
      */
-    public double[] getArray() {
+    public double[] value() {
         return array;
-    }
-
-    @Override
-    public String toMatlabString() {
-        StringBuilder sb = new StringBuilder("[");
-        Joiner joiner = Joiner.on(",");
-        joiner.appendTo(sb, Doubles.asList(array));
-        return sb.append(']').toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabArray) {
             MatlabArray other = (MatlabArray) o;
-            return Arrays.equals(getArray(), other.getArray());
+            return Arrays.equals(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(getArray());
+        return Arrays.hashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitArray(this);
+        return visitor;
     }
 }

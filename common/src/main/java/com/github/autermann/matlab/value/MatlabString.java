@@ -16,9 +16,11 @@
  */
 package com.github.autermann.matlab.value;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 
-public class MatlabString extends MatlabValue {
+public class MatlabString extends MatlabValue implements Comparable<MatlabString>{
 
     private final String string;
 
@@ -29,7 +31,7 @@ public class MatlabString extends MatlabValue {
      * @param string the <code>String</code>
      */
     public MatlabString(String string) {
-        this.string = string;
+        this.string = checkNotNull(string);
     }
 
     /**
@@ -37,26 +39,32 @@ public class MatlabString extends MatlabValue {
      *
      * @return the string
      */
-    public String getString() {
+    public String value() {
         return string;
-    }
-
-    @Override
-    public String toMatlabString() {
-        return "'" + string + "'";
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabString) {
             MatlabString other = (MatlabString) o;
-            return Objects.equal(getString(), other.getString());
+            return Objects.equal(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getString());
+        return Objects.hashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitString(this);
+        return visitor;
+    }
+
+    @Override
+    public int compareTo(MatlabString o) {
+        return value().compareTo(checkNotNull(o).value());
     }
 }

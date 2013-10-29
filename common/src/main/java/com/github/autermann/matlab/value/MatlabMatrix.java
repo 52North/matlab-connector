@@ -16,81 +16,72 @@
  */
 package com.github.autermann.matlab.value;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Arrays;
 
-import com.google.common.base.Joiner;
-import com.google.common.primitives.Doubles;
-
 /**
- * Represents a MATLAB matrix.
+ * Represents a MATLAB value.
  *
  * @author Richard Jones
  *
  */
 public class MatlabMatrix extends MatlabValue {
-
-    private final double[][] matrix;
+    private final double[][] value;
 
     /**
      * Creates a new <code>MLMatrix</code> instance from the given
-     * <code>double</code> matrix.
+     * <code>double</code> value.
      *
-     * @param matrix the <code>double</code> matrix
+     * @param matrix the <code>double</code> value
      */
     public MatlabMatrix(double[][] matrix) {
-        this.matrix = matrix;
+        this.value = checkNotNull(matrix);
     }
 
     /**
      * Creates a new <code>MLMatrix</code> instance from the given
-     * {@link Double} matrix.
+     * {@link Double} value.
      *
-     * @param matrix the <code>Double</code> matrix
+     * @param matrix the <code>Double</code> value
      */
     public MatlabMatrix(Double[][] matrix) {
-        double[][] values = new double[matrix.length][matrix[0].length];
+        double[][] values = new double[checkNotNull(matrix).length][];
         for (int i = 0; i < matrix.length; i++) {
+            values[i] = new double[checkNotNull(matrix[i]).length];
             for (int j = 0; j < matrix[i].length; j++) {
-                values[i][j] = matrix[i][j];
+                values[i][j] = checkNotNull(matrix[i][j]).doubleValue();
             }
         }
-        this.matrix = values;
+        this.value = values;
     }
 
     /**
-     * Returns the matrix.
+     * Returns the value.
      *
-     * @return the matrix
+     * @return the value
      */
-    public double[][] getMatrix() {
-        return matrix;
-    }
-
-    @Override
-    public String toMatlabString() {
-        StringBuilder builder = new StringBuilder("[ ");
-        final Joiner joiner = Joiner.on(", ");
-        for (int i = 0; i < matrix.length; i++) {
-            joiner.appendTo(builder, Doubles.asList(matrix[i]));
-            if (i < matrix.length - 1) {
-                builder.append("; ");
-            }
-        }
-        builder.append(" ]");
-        return builder.toString();
+    public double[][] value() {
+        return value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabMatrix) {
             MatlabMatrix other = (MatlabMatrix) o;
-            return Arrays.deepEquals(getMatrix(), other.getMatrix());
+            return Arrays.deepEquals(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(getMatrix());
+        return Arrays.deepHashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitMatrix(this);
+        return visitor;
     }
 }

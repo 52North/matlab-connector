@@ -16,61 +16,69 @@
  */
 package com.github.autermann.matlab.value;
 
-import java.util.Arrays;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
- * Represents a MATLAB cell.
+ * Represents a MATLAB value.
  *
  * @author Richard Jones
  */
 public class MatlabCell extends MatlabValue {
-
-    private final MatlabValue[] cell;
+    private final List<MatlabValue> value;
 
     /**
      * Creates a new <code>MLCell</code> instance from the given array of
      * <code>MatlabValue</code> objects.
      *
-     * @param cell the cell, given as an array of <code>MatlabValue</code>
+     * @param cell the value, given as an array of <code>MatlabValue</code>
      *             objects
      */
     public MatlabCell(MatlabValue... cell) {
-        this.cell = cell;
+        this(Arrays.asList(checkNotNull(cell)));
     }
 
-    @Override
-    public String toMatlabString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{ ");
-        Joiner.on(", ").appendTo(sb, Iterables
-                .transform(Arrays.asList(cell), TO_MATLAB_STRING));
-        sb.append(" }");
-        return sb.toString();
+    public MatlabCell(Iterable<? extends MatlabValue> values) {
+        this.value = Lists.newArrayList(checkNotNull(values));
+    }
+
+    public MatlabCell add(MatlabValue value) {
+        this.value.add(checkNotNull(value));
+        return this;
     }
 
     /**
-     * Returns the cell.
+     * Returns the value.
      *
-     * @return the cell, as an array of <code>MatlabValue</code> objects
+     * @return the value, as an array of <code>MatlabValue</code> objects
      */
-    public MatlabValue[] getCell() {
-        return cell;
+    public List<MatlabValue> value() {
+        return Collections.unmodifiableList(value);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabCell) {
             MatlabCell other = (MatlabCell) o;
-            return Arrays.equals(getCell(), other.getCell());
+            return Objects.equal(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(getCell());
+        return Objects.hashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitCell(this);
+        return visitor;
     }
 }

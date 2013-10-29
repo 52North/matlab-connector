@@ -34,6 +34,6 @@ public class MatlabCellRepresent extends TypeSafeRepresent<MatlabCell> {
 
     @Override
     protected Node represent(MatlabCell t) {
-        return delegate(MatlabYAMLConstants.MATLAB_CELL_TAG, t.getCell());
+        return delegate(MatlabYAMLConstants.MATLAB_CELL_TAG, t.value());
     }
 }

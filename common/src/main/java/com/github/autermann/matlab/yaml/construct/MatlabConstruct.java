@@ -188,8 +188,8 @@ public abstract class MatlabConstruct extends AbstractConstruct {
     protected MatlabStruct constructStruct(Map<Object, Object> map) {
         MatlabStruct struct = new MatlabStruct();
         for (Entry<Object, Object> e : map.entrySet()) {
-            struct.setField(constructString(e.getKey()),
-                            constructValue(e.getValue()));
+            struct.set(constructString(e.getKey()),
+                       constructValue(e.getValue()));
         }
         return struct;
     }

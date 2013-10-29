@@ -16,7 +16,10 @@
  */
 package com.github.autermann.matlab.value;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
+import com.google.common.primitives.Doubles;
 
 /**
  * Represents a MATLAB scalar.
@@ -24,7 +27,7 @@ import com.google.common.base.Objects;
  * @author Richard Jones
  *
  */
-public class MatlabScalar extends MatlabValue {
+public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar>{
 
     private final double scalar;
 
@@ -45,7 +48,7 @@ public class MatlabScalar extends MatlabValue {
      * @param scalar the <code>Double</code> scalar
      */
     public MatlabScalar(Double scalar) {
-        this.scalar = scalar;
+        this(checkNotNull(scalar).doubleValue());
     }
 
     /**
@@ -53,26 +56,32 @@ public class MatlabScalar extends MatlabValue {
      *
      * @return the scalar
      */
-    public double getScalar() {
+    public double value() {
         return scalar;
-    }
-
-    @Override
-    public String toMatlabString() {
-        return String.valueOf(scalar);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabScalar) {
             MatlabScalar other = (MatlabScalar) o;
-            return Objects.equal(getScalar(), other.getScalar());
+            return Objects.equal(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getScalar());
+        return Objects.hashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitScalar(this);
+        return visitor;
+    }
+
+    @Override
+    public int compareTo(MatlabScalar o) {
+        return Doubles.compare(value(), checkNotNull(o).value());
     }
 }

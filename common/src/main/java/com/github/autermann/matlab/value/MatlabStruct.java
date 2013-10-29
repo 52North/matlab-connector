@@ -16,70 +16,84 @@
  */
 package com.github.autermann.matlab.value;
 
-import java.util.Map;
-import java.util.Map.Entry;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Joiner.MapJoiner;
+import java.util.Collections;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class MatlabStruct extends MatlabValue {
-    private static final MapJoiner JOINER
-            = Joiner.on(", ").withKeyValueSeparator(", ");
-    private static final Function<Entry<String, MatlabValue>, Entry<String, String>> TRANSFORMER
-            = new Function<Entry<String, MatlabValue>, Entry<String, String>>() {
-                @Override
-                public Entry<String, String> apply(
-                        Entry<String, MatlabValue> input) {
-                    return Maps.immutableEntry(
-                            "'" + input.getKey() + "'",
-                            input.getValue().toMatlabString());
-                }
-            };
-
-    private final Map<String, MatlabValue> fields;
+    private final Map<MatlabString, MatlabValue> fields;
 
     /**
      * Creates a new <code>MLStruct</code> instance.
      *
      */
     public MatlabStruct() {
-        this.fields = Maps.newHashMap();
+        this(Maps.<MatlabString, MatlabValue>newTreeMap());
     }
 
-    public void setField(String field, MatlabValue value) {
-        fields.put(field, value);
+    public MatlabStruct(Map<MatlabString, MatlabValue> value) {
+        if (checkNotNull(value) instanceof SortedMap) {
+            this.fields = value;
+        } else {
+            TreeMap<MatlabString, MatlabValue> sorted = Maps.newTreeMap();
+            sorted.putAll(value);
+            this.fields = sorted;
+        }
     }
 
-    public MatlabValue getField(String field) {
-        return fields.get(field);
+    public MatlabStruct set(String field, MatlabValue value) {
+        return set(new MatlabString(checkNotNull(field)), value);
     }
 
-    public Map<String, MatlabValue> getFields() {
-        return fields;
+    public MatlabStruct set(MatlabString field, MatlabValue value) {
+        fields.put(checkNotNull(field), checkNotNull(value));
+        return this;
     }
 
-    @Override
-    public String toMatlabString() {
-        StringBuilder sb = new StringBuilder().append("struct(");
-        JOINER.appendTo(sb, Iterables.transform(fields.entrySet(), TRANSFORMER));
-        return sb.append(')').toString();
+    public MatlabStruct remove(String field) {
+        return remove(new MatlabString(checkNotNull(field)));
+    }
+
+    public MatlabStruct remove(MatlabString field) {
+        fields.remove(checkNotNull(field));
+        return this;
+    }
+
+    public MatlabValue get(String field) {
+        return get(new MatlabString(checkNotNull(field)));
+    }
+
+    public MatlabValue get(MatlabString field) {
+        return fields.get(checkNotNull(field));
+    }
+
+    public Map<MatlabString, MatlabValue> value() {
+        return Collections.unmodifiableMap(fields);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabStruct) {
             MatlabStruct other = (MatlabStruct) o;
-            return Objects.equal(getFields(), other.getFields());
+            return Objects.equal(value(), other.value());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getFields());
+        return Objects.hashCode(value());
+    }
+
+    @Override
+    public <T extends MatlabValueVisitor> T accept(T visitor) {
+        checkNotNull(visitor).visitStruct(this);
+        return visitor;
     }
 }

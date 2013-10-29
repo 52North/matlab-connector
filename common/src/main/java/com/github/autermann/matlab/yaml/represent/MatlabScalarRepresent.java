@@ -32,7 +32,7 @@ public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
 
     @Override
     protected Node represent(MatlabScalar t) {
-        return delegate(t.getScalar());
+        return delegate(t.value());
     }
 
 }

@@ -222,7 +222,7 @@ public class MatlabInstance {
         for (String name : fieldNames(varName)) {
             String subvarName = varName + "s";
             assign(subvarName, varName + "." + name);
-            struct.setField(name, parseValue(subvarName));
+            struct.set(name, parseValue(subvarName));
         }
         return struct;
     }

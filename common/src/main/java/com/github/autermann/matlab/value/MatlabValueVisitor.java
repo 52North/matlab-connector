@@ -14,25 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml.represent;
-
-import org.yaml.snakeyaml.nodes.Node;
-
-import com.github.autermann.matlab.value.MatlabString;
+package com.github.autermann.matlab.value;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
  */
-public class MatlabStringRepresent extends TypeSafeRepresent<MatlabString> {
+public interface MatlabValueVisitor {
 
-    public MatlabStringRepresent(MatlabRepresenter delegate) {
-        super(delegate, MatlabString.class);
-    }
+    void visitArray(MatlabArray value);
 
-    @Override
-    protected Node represent(MatlabString t) {
-        return delegate(t.value());
-    }
+    void visitBoolean(MatlabBoolean value);
+
+    void visitCell(MatlabCell value);
+
+    void visitMatrix(MatlabMatrix value);
+
+    void visitScalar(MatlabScalar value);
+
+    void visitString(MatlabString value);
+
+    void visitStruct(MatlabStruct value);
 
 }

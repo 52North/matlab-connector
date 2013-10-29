@@ -16,8 +16,6 @@
  */
 package com.github.autermann.matlab.value;
 
-import com.google.common.base.Function;
-
 /**
  * Base class for representing a MATLAB value.
  *
@@ -25,20 +23,7 @@ import com.google.common.base.Function;
  *
  */
 public abstract class MatlabValue {
-    public static final Function<MatlabValue, String> TO_MATLAB_STRING
-            = new Function<MatlabValue, String>() {
-                @Override
-                public String apply(MatlabValue input) {
-                    return input == null ? null : input.toMatlabString();
-                }
-            };
-
-    /**
-     * Returns a MATLAB string representation of this value.
-     *
-     * @return a MATLAB string representation of this value
-     */
-    public abstract String toMatlabString();
+    public abstract <T extends MatlabValueVisitor> T accept(T visitor);
 
     @Override
     public abstract boolean equals(Object o);
@@ -192,7 +177,7 @@ public abstract class MatlabValue {
 
     @Override
     public String toString() {
-        return String
-                .format("%s[%s]", getClass().getSimpleName(), toMatlabString());
+        return String.format("%s[%s]", getClass().getSimpleName(),
+                                       StringVisitor.create().apply(this));
     }
 }
