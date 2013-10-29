@@ -31,7 +31,7 @@ import com.google.gson.JsonParseException;
  * @author Richard Jones
  *
  */
-public class MatlabResultDeserializer extends AbstractDeserializer implements
+public class MatlabResultDeserializer extends MatlabValueDeserializer implements
         JsonDeserializer<MatlabResult> {
 
     @Override
