@@ -56,6 +56,16 @@ public class MatlabBoolean extends MatlabValue {
         return visitor;
     }
 
+    @Override
+    public MatlabBoolean asBoolean() {
+        return this;
+    }
+
+    @Override
+    public boolean isBoolean() {
+        return true;
+    }
+
     public static MatlabBoolean yes() {
         return TRUE;
     }

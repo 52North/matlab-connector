@@ -81,4 +81,14 @@ public class MatlabCell extends MatlabValue {
         checkNotNull(visitor).visitCell(this);
         return visitor;
     }
+
+    @Override
+    public MatlabCell asCell() {
+        return this;
+    }
+
+    @Override
+    public boolean isCell() {
+        return true;
+    }
 }

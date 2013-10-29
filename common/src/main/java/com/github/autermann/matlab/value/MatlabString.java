@@ -20,8 +20,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 
-public class MatlabString extends MatlabValue implements Comparable<MatlabString>{
-
+public class MatlabString extends MatlabValue implements
+        Comparable<MatlabString> {
     private final String string;
 
     /**
@@ -66,5 +66,15 @@ public class MatlabString extends MatlabValue implements Comparable<MatlabString
     @Override
     public int compareTo(MatlabString o) {
         return value().compareTo(checkNotNull(o).value());
+    }
+
+    @Override
+    public MatlabString asString() {
+        return this;
+    }
+
+    @Override
+    public boolean isString() {
+        return true;
     }
 }

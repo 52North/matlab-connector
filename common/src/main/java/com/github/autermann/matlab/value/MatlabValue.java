@@ -38,7 +38,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isScalar() {
-        return (this instanceof MatlabScalar);
+        return false;
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isMatrix() {
-        return (this instanceof MatlabMatrix);
+        return false;
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isArray() {
-        return (this instanceof MatlabArray);
+        return false;
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isString() {
-        return (this instanceof MatlabString);
+        return false;
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isCell() {
-        return (this instanceof MatlabCell);
+        return false;
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isStruct() {
-        return (this instanceof MatlabStruct);
+        return false;
     }
 
     /**
@@ -98,11 +98,12 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isBoolean() {
-        return (this instanceof MatlabBoolean);
+        return false;
     }
 
     /**
-     * Returns this value as a scalar. Will throw a {@link ClassCastException}
+     * Returns this value as a scalar. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a scalar.
      *
      * @return this value as a {@link MatlabScalar}
@@ -110,11 +111,12 @@ public abstract class MatlabValue {
      * @see #isScalar()
      */
     public MatlabScalar asScalar() {
-        return (MatlabScalar) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a matrix. Will throw a {@link ClassCastException}
+     * Returns this value as a matrix. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a matrix.
      *
      * @return this value as a {@link MatlabMatrix}
@@ -122,62 +124,67 @@ public abstract class MatlabValue {
      * @see #isMatrix()
      */
     public MatlabMatrix asMatrix() {
-        return (MatlabMatrix) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a array. Will throw a {@link ClassCastException}
+     * Returns this value as a array. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a array.
      *
      * @return this value as a {@link MatlabArray}
      */
     public MatlabArray asArray() {
-        return (MatlabArray) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a string. Will throw a {@link ClassCastException}
+     * Returns this value as a string. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a string.
      *
      * @return this value as a {@link MatlabString}
      */
     public MatlabString asString() {
-        return (MatlabString) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a cell. Will throw a {@link ClassCastException}
+     * Returns this value as a cell. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a cell.
      *
      * @return this value as a {@link MatlabCell}
      */
     public MatlabCell asCell() {
-        return (MatlabCell) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a struct. Will throw a {@link ClassCastException}
+     * Returns this value as a struct. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a struct.
      *
      * @return this value as a {@link MatlabStruct}
      */
     public MatlabStruct asStruct() {
-        return (MatlabStruct) this;
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns this value as a boolean. Will throw a {@link ClassCastException}
+     * Returns this value as a boolean. Will throw a
+     * {@link UnsupportedOperationException}
      * if this value is not a boolean.
      *
      * @return this value as a {@link MatlabBoolean}
      */
     public MatlabBoolean asBoolean() {
-        return (MatlabBoolean) this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String toString() {
         return String.format("%s[%s]", getClass().getSimpleName(),
-                                       StringVisitor.create().apply(this));
+                             StringVisitor.create().apply(this));
     }
 }

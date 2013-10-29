@@ -84,4 +84,14 @@ public class MatlabMatrix extends MatlabValue {
         checkNotNull(visitor).visitMatrix(this);
         return visitor;
     }
+
+    @Override
+    public MatlabMatrix asMatrix() {
+        return this;
+    }
+
+    @Override
+    public boolean isMatrix() {
+        return true;
+    }
 }

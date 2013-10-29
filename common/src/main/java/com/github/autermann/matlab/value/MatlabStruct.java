@@ -96,4 +96,14 @@ public class MatlabStruct extends MatlabValue {
         checkNotNull(visitor).visitStruct(this);
         return visitor;
     }
+
+    @Override
+    public MatlabStruct asStruct() {
+        return this;
+    }
+
+    @Override
+    public boolean isStruct() {
+        return true;
+    }
 }

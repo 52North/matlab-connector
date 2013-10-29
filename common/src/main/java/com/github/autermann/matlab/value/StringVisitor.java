@@ -36,7 +36,7 @@ public class StringVisitor implements MatlabValueVisitor,
     private static final String BOOL_TRUE = "1";
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
     private static final MapJoiner STRUCT_JOINER = COMMA_JOINER.withKeyValueSeparator(", ");
-    String value;
+    private String value;
 
     private StringVisitor() {
     }

@@ -28,7 +28,6 @@ import com.google.common.primitives.Doubles;
  *
  */
 public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar>{
-
     private final double scalar;
 
     /**
@@ -83,5 +82,15 @@ public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar
     @Override
     public int compareTo(MatlabScalar o) {
         return Doubles.compare(value(), checkNotNull(o).value());
+    }
+
+    @Override
+    public MatlabScalar asScalar() {
+        return this;
+    }
+
+    @Override
+    public boolean isScalar() {
+        return true;
     }
 }

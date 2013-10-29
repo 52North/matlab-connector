@@ -84,4 +84,14 @@ public class MatlabArray extends MatlabValue {
         checkNotNull(visitor).visitArray(this);
         return visitor;
     }
+
+    @Override
+    public MatlabArray asArray() {
+        return this;
+    }
+
+    @Override
+    public boolean isArray() {
+        return true;
+    }
 }
