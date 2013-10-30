@@ -18,6 +18,10 @@ package com.github.autermann.matlab.server;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +35,10 @@ import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
+import com.github.autermann.matlab.value.StringVisitor;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
@@ -41,6 +49,7 @@ import matlabcontrol.extensions.MatlabNumericArray;
 import matlabcontrol.extensions.MatlabTypeConverter;
 
 public class MatlabInstance {
+    private static final Joiner COMMA_JOINER = Joiner.on(", ");
     private static final String CHAR_TYPE = "char";
     private static final String CELL_TYPE = "cell";
     private static final String DOUBLE_TYPE = "double";
@@ -104,6 +113,52 @@ public class MatlabInstance {
         }
     }
 
+    protected Map<String, MatlabValue> feval(String function,
+                                             List<String> results,
+                                             List<MatlabValue> parameters)
+            throws MatlabInvocationException, MatlabException {
+        final int length = results.size();
+        final String[] rarray = results.toArray(new String[length]);
+        final String[] varray = genvarnames(rarray);
+        final String cmd = buildFEval(function, varray, parameters);
+        log.debug("Evaluation: {}", cmd);
+        proxy.eval(cmd);
+        log.info("Evaluation complete, parsing results...");
+        final Map<String, MatlabValue> result = Maps.newLinkedHashMap();
+        for (int i = 0; i < length; ++i) {
+            result.put(rarray[i], parseValue(varray[i]));
+        }
+        return result;
+    }
+
+    protected String[] genvarnames(String[] rarray) throws MatlabInvocationException {
+        final int length = rarray.length;
+        final String[] varray = new String[length];
+        final StringVisitor f = StringVisitor.create();
+        for (int i = 0; i < length; ++i) {
+            String safe = f.apply(new MatlabString(rarray[i]));
+            String cmd = String.format("genvarname(%s, who)", safe);
+            varray[i] = (String) proxy.returningEval(cmd, 1)[0];
+        }
+        return varray;
+    }
+
+    protected String buildFEval(String function, String[] varray,
+                                List<MatlabValue> parameters) {
+        // buildFEval cmd
+        StringBuilder sb = new StringBuilder();
+        COMMA_JOINER.appendTo(sb.append('['), varray).append("]");
+        sb.append(" = ");
+        sb.append("feval('").append(function).append('\'');
+        if (!parameters.isEmpty()) {
+            COMMA_JOINER.appendTo(sb.append(", "), Iterables.transform(
+                    parameters, StringVisitor.create()));
+        }
+        sb.append(')');
+        // evaluate
+        return sb.toString();
+    }
+
     public MatlabResult handle(MatlabRequest request) throws
             MatlabException {
         // anything we need to do before handling
@@ -112,15 +167,13 @@ public class MatlabInstance {
         // eval request
         try {
             log.info("Evaluating function {}...", request.getFunction());
-            String evalString = request.toEvalString();
-            log.debug("Evaluation: {}", evalString);
-            proxy.eval(evalString);
+            Map<String, MatlabValue> results = feval(request.getFunction(),
+                                                     request.getResults(),
+                                                     request.getParameters());
 
-            // get results
-            log.info("Evaluation complete, parsing results...");
             MatlabResult result = new MatlabResult();
-            for (String name : request.getResults()) {
-                result.addResult(name, parseValue(name));
+            for (Entry<String, MatlabValue> e : results.entrySet()) {
+                result.addResult(e.getKey(), e.getValue());
             }
             return result;
         } catch (MatlabInvocationException e) {
@@ -156,7 +209,8 @@ public class MatlabInstance {
     }
 
     private String getType(String varName) throws MatlabInvocationException {
-        return (String) proxy.returningEval("class(" + varName + ")", 1)[0];
+        String cmd = String.format("class(%s)",varName);
+        return (String) proxy.returningEval(cmd, 1)[0];
     }
 
     private void clearAll() throws MatlabInvocationException {
@@ -165,7 +219,7 @@ public class MatlabInstance {
 
     private void changeDir(String path) throws MatlabInvocationException {
         // matlab needs escaped slashes too
-        proxy.eval("cd('" + path.replace("\\", "\\\\") + "')");
+        proxy.eval(String.format("cd('%s')", path.replace("\\", "\\\\")));
     }
 
     private String[] fieldNames(String name) throws MatlabInvocationException {
@@ -208,8 +262,8 @@ public class MatlabInstance {
         // cell looks like ["key", ["another", 0.1]]
         Object[] obj = getVariable(varName);
         MatlabValue[] cell = new MatlabValue[obj.length];
+        final String subvarName = varName + "s";
         for (int i = 0; i < cell.length; i++) {
-            final String subvarName = varName + "s";
             assign(subvarName, varName + "{" + (i + 1) + "}");
             cell[i] = parseValue(subvarName);
         }

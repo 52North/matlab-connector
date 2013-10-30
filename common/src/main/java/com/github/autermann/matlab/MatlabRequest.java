@@ -23,10 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
-import com.github.autermann.matlab.value.StringVisitor;
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 
 /**
  * Represents a MATLAB function execution request.
@@ -36,7 +33,6 @@ import com.google.common.collect.Iterables;
  */
 public class MatlabRequest {
     private static final String DEFAULT_RESULT_NAME = "result";
-    private static final Joiner JOINER = Joiner.on(", ");
     private final String function;
     private final List<MatlabValue> parameters;
     private final List<String> results;
@@ -121,34 +117,13 @@ public class MatlabRequest {
         return this;
     }
 
-    /**
-     * Returns a string representation of this request that is compatible with
-     * MATLAB's <a
-     * href="http://www.mathworks.com/help/techdoc/ref/eval.html">eval
-     * function</a>.
-     *
-     * @return the eval string
-     */
-    public String toEvalString() {
-        StringBuilder sb = new StringBuilder().append('[');
-        StringVisitor f = StringVisitor.create();
-        if (getResults().isEmpty()) {
-            sb.append(DEFAULT_RESULT_NAME);
-        } else {
-            JOINER.appendTo(sb, getResults());
-        }
-        sb.append("] = feval('").append(getFunction()).append('\'');
-        if (!parameters.isEmpty()) {
-            sb.append(", ");
-            JOINER.appendTo(sb, Iterables.transform(getParameters(), f));
-        }
-        sb.append(')');
-        return sb.toString();
-    }
-
     @Override
     public String toString() {
-        return "MatlabRequest[" + toEvalString() + "]";
+        return Objects.toStringHelper(this)
+                .add("function", getFunction())
+                .add("results", getResults())
+                .add("parameters", getParameters())
+                .toString();
     }
 
     @Override
