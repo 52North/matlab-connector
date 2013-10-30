@@ -148,9 +148,9 @@ public abstract class MatlabConstruct extends AbstractConstruct {
         return constructString(scalar);
     }
 
-    protected String constructString(Object scalar) {
-        if (scalar instanceof String) {
-            return (String) scalar;
+    protected String constructString(Object o) {
+        if (o instanceof String) {
+            return (String) o;
         }
         throw new IllegalArgumentException();
     }

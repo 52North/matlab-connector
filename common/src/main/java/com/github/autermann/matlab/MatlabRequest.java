@@ -16,19 +16,17 @@
  */
 package com.github.autermann.matlab;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.value.StringVisitor;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Range;
 
 /**
  * Represents a MATLAB function execution request.
@@ -37,17 +35,11 @@ import com.google.common.collect.Range;
  *
  */
 public class MatlabRequest {
-    private static final Function<Integer, String> RESULT_FUNCTION
-            = new Function<Integer, String>() {
-                @Override
-                public String apply(Integer input) {
-                    return "result" + input;
-                }
-            };
+    private static final String DEFAULT_RESULT_NAME = "result";
     private static final Joiner JOINER = Joiner.on(", ");
     private final String function;
-    private int resultCount;
     private final List<MatlabValue> parameters;
+    private final List<String> results;
 
     /**
      * Creates a new <code>MLRequest</code> instance for the given function
@@ -59,22 +51,9 @@ public class MatlabRequest {
      * @param function the name of the function to execute
      */
     public MatlabRequest(String function) {
+        checkArgument(function != null && !function.isEmpty());
         this.function = function;
-        this.resultCount = 1;
-        this.parameters = new LinkedList<MatlabValue>();
-    }
-
-    /**
-     * Creates a new <code>MLRequest</code> instance for the given function name
-     * and expected/requested number of
-     * results.
-     *
-     * @param function    the name of the function
-     * @param resultCount the expected/requested number of results
-     */
-    public MatlabRequest(String function, int resultCount) {
-        this.function = function;
-        this.resultCount = resultCount;
+        this.results = new LinkedList<String>();
         this.parameters = new LinkedList<MatlabValue>();
     }
 
@@ -128,22 +107,18 @@ public class MatlabRequest {
         return this.parameters.size();
     }
 
-    /**
-     * Returns the number of expected/requested results.
-     *
-     * @return the number of expected/requested results
-     */
-    public int getResultCount() {
-        return this.resultCount;
+    public MatlabRequest addResult(String name) {
+        checkArgument(name != null && !name.isEmpty());
+        checkArgument(!this.results.contains(name));
+        this.results.add(name);
+        return this;
     }
-
-    /**
-     * Sets the number of expected/requested results.
-     *
-     * @param resultCount the number of expected/requested results
-     */
-    public void setResultCount(int resultCount) {
-        this.resultCount = resultCount;
+    public MatlabRequest addResult(Iterable<? extends String> names) {
+        checkArgument(names != null);
+        for (String name : names) {
+            addResult(name);
+        }
+        return this;
     }
 
     /**
@@ -156,21 +131,19 @@ public class MatlabRequest {
      */
     public String toEvalString() {
         StringBuilder sb = new StringBuilder().append('[');
-        JOINER.appendTo(sb, Iterables.transform(resultRange(), RESULT_FUNCTION));
-        sb.append("] = feval('").append(getFunction());
-        sb.append('\'');
+        StringVisitor f = StringVisitor.create();
+        if (getResults().isEmpty()) {
+            sb.append(DEFAULT_RESULT_NAME);
+        } else {
+            JOINER.appendTo(sb, getResults());
+        }
+        sb.append("] = feval('").append(getFunction()).append('\'');
         if (!parameters.isEmpty()) {
-            JOINER.appendTo(sb.append(", "),
-                            Iterables.transform(parameters,
-                                                StringVisitor.create()));
+            sb.append(", ");
+            JOINER.appendTo(sb, Iterables.transform(getParameters(), f));
         }
         sb.append(')');
         return sb.toString();
-    }
-
-    private ContiguousSet<Integer> resultRange() {
-        return ContiguousSet.create(Range.closed(1, getResultCount()),
-                                    DiscreteDomain.integers());
     }
 
     @Override
@@ -192,5 +165,12 @@ public class MatlabRequest {
         }
         return false;
 
+    }
+
+    public List<String> getResults() {
+        if (results.isEmpty()) {
+            return Collections.singletonList(DEFAULT_RESULT_NAME);
+        }
+        return Collections.unmodifiableList(results);
     }
 }

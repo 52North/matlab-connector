@@ -17,12 +17,13 @@
 package com.github.autermann.matlab.json;
 
 import java.lang.reflect.Type;
+import java.util.Map.Entry;
 
 import com.github.autermann.matlab.MatlabResult;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 /**
@@ -39,10 +40,11 @@ public class MatlabResultDeserializer extends MatlabValueDeserializer implements
                                     JsonDeserializationContext ctx)
             throws JsonParseException {
         MatlabResult mlresult = new MatlabResult();
-        JsonArray results = elem.getAsJsonObject()
-                .get(MatlabJSONConstants.RESULTS).getAsJsonArray();
-        for (JsonElement result : results) {
-            mlresult.addResult(deserializeValue(result));
+        JsonObject results = elem.getAsJsonObject().get(MatlabJSONConstants.RESULTS).getAsJsonObject();
+
+        for (Entry<String, JsonElement> result : results.entrySet()) {
+            mlresult.addResult(result.getKey(),
+                               deserializeValue(result.getValue()));
         }
         return mlresult;
     }

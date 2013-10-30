@@ -16,13 +16,16 @@
  */
 package com.github.autermann.matlab.yaml.construct;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.MatlabResult;
-import com.github.autermann.matlab.value.MatlabValue;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabResultConstruct extends MatlabConstruct {
@@ -34,8 +37,10 @@ public class MatlabResultConstruct extends MatlabConstruct {
     @Override
     public Object construct(Node node) {
         MatlabResult result = new MatlabResult();
-        for (MatlabValue value : constructValueList(node)) {
-            result.addResult(value);
+        Map<Object, Object> map = constructMapping(node);
+        for (Entry<Object, Object> e : map.entrySet()) {
+            result.addResult(constructString(e.getKey()),
+                             constructValue(e.getValue()));
         }
         return result;
     }

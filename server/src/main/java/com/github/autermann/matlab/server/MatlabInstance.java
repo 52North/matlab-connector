@@ -45,7 +45,7 @@ public class MatlabInstance {
     private static final String CELL_TYPE = "cell";
     private static final String DOUBLE_TYPE = "double";
     private static final String STRUCT_TYPE = "struct";
-    private final Logger logger = LoggerFactory.getLogger(MatlabInstance.class);
+    private final Logger log = LoggerFactory.getLogger(MatlabInstance.class);
     private final MatlabProxy proxy;
     private final MatlabTypeConverter processor;
     private final MatlabInstanceConfiguration config;
@@ -111,16 +111,16 @@ public class MatlabInstance {
 
         // eval request
         try {
-            logger.info("Evaluating function {}...", request.getFunction());
+            log.info("Evaluating function {}...", request.getFunction());
             String evalString = request.toEvalString();
-            logger.debug("Evaluation: {}", evalString);
+            log.debug("Evaluation: {}", evalString);
             proxy.eval(evalString);
 
             // get results
-            logger.info("Evaluation complete, parsing results...");
+            log.info("Evaluation complete, parsing results...");
             MatlabResult result = new MatlabResult();
-            for (int i = 1; i <= request.getResultCount(); i++) {
-                result.addResult(parseValue("result" + i));
+            for (String name : request.getResults()) {
+                result.addResult(name, parseValue(name));
             }
             return result;
         } catch (MatlabInvocationException e) {

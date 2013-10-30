@@ -16,7 +16,6 @@
  */
 package com.github.autermann.matlab.yaml;
 
-import com.github.autermann.matlab.values.MatlabValues;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -30,6 +29,7 @@ import org.yaml.snakeyaml.Yaml;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.values.MatlabValues;
 
 /**
  * TODO JavaDoc
@@ -40,7 +40,10 @@ public class MatlabYAMLTest {
 
     @Test
     public void testRequest() {
-        MatlabRequest request = new MatlabRequest("add", 5);
+        MatlabRequest request = new MatlabRequest("add")
+                .addResult("result1")
+                .addResult("result2")
+                .addResult("result3");
         request.addParameter(MatlabValues.randomMatlabArray(3));
         request.addParameter(MatlabBoolean.fromBoolean(true));
         request.addParameter(MatlabBoolean.fromBoolean(false));
@@ -65,14 +68,14 @@ public class MatlabYAMLTest {
     @Test
     public void testResult() {
         MatlabResult response = new MatlabResult();
-        response.addResult(MatlabValues.randomMatlabArray(3));
-        response.addResult(MatlabBoolean.fromBoolean(true));
-        response.addResult(MatlabBoolean.fromBoolean(false));
-        response.addResult(MatlabValues.randomCell());
-        response.addResult(MatlabValues.randomMatlabMatrix(5, 5));
-        response.addResult(MatlabValues.randomMatlabScalar());
-        response.addResult(MatlabValues.randomMatlabString());
-        response.addResult(MatlabValues.randomStruct());
+        response.addResult("result1", MatlabValues.randomMatlabArray(3));
+        response.addResult("result2", MatlabBoolean.fromBoolean(true));
+        response.addResult("result3", MatlabBoolean.fromBoolean(false));
+        response.addResult("result4", MatlabValues.randomCell());
+        response.addResult("result5", MatlabValues.randomMatlabMatrix(5, 5));
+        response.addResult("result6", MatlabValues.randomMatlabScalar());
+        response.addResult("result7", MatlabValues.randomMatlabString());
+        response.addResult("result8", MatlabValues.randomStruct());
         MatlabResult presponse = readWrite(response);
         assertThat(presponse, is(equalTo(response)));
 

@@ -44,8 +44,8 @@ public class MatlabRequestRepresent extends TypeSafeRepresent<MatlabRequest> {
                               delegate(t.getFunction())),
                 new NodeTuple(delegate(MatlabYAMLConstants.PARAMETERS_KEY),
                               delegate(t.getParameters())),
-                new NodeTuple(delegate(MatlabYAMLConstants.RESULT_COUNT_KEY),
-                              delegate(t.getResultCount())));
+                new NodeTuple(delegate(MatlabYAMLConstants.RESULTS),
+                              delegate(t.getResults())));
         return new MappingNode(MatlabYAMLConstants.MATLAB_REQUEST_TAG,
                                nodes, getFlowStyleForTuples(nodes));
     }

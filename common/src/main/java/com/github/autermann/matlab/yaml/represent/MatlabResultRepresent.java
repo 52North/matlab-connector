@@ -33,7 +33,7 @@ public class MatlabResultRepresent extends TypeSafeRepresent<MatlabResult> {
 
     @Override
     protected Node represent(MatlabResult t) {
-        return delegate(MatlabYAMLConstants.MATLAB_RESULT_TAG, t.iterator());
+        return delegate(MatlabYAMLConstants.MATLAB_RESULT_TAG, t.getResults());
     }
 
 }

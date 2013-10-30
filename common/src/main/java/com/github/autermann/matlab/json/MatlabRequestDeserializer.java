@@ -43,10 +43,15 @@ public class MatlabRequestDeserializer extends MatlabValueDeserializer implement
         String function = json.get(MatlabJSONConstants.FUNCTION).getAsString();
         MatlabRequest request = new MatlabRequest(function);
 
-        // add result count if it exists
-        if (json.has(MatlabJSONConstants.RESULT_COUNT)) {
-            request.setResultCount(json.get(MatlabJSONConstants.RESULT_COUNT)
-                    .getAsInt());
+        if (json.has(MatlabJSONConstants.RESULTS)) {
+            JsonElement results = json.get(MatlabJSONConstants.RESULTS);
+            if (results.isJsonPrimitive()) {
+                request.addResult(results.getAsJsonPrimitive().getAsString());
+            } else if (results.isJsonArray()) {
+                for (JsonElement e : results.getAsJsonArray()) {
+                    request.addResult(e.getAsString());
+                }
+            }
         }
 
         // add parameters

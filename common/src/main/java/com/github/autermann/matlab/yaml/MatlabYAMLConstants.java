@@ -36,7 +36,7 @@ public interface MatlabYAMLConstants {
     Tag MATLAB_RESULT_TAG = new Tag("!matlab-result");
     Tag MATLAB_BOOLEAN_TAG = new Tag("!matlab-boolean");
     String PARAMETERS_KEY = "parameters";
-    String RESULT_COUNT_KEY = "resultCount";
+    String RESULTS = "results";
     String MESSAGE_KEY = "message";
     String FUNCTION_KEY = "function";
 }

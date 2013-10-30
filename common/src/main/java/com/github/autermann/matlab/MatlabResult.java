@@ -16,13 +16,18 @@
  */
 package com.github.autermann.matlab;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Joiner;
+import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Represents the result of a MATLAB function execution.
@@ -31,39 +36,38 @@ import com.google.common.collect.Lists;
  *
  */
 public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
-    private static final Joiner JOINER = Joiner.on(", ");
-    private final List<MatlabValue> results;
+    private static final MapJoiner JOINER = Joiner.on(", ").withKeyValueSeparator(" = ");
+    private final LinkedHashMap<String, MatlabValue> results;
 
     /**
      * Creates a new <code>MLResult</code> instance.
      *
+     * @param request
      */
     public MatlabResult() {
-        this.results = Lists.newArrayList();
+        this.results = Maps.newLinkedHashMap();
     }
 
     /**
      * Adds a result {@link MatlabValue}.
      *
+     * @param name
      * @param result the result <code>MatlabValue</code>
+     * @return this
      */
-    public void addResult(MatlabValue result) {
-        getResults().add(result);
+    public MatlabResult addResult(String name, MatlabValue result) {
+        checkNotNull(name);
+        checkNotNull(result);
+        this.results.put(name, result);
+        return this;
     }
 
-    protected List<MatlabValue> getResults() {
-        return results;
+    public Map<String, MatlabValue> getResults() {
+        return Collections.unmodifiableMap(results);
     }
 
-    /**
-     * Returns a result {@link MatlabValue} at a given index.
-     *
-     * @param index the index of the result (starts at 0)
-     *
-     * @return the result <code>MatlabValue</code> at the given index
-     */
-    public MatlabValue getResult(int index) {
-        return getResults().get(index);
+    public MatlabValue getResult(String name) {
+        return getResults().get(name);
     }
 
     /**
@@ -78,13 +82,12 @@ public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("MatlabResult[");
-        JOINER.appendTo(sb, getResults());
-        return sb.append(']').toString();
+        return JOINER.appendTo(sb, getResults()).append(']').toString();
     }
 
     @Override
     public Iterator<MatlabValue> iterator() {
-        return getResults().iterator();
+        return getResults().values().iterator();
     }
 
     @Override

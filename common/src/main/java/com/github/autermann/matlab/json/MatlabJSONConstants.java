@@ -24,9 +24,8 @@ package com.github.autermann.matlab.json;
 public interface MatlabJSONConstants {
     public static final String EXCEPTION = "exception";
     public static final String FUNCTION = "function";
-    public static final String RESULT_COUNT = "resultCount";
-    public static final String PARAMETERS = "parameters";
     public static final String RESULTS = "results";
+    public static final String PARAMETERS = "parameters";
     public static final String STRUCT = "struct";
     public static final String CELL = "cell";
     public static final String IOEXCEPTION = "ioexception";
