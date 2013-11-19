@@ -73,10 +73,14 @@ public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar
         return Objects.hashCode(value());
     }
 
+     @Override
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitScalar(this);
-        return visitor;
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

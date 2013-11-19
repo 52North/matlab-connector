@@ -58,9 +58,13 @@ public class MatlabString extends MatlabValue implements
     }
 
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitString(this);
-        return visitor;
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

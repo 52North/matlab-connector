@@ -77,12 +77,6 @@ public class MatlabCell extends MatlabValue {
     }
 
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitCell(this);
-        return visitor;
-    }
-
-    @Override
     public MatlabCell asCell() {
         return this;
     }
@@ -90,5 +84,15 @@ public class MatlabCell extends MatlabValue {
     @Override
     public boolean isCell() {
         return true;
+    }
+
+    @Override
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

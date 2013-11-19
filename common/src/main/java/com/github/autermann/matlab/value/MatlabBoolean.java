@@ -16,7 +16,6 @@
  */
 package com.github.autermann.matlab.value;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 
@@ -51,12 +50,6 @@ public class MatlabBoolean extends MatlabValue {
     }
 
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitBoolean(this);
-        return visitor;
-    }
-
-    @Override
     public MatlabBoolean asBoolean() {
         return this;
     }
@@ -76,5 +69,15 @@ public class MatlabBoolean extends MatlabValue {
 
     public static MatlabBoolean fromBoolean(boolean bool) {
         return bool ? TRUE : FALSE;
+    }
+
+    @Override
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

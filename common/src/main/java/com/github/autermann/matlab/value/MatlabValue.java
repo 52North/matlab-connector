@@ -23,7 +23,8 @@ package com.github.autermann.matlab.value;
  *
  */
 public abstract class MatlabValue {
-    public abstract <T extends MatlabValueVisitor> T accept(T visitor);
+    public abstract void accept(MatlabValueVisitor visitor);
+    public abstract <T> T accept(ReturningMatlabValueVisitor<T> visitor);
 
     @Override
     public abstract boolean equals(Object o);

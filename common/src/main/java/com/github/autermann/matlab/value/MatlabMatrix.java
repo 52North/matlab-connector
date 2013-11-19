@@ -80,9 +80,13 @@ public class MatlabMatrix extends MatlabValue {
     }
 
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitMatrix(this);
-        return visitor;
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

@@ -30,40 +30,39 @@ import com.google.common.primitives.Doubles;
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class StringVisitor implements MatlabValueVisitor,
+public class StringVisitor implements ReturningMatlabValueVisitor<String>,
                                       Function<MatlabValue, String> {
     private static final String BOOL_FALSE = "0";
     private static final String BOOL_TRUE = "1";
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
     private static final MapJoiner STRUCT_JOINER = COMMA_JOINER.withKeyValueSeparator(", ");
-    private String value;
 
     private StringVisitor() {
     }
 
     @Override
-    public void visitArray(MatlabArray value) {
+    public String visit(MatlabArray value) {
         StringBuilder sb = new StringBuilder("[ ");
         Joiner joiner = Joiner.on(", ");
         joiner.appendTo(sb, Doubles.asList(value.value()));
-        this.value = sb.append(" ]").toString();
+        return sb.append(" ]").toString();
     }
 
     @Override
-    public void visitBoolean(MatlabBoolean value) {
-        this.value = value.value() ? BOOL_TRUE : BOOL_FALSE;
+    public String visit(MatlabBoolean value) {
+        return value.value() ? BOOL_TRUE : BOOL_FALSE;
     }
 
 
     @Override
-    public void visitCell(MatlabCell value) {
+    public String visit(MatlabCell value) {
         StringBuilder sb = new StringBuilder().append("{ ");
         COMMA_JOINER.appendTo(sb, Iterables.transform(value.value(), this));
-        this.value = sb.append(" }").toString();
+        return sb.append(" }").toString();
     }
 
     @Override
-    public void visitMatrix(MatlabMatrix value) {
+    public String visit(MatlabMatrix value) {
         StringBuilder builder = new StringBuilder().append("[ ");
         double[][] matrix = value.value();
         for (int i = 0; i < matrix.length; ++i) {
@@ -72,21 +71,21 @@ public class StringVisitor implements MatlabValueVisitor,
                 builder.append("; ");
             }
         }
-        this.value = builder.append(" ]").toString();
+        return builder.append(" ]").toString();
     }
 
     @Override
-    public void visitScalar(MatlabScalar value) {
-        this.value = String.valueOf(value.value());
+    public String visit(MatlabScalar value) {
+        return String.valueOf(value.value());
     }
 
     @Override
-    public void visitString(MatlabString value) {
-        this.value = "'" + value.value().replace("'", "''") + "'";
+    public String visit(MatlabString value) {
+        return "'" + value.value().replace("'", "''") + "'";
     }
 
     @Override
-    public void visitStruct(MatlabStruct value) {
+    public String visit(MatlabStruct value) {
         StringBuilder sb = new StringBuilder().append("struct(");
         STRUCT_JOINER.appendTo(sb, Iterables.transform(value.value().entrySet(),
                             new Function<Entry<MatlabString, MatlabValue>, Entry<String, String>>() {
@@ -97,16 +96,11 @@ public class StringVisitor implements MatlabValueVisitor,
                                     StringVisitor.this.apply(input.getValue()));
                         }
             }));
-        this.value = sb.append(')').toString();
+        return sb.append(')').toString();
     }
-
-    public String value() {
-        return this.value;
-    }
-
     @Override
     public String apply(MatlabValue input) {
-        return input.accept(this).value();
+        return input.accept(this);
     }
 
     public static StringVisitor create() {

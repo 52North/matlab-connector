@@ -80,12 +80,6 @@ public class MatlabArray extends MatlabValue {
     }
 
     @Override
-    public <T extends MatlabValueVisitor> T accept(T visitor) {
-        checkNotNull(visitor).visitArray(this);
-        return visitor;
-    }
-
-    @Override
     public MatlabArray asArray() {
         return this;
     }
@@ -93,5 +87,15 @@ public class MatlabArray extends MatlabValue {
     @Override
     public boolean isArray() {
         return true;
+    }
+
+    @Override
+    public void accept(MatlabValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

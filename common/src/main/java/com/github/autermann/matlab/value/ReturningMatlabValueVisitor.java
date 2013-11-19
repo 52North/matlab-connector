@@ -19,22 +19,22 @@ package com.github.autermann.matlab.value;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann
  */
-public interface MatlabValueVisitor {
+public interface ReturningMatlabValueVisitor<T> {
 
-    void visit(MatlabArray array);
+    T visit(MatlabArray array);
 
-    void visit(MatlabBoolean bool);
+    T visit(MatlabBoolean bool);
 
-    void visit(MatlabCell cell);
+    T visit(MatlabCell cell);
 
-    void visit(MatlabMatrix matrix);
+    T visit(MatlabMatrix matrix);
 
-    void visit(MatlabScalar scalar);
+    T visit(MatlabScalar scalar);
 
-    void visit(MatlabString string);
+    T visit(MatlabString string);
 
-    void visit(MatlabStruct struct);
+    T visit(MatlabStruct struct);
 
 }
