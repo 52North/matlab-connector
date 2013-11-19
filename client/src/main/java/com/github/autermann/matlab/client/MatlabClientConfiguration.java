@@ -62,13 +62,20 @@ public class MatlabClientConfiguration {
         return attempts;
     }
 
-    private static class Builder {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
         private static final int DEFAULT_TIMEOUT = 10 * 1000;
         public static final int DEFAULT_ATTEMPTS = 3;
         private InetSocketAddress address;
         private ClientSocketFactory socketFactory;
         private int timeout = DEFAULT_TIMEOUT;
         private int attempts = DEFAULT_ATTEMPTS;
+
+        private Builder() {
+        }
 
         public Builder withAddress(InetSocketAddress address) {
             this.address = checkNotNull(address);
