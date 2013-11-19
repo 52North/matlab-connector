@@ -17,6 +17,7 @@
 package com.github.autermann.matlab;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -59,7 +60,13 @@ public class MatlabRequest {
      * @param parameter the parameter <code>MatlabValue</code> to add
      */
     public void addParameter(MatlabValue parameter) {
-        this.parameters.add(parameter);
+        this.parameters.add(checkNotNull(parameter));
+    }
+
+    public void addParameters(Iterable<? extends MatlabValue> parameters) {
+        for (MatlabValue parameter : parameters) {
+            addParameter(parameter);
+        }
     }
 
     /**
