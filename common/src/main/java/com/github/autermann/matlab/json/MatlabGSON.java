@@ -16,13 +16,13 @@
  */
 package com.github.autermann.matlab.json;
 
-import com.github.autermann.matlab.MatlabEncoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import com.github.autermann.matlab.MatlabEncoding;
 import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
@@ -54,7 +54,7 @@ public class MatlabGSON implements MatlabEncoding {
     public MatlabResponse decodeResponse(InputStream is) {
         JsonElement json = decode(is);
         try {
-            return getGson().fromJson(json, MatlabResponse.class);
+            return getGson().fromJson(json, MatlabResult.class);
         } catch (JsonParseException e1) {
             try {
                 return getGson().fromJson(json, MatlabException.class);
