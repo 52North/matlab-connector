@@ -19,6 +19,7 @@ package com.github.autermann.matlab.yaml.represent;
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
@@ -32,7 +33,7 @@ public class MatlabStructRepresent extends TypeSafeRepresent<MatlabStruct> {
 
     @Override
     protected Node represent(MatlabStruct struct) {
-        return delegate(struct.value());
+        return delegate(MatlabYAMLConstants.MATLAB_STRUCT_TAG, struct.value());
     }
 
 }

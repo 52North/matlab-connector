@@ -57,6 +57,8 @@ public class MatlabConstructor extends SafeConstructor {
                  new MatlabResultConstruct(this));
         register(MatlabYAMLConstants.MATLAB_BOOLEAN_TAG,
                  new MatlabBooleanConstruct(this));
+        register(MatlabYAMLConstants.MATLAB_FILE_TAG,
+                 new MatlabFileConstruct(this));
     }
 
     private void register(Tag tag, Construct construct) {

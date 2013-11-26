@@ -24,7 +24,10 @@ package com.github.autermann.matlab.value;
  */
 public abstract class MatlabValue {
     public abstract void accept(MatlabValueVisitor visitor);
+
     public abstract <T> T accept(ReturningMatlabValueVisitor<T> visitor);
+
+    public abstract MatlabType getType();
 
     @Override
     public abstract boolean equals(Object o);
@@ -39,7 +42,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isScalar() {
-        return false;
+        return getType() == MatlabType.SCALAR;
     }
 
     /**
@@ -49,7 +52,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isMatrix() {
-        return false;
+        return getType() == MatlabType.MATRIX;
     }
 
     /**
@@ -59,7 +62,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isArray() {
-        return false;
+        return getType() == MatlabType.ARRAY;
     }
 
     /**
@@ -69,7 +72,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isString() {
-        return false;
+        return getType() == MatlabType.STRING;
     }
 
     /**
@@ -79,7 +82,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isCell() {
-        return false;
+        return getType() == MatlabType.CELL;
     }
 
     /**
@@ -89,7 +92,7 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isStruct() {
-        return false;
+        return getType() == MatlabType.STRUCT;
     }
 
     /**
@@ -99,7 +102,17 @@ public abstract class MatlabValue {
      *         otherwise
      */
     public boolean isBoolean() {
-        return false;
+        return getType() == MatlabType.BOOLEAN;
+    }
+
+    /**
+     * Checks if this value is a file.
+     *
+     * @return <code>true</code> if this value is a file, <code>false</code>
+     *         otherwise
+     */
+    public boolean isFile() {
+        return getType() == MatlabType.FILE;
     }
 
     /**
@@ -112,7 +125,11 @@ public abstract class MatlabValue {
      * @see #isScalar()
      */
     public MatlabScalar asScalar() {
-        throw new UnsupportedOperationException();
+        if (isScalar()) {
+            return (MatlabScalar) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -125,7 +142,11 @@ public abstract class MatlabValue {
      * @see #isMatrix()
      */
     public MatlabMatrix asMatrix() {
-        throw new UnsupportedOperationException();
+        if (isMatrix()) {
+            return (MatlabMatrix) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -136,7 +157,11 @@ public abstract class MatlabValue {
      * @return this value as a {@link MatlabArray}
      */
     public MatlabArray asArray() {
-        throw new UnsupportedOperationException();
+        if (isArray()) {
+            return (MatlabArray) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -147,7 +172,11 @@ public abstract class MatlabValue {
      * @return this value as a {@link MatlabString}
      */
     public MatlabString asString() {
-        throw new UnsupportedOperationException();
+        if (isString()) {
+            return (MatlabString) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -158,7 +187,11 @@ public abstract class MatlabValue {
      * @return this value as a {@link MatlabCell}
      */
     public MatlabCell asCell() {
-        throw new UnsupportedOperationException();
+        if (isCell()) {
+            return (MatlabCell) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -169,7 +202,11 @@ public abstract class MatlabValue {
      * @return this value as a {@link MatlabStruct}
      */
     public MatlabStruct asStruct() {
-        throw new UnsupportedOperationException();
+        if (isStruct()) {
+            return (MatlabStruct) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -180,12 +217,32 @@ public abstract class MatlabValue {
      * @return this value as a {@link MatlabBoolean}
      */
     public MatlabBoolean asBoolean() {
-        throw new UnsupportedOperationException();
+        if (isBoolean()) {
+            return (MatlabBoolean) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Returns this value as a file. Will throw a
+     * {@link UnsupportedOperationException}
+     * if this value is not a boolean.
+     *
+     * @return this value as a {@link MatlabBoolean}
+     */
+    public MatlabFile asFile() {
+        if (isFile()) {
+            return (MatlabFile) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
     public String toString() {
         return String.format("%s[%s]", getClass().getSimpleName(),
-                             StringVisitor.create().apply(this));
+                             MatlabEvalStringVisitor.create().apply(this));
     }
+
 }

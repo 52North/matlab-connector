@@ -26,7 +26,7 @@ public interface MatlabJSONConstants {
     public static final String FUNCTION = "function";
     public static final String RESULTS = "results";
     public static final String PARAMETERS = "parameters";
-    public static final String STRUCT = "struct";
-    public static final String CELL = "cell";
     public static final String IOEXCEPTION = "ioexception";
+    public static final String TYPE = "type";
+    public static final String VALUE = "value";
 }

@@ -16,16 +16,21 @@
  */
 package com.github.autermann.matlab.values;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Random;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 /**
  * TODO JavaDoc
@@ -103,5 +108,14 @@ public class MatlabValues {
         struct.set(MatlabValues.randomString(),
                         MatlabValues.randomMatlabString());
         return struct;
+    }
+
+    public static MatlabFile randomFile() throws IOException {
+        File file = File.createTempFile("test-file", ".rnd");
+        file.deleteOnExit();
+        byte[] bytes = new byte[8192];
+        random.nextBytes(bytes);
+        ByteStreams.write(bytes, Files.newOutputStreamSupplier(file));
+        return new MatlabFile(file);
     }
 }

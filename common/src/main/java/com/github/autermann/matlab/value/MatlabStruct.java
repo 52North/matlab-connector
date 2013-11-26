@@ -102,12 +102,7 @@ public class MatlabStruct extends MatlabValue {
     }
 
     @Override
-    public MatlabStruct asStruct() {
-        return this;
-    }
-
-    @Override
-    public boolean isStruct() {
-        return true;
+    public MatlabType getType() {
+        return MatlabType.STRUCT;
     }
 }

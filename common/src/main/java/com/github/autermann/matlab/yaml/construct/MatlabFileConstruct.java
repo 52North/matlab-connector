@@ -14,26 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml.represent;
+package com.github.autermann.matlab.yaml.construct;
 
 import org.yaml.snakeyaml.nodes.Node;
-
-import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
+import com.github.autermann.matlab.value.MatlabFile;
+import com.google.common.io.BaseEncoding;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
+ *
+ * @author Christian Autermann
  */
-public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
+public class MatlabFileConstruct extends MatlabConstruct {
 
-    public MatlabScalarRepresent(MatlabRepresenter delegate) {
-        super(delegate, MatlabScalar.class);
+    public MatlabFileConstruct(MatlabConstructor delegate) {
+        super(delegate);
     }
 
     @Override
-    protected Node represent(MatlabScalar t) {
-        return delegate(MatlabYAMLConstants.MATLAB_SCALAR_TAG, t.value());
+    public Object construct(Node node) {
+        return new MatlabFile(BaseEncoding.base64()
+                .decode(constructString(node)));
     }
 
 }

@@ -19,6 +19,7 @@ package com.github.autermann.matlab.yaml.represent;
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
@@ -33,6 +34,6 @@ public class MatlabBooleanRepresent extends TypeSafeRepresent<MatlabBoolean> {
 
     @Override
     protected Node represent(MatlabBoolean t) {
-        return delegate(t.value());
+        return delegate(MatlabYAMLConstants.MATLAB_BOOLEAN_TAG, t.value());
     }
 }

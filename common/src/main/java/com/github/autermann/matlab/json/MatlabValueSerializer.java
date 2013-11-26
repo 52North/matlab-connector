@@ -16,18 +16,21 @@
  */
 package com.github.autermann.matlab.json;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.value.ReturningMatlabValueVisitor;
+import com.google.common.io.BaseEncoding;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -44,8 +47,15 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
     @Override
     public JsonElement serialize(MatlabValue value, Type type,
                                  JsonSerializationContext ctx) {
-        return value == null ? new JsonNull() : value
-                .accept(new VisitingSerializer(ctx));
+        if (value == null) {
+            return new JsonNull();
+        }
+        JsonObject object = new JsonObject();
+        object.addProperty(MatlabJSONConstants.TYPE,
+                           value.getType().toString());
+        object.add(MatlabJSONConstants.VALUE,
+                   value.accept(new VisitingSerializer(ctx)));
+        return object;
     }
 
     private class VisitingSerializer implements
@@ -68,10 +78,7 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
 
         @Override
         public JsonElement visit(MatlabCell cell) {
-            JsonObject object = new JsonObject();
-            object.add(MatlabJSONConstants.CELL,
-                       ctx.serialize(cell.value()));
-            return object;
+            return ctx.serialize(cell.value());
         }
 
         @Override
@@ -92,13 +99,24 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
         @Override
         public JsonElement visit(MatlabStruct struct) {
             JsonObject object = new JsonObject();
-            JsonObject structobj = new JsonObject();
             for (Entry<MatlabString, MatlabValue> e : struct.value().entrySet()) {
-                structobj.add(e.getKey().value(),
-                              serialize(e.getValue(), MatlabValue.class, ctx));
+                object.add(e.getKey().value(),
+                           serialize(e.getValue(), MatlabValue.class, ctx));
             }
-            object.add(MatlabJSONConstants.STRUCT, structobj);
             return object;
+        }
+
+        @Override
+        public JsonElement visit(MatlabFile file) {
+            if (!file.isLoaded()) {
+                try {
+                    file.load();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            return ctx
+                    .serialize(BaseEncoding.base64().encode(file.getContent()));
         }
     }
 }

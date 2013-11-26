@@ -65,6 +65,10 @@ public class MatlabArray extends MatlabValue {
         return array;
     }
 
+    public int size() {
+        return array.length;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabArray) {
@@ -80,16 +84,6 @@ public class MatlabArray extends MatlabValue {
     }
 
     @Override
-    public MatlabArray asArray() {
-        return this;
-    }
-
-    @Override
-    public boolean isArray() {
-        return true;
-    }
-
-    @Override
     public void accept(MatlabValueVisitor visitor) {
         visitor.visit(this);
     }
@@ -97,5 +91,10 @@ public class MatlabArray extends MatlabValue {
     @Override
     public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public MatlabType getType() {
+        return MatlabType.ARRAY;
     }
 }

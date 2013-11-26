@@ -14,26 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml.represent;
-
-import org.yaml.snakeyaml.nodes.Node;
-
-import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
+package com.github.autermann.matlab.value;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
+ *
+ * @author Christian Autermann
  */
-public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
-
-    public MatlabScalarRepresent(MatlabRepresenter delegate) {
-        super(delegate, MatlabScalar.class);
-    }
+public enum MatlabType {
+    ARRAY,
+    BOOLEAN,
+    CELL,
+    FILE,
+    MATRIX,
+    SCALAR,
+    STRING,
+    STRUCT;
 
     @Override
-    protected Node represent(MatlabScalar t) {
-        return delegate(MatlabYAMLConstants.MATLAB_SCALAR_TAG, t.value());
+    public String toString() {
+        return name().toLowerCase();
+    }
+
+    public static MatlabType fromString(String string) {
+        for (MatlabType type : values()) {
+            if (type.toString().equals(string)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
 }

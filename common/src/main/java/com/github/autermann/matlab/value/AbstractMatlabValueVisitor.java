@@ -14,26 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml.represent;
+package com.github.autermann.matlab.value;
 
-import org.yaml.snakeyaml.nodes.Node;
 
-import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
+public class AbstractMatlabValueVisitor implements MatlabValueVisitor {
 
-/**
- * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
- */
-public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
-
-    public MatlabScalarRepresent(MatlabRepresenter delegate) {
-        super(delegate, MatlabScalar.class);
+    @Override
+    public void visit(MatlabArray array) {
     }
 
     @Override
-    protected Node represent(MatlabScalar t) {
-        return delegate(MatlabYAMLConstants.MATLAB_SCALAR_TAG, t.value());
+    public void visit(MatlabBoolean bool) {
+    }
+
+    @Override
+    public void visit(MatlabCell cell) {
+    }
+
+    @Override
+    public void visit(MatlabMatrix matrix) {
+    }
+
+    @Override
+    public void visit(MatlabScalar scalar) {
+    }
+
+    @Override
+    public void visit(MatlabString string) {
+    }
+
+    @Override
+    public void visit(MatlabStruct struct) {
+    }
+
+    @Override
+    public void visit(MatlabFile file) {
     }
 
 }

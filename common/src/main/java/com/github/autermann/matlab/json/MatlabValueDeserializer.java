@@ -16,20 +16,26 @@
  */
 package com.github.autermann.matlab.json;
 
+import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
+import com.google.common.io.BaseEncoding;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonParseException;
 
 /**
  * MatlabValueDeserializer JSON serializing and deserializing methods.
@@ -37,7 +43,15 @@ import com.google.gson.JsonPrimitive;
  * @author Richard Jones
  *
  */
-public class MatlabValueDeserializer {
+public class MatlabValueDeserializer implements JsonDeserializer<MatlabValue> {
+
+    @Override
+    public MatlabValue deserialize(JsonElement json, Type typeOfT,
+                                   JsonDeserializationContext context)
+            throws JsonParseException {
+        return deserializeValue(json);
+    }
+
     /**
      * Deserializes an {@link MatlabValue} from a {@link JsonElement}.
      *
@@ -47,47 +61,45 @@ public class MatlabValueDeserializer {
      * @return the deserialized <code>MatlabValue</code>
      */
     public MatlabValue deserializeValue(JsonElement element) {
-        if (element.isJsonPrimitive()) {
-            return deserializePrimitive(element.getAsJsonPrimitive());
-        } else if (element.isJsonArray()) {
-            return deserializeArray(element.getAsJsonArray());
-        } else if (element.isJsonObject()) {
-            return deserializeObject(element.getAsJsonObject());
-        } else {
-            throw new IllegalArgumentException();
+        if (!element.isJsonObject()) {
+            throw new JsonParseException("expected JSON object");
+        }
+        JsonObject json = element.getAsJsonObject();
+        MatlabType type = getType(json);
+        JsonElement value = json.get(MatlabJSONConstants.VALUE);
+        switch (type) {
+            case ARRAY:
+                return parseMatlabArray(value);
+            case BOOLEAN:
+                return parseMatlabBoolean(value);
+            case CELL:
+                return parseMatlabCell(value);
+            case FILE:
+                return parseMatlabFile(value);
+            case MATRIX:
+                return parseMatlabMatrix(value);
+            case SCALAR:
+                return parseMatlabScalar(value);
+            case STRING:
+                return parseMatlabString(value);
+            case STRUCT:
+                return parseMatlabStruct(value);
+            default:
+                throw new JsonParseException("Unknown type: " + type);
         }
     }
 
-    protected MatlabValue deserializeObject(JsonObject json) {
-        if (json.has(MatlabJSONConstants.CELL)) {
-            return parseMatlabCell(json.get(MatlabJSONConstants.CELL).getAsJsonArray());
-        } else if (json.has(MatlabJSONConstants.STRUCT)) {
-            return parseMatlabStruct(json.get(MatlabJSONConstants.STRUCT).getAsJsonObject());
-        } else {
-            throw new IllegalArgumentException();
+    private MatlabType getType(JsonObject json) throws JsonParseException {
+        String type = json.get(MatlabJSONConstants.TYPE).getAsString();
+        try {
+            return MatlabType.fromString(type);
+        } catch (IllegalArgumentException e) {
+            throw new JsonParseException("Unknown type: " + type);
         }
     }
 
-    protected MatlabValue deserializeArray(JsonArray array) {
-        // have a peek to check for matrix
-        if (array.get(0).isJsonArray()) {
-            return parseMatlabMatrix(array);
-        } else {
-            return parseMatlabArray(array);
-        }
-    }
-
-    protected MatlabValue deserializePrimitive(JsonPrimitive primitive) {
-        if (primitive.isString()) {
-            return parseMatlabString(primitive);
-        } else if (primitive.isBoolean()) {
-            return parseMatlabBoolean(primitive);
-        } else {
-            return parseMatlabScalar(primitive);
-        }
-    }
-
-    protected MatlabMatrix parseMatlabMatrix(JsonArray array) {
+    private MatlabMatrix parseMatlabMatrix(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
         double[][] values = new double[array.size()][array.get(0)
                 .getAsJsonArray().size()];
         for (int i = 0; i < array.size(); i++) {
@@ -99,7 +111,8 @@ public class MatlabValueDeserializer {
         return new MatlabMatrix(values);
     }
 
-    protected MatlabArray parseMatlabArray(JsonArray array) {
+    private MatlabArray parseMatlabArray(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
         double[] values = new double[array.size()];
         for (int i = 0; i < array.size(); i++) {
             values[i] = array.get(i).getAsDouble();
@@ -107,15 +120,16 @@ public class MatlabValueDeserializer {
         return new MatlabArray(values);
     }
 
-    protected MatlabStruct parseMatlabStruct(JsonObject json) {
+    private MatlabStruct parseMatlabStruct(JsonElement value) {
         MatlabStruct struct = new MatlabStruct();
-        for (Entry<String, JsonElement> e : json.entrySet()) {
+        for (Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
             struct.set(e.getKey(), deserializeValue(e.getValue()));
         }
         return struct;
     }
 
-    protected MatlabCell parseMatlabCell(JsonArray array) {
+    private MatlabCell parseMatlabCell(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
         MatlabValue[] cell = new MatlabValue[array.size()];
         for (int i = 0; i < array.size(); i++) {
             cell[i] = deserializeValue(array.get(i));
@@ -123,15 +137,19 @@ public class MatlabValueDeserializer {
         return new MatlabCell(cell);
     }
 
-    protected MatlabScalar parseMatlabScalar(JsonPrimitive primitive) {
-        return new MatlabScalar(primitive.getAsDouble());
+    private MatlabScalar parseMatlabScalar(JsonElement value) {
+        return new MatlabScalar(value.getAsDouble());
     }
 
-    protected MatlabBoolean parseMatlabBoolean(JsonPrimitive primitive) {
-        return MatlabBoolean.fromBoolean(primitive.getAsBoolean());
+    private MatlabBoolean parseMatlabBoolean(JsonElement value) {
+        return MatlabBoolean.fromBoolean(value.getAsBoolean());
     }
 
-    protected MatlabString parseMatlabString(JsonPrimitive primitive) {
-        return new MatlabString(primitive.getAsString());
+    private MatlabString parseMatlabString(JsonElement value) {
+        return new MatlabString(value.getAsString());
+    }
+
+    private MatlabFile parseMatlabFile(JsonElement value) {
+        return new MatlabFile(BaseEncoding.base64().decode(value.getAsString()));
     }
 }

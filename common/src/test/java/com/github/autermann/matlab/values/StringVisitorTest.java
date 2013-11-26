@@ -29,7 +29,7 @@ import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
-import com.github.autermann.matlab.value.StringVisitor;
+import com.github.autermann.matlab.value.MatlabEvalStringVisitor;
 
 /**
  * TODO JavaDoc
@@ -37,11 +37,11 @@ import com.github.autermann.matlab.value.StringVisitor;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class StringVisitorTest {
-    private StringVisitor visitor;
+    private MatlabEvalStringVisitor visitor;
 
     @Before
     public void setUp() {
-        this.visitor = StringVisitor.create();
+        this.visitor = MatlabEvalStringVisitor.create();
     }
 
     @Test

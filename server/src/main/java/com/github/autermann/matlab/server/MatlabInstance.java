@@ -18,6 +18,8 @@ package com.github.autermann.matlab.server;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,17 +30,20 @@ import org.slf4j.LoggerFactory;
 import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
+import com.github.autermann.matlab.value.AbstractMatlabValueVisitor;
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabEvalStringVisitor;
+import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
-import com.github.autermann.matlab.value.StringVisitor;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
@@ -78,8 +83,8 @@ public class MatlabInstance {
             MatlabInstanceConfiguration config) {
         MatlabProxyFactoryOptions.Builder builder
                 = new MatlabProxyFactoryOptions.Builder()
-                        .setHidden(config.isHidden())
-                        .setPort(config.getPort());
+                .setHidden(config.isHidden())
+                .setPort(config.getPort());
         if (config.getBaseDir().isPresent()) {
             builder.setMatlabStartingDirectory(config.getBaseDir().get());
         }
@@ -131,10 +136,11 @@ public class MatlabInstance {
         return result;
     }
 
-    protected String[] genvarnames(String[] rarray) throws MatlabInvocationException {
+    protected String[] genvarnames(String[] rarray) throws
+            MatlabInvocationException {
         final int length = rarray.length;
         final String[] varray = new String[length];
-        final StringVisitor f = StringVisitor.create();
+        final MatlabEvalStringVisitor f = MatlabEvalStringVisitor.create();
         for (int i = 0; i < length; ++i) {
             String safe = f.apply(new MatlabString(rarray[i]));
             String cmd = String.format("genvarname(%s, who)", safe);
@@ -152,7 +158,7 @@ public class MatlabInstance {
         sb.append("feval('").append(function).append('\'');
         if (!parameters.isEmpty()) {
             COMMA_JOINER.appendTo(sb.append(", "), Iterables.transform(
-                    parameters, StringVisitor.create()));
+                    parameters, MatlabEvalStringVisitor.create()));
         }
         sb.append(')');
         // evaluate
@@ -165,20 +171,30 @@ public class MatlabInstance {
         preHandle();
 
         // eval request
+        File temp = Files.createTempDir();
         try {
+            request.visitParameters(new FileSavingVisitor(temp));
+
             log.info("Evaluating function {}...", request.getFunction());
             Map<String, MatlabValue> results = feval(request.getFunction(),
                                                      request.getResults(),
                                                      request.getParameters());
 
+            FileDeletingVisitor delV = new FileDeletingVisitor();
+
             MatlabResult result = new MatlabResult();
             for (Entry<String, MatlabValue> e : results.entrySet()) {
+                e.getValue().accept(delV);
                 result.addResult(e.getKey(), e.getValue());
             }
+
+            request.visitParameters(delV);
+
             return result;
         } catch (MatlabInvocationException e) {
             throw new MatlabException("Unable to evaluate request.", e);
         } finally {
+            temp.delete();
             try {
                 postHandle();
             } catch (MatlabException e) {
@@ -201,7 +217,7 @@ public class MatlabInstance {
                 return parseStructValue(varName);
             } else {
                 throw new MatlabException("Unable to parse value of type " +
-                                                   type + ", unsupported.");
+                                          type + ", unsupported.");
             }
         } catch (MatlabInvocationException e) {
             throw new MatlabException("Unable to parse value.", e);
@@ -209,7 +225,7 @@ public class MatlabInstance {
     }
 
     private String getType(String varName) throws MatlabInvocationException {
-        String cmd = String.format("class(%s)",varName);
+        String cmd = String.format("class(%s)", varName);
         return (String) proxy.returningEval(cmd, 1)[0];
     }
 
@@ -279,5 +295,67 @@ public class MatlabInstance {
             struct.set(name, parseValue(subvarName));
         }
         return struct;
+    }
+
+    private static class FileSavingVisitor extends AbstractMatlabValueVisitor {
+        private final File directory;
+
+        FileSavingVisitor(File directory) {
+            this.directory = checkNotNull(directory);
+        }
+
+        @Override
+        public void visit(MatlabCell cell) {
+            for (MatlabValue v : cell) {
+                v.accept(this);
+            }
+        }
+
+        @Override
+        public void visit(MatlabStruct struct) {
+            for (MatlabValue v : struct.value().values()) {
+                v.accept(this);
+            }
+        }
+
+        @Override
+        public void visit(MatlabFile file) {
+            try {
+                File f = File.createTempFile("matlab-file", ".bin", directory);
+                file.save(f);
+                file.unload();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private static class FileDeletingVisitor extends AbstractMatlabValueVisitor {
+
+        @Override
+        public void visit(MatlabCell cell) {
+            for (MatlabValue v : cell) {
+                v.accept(this);
+            }
+        }
+
+        @Override
+        public void visit(MatlabStruct struct) {
+            for (MatlabValue v : struct.value().values()) {
+                v.accept(this);
+            }
+        }
+
+        @Override
+        public void visit(MatlabFile file) {
+            try {
+                if (!file.isLoaded()) {
+                    file.load();
+                    file.delete();
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

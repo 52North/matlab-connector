@@ -37,4 +37,6 @@ public interface MatlabValueVisitor {
 
     void visit(MatlabStruct struct);
 
+    void visit(MatlabFile file);
+
 }

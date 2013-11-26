@@ -38,6 +38,7 @@ public class MatlabRepresenter extends Representer {
         register(new MatlabResultRepresent(this));
         register(new MatlabExceptionRepresent(this));
         register(new MatlabBooleanRepresent(this));
+        register(new MatlabFileRepresent(this));
     }
 
     public Node delegate(Object data) {

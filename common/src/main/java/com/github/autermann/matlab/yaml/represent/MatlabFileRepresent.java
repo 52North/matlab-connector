@@ -16,24 +16,32 @@
  */
 package com.github.autermann.matlab.yaml.represent;
 
+import java.io.IOException;
 import org.yaml.snakeyaml.nodes.Node;
-
-import com.github.autermann.matlab.value.MatlabScalar;
+import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
- * @author Christian Autermann <autermann@uni-muenster.de>
+ *
+ * @author Christian Autermann
  */
-public class MatlabScalarRepresent extends TypeSafeRepresent<MatlabScalar> {
+public class MatlabFileRepresent extends TypeSafeRepresent<MatlabFile> {
 
-    public MatlabScalarRepresent(MatlabRepresenter delegate) {
-        super(delegate, MatlabScalar.class);
+    public MatlabFileRepresent(MatlabRepresenter delegate) {
+        super(delegate, MatlabFile.class);
     }
 
     @Override
-    protected Node represent(MatlabScalar t) {
-        return delegate(MatlabYAMLConstants.MATLAB_SCALAR_TAG, t.value());
+    protected Node represent(MatlabFile t) {
+        if (!t.isLoaded()) {
+            try {
+                t.load();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return delegate(MatlabYAMLConstants.MATLAB_FILE_TAG, t.getContent());
     }
 
 }

@@ -73,12 +73,8 @@ public class MatlabString extends MatlabValue implements
     }
 
     @Override
-    public MatlabString asString() {
-        return this;
+    public MatlabType getType() {
+        return MatlabType.STRING;
     }
 
-    @Override
-    public boolean isString() {
-        return true;
-    }
 }

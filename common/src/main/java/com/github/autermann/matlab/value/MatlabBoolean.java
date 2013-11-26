@@ -50,13 +50,8 @@ public class MatlabBoolean extends MatlabValue {
     }
 
     @Override
-    public MatlabBoolean asBoolean() {
-        return this;
-    }
-
-    @Override
-    public boolean isBoolean() {
-        return true;
+    public MatlabType getType() {
+        return MatlabType.BOOLEAN;
     }
 
     public static MatlabBoolean yes() {

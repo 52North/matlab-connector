@@ -14,30 +14,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.yaml;
+package com.github.autermann.matlab.json;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.values.MatlabValues;
+import com.google.gson.Gson;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author Christian Autermann
  */
-public class MatlabYAMLTest {
+public class MatlabJSONTest {
+    private Gson gson;
+
+    @Before
+    public void setUp() {
+        this.gson = new MatlabGSON().getGson();
+    }
+
+    private <T> T readWrite(T t) {
+        Class<T> c = (Class<T>) t.getClass();
+        String s = gson.toJson(t);
+        System.out.println(s);
+        return gson.fromJson(s, c);
+    }
 
     @Test
     public void testRequest() throws IOException {
@@ -58,17 +71,6 @@ public class MatlabYAMLTest {
         assertThat(prequest, is(equalTo(request)));
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T readWrite(T t) {
-        StringWriter w = new StringWriter();
-        Yaml yaml = new MatlabYAML().createYAML();
-        yaml.dump(t, w);
-        String string = w.toString();
-        System.out.println(string);
-        T read = (T) yaml.load(new StringReader(string));
-        return read;
-    }
-
     @Test
     public void testResult() throws IOException {
         MatlabResult response = new MatlabResult();
@@ -83,8 +85,59 @@ public class MatlabYAMLTest {
         response.addResult("result9", MatlabValues.randomFile());
         MatlabResult presponse = readWrite(response);
         assertThat(presponse, is(equalTo(response)));
-
     }
 
-    
+    @Test
+    public void testMatlabArray() {
+        MatlabValue value = MatlabValues.randomMatlabArray(3);
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabTrue() {
+        MatlabValue value = MatlabBoolean.yes();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabFalse() {
+        MatlabValue value = MatlabBoolean.no();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabCell() {
+        MatlabValue value = MatlabValues.randomCell();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabMatrix() {
+        MatlabValue value = MatlabValues.randomMatlabMatrix(10, 10);
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabScalar() {
+        MatlabValue value = MatlabValues.randomMatlabScalar();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabString() {
+        MatlabValue value = MatlabValues.randomMatlabString();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabStruct() {
+        MatlabValue value = MatlabValues.randomStruct();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabFile() throws IOException {
+        MatlabValue value = MatlabValues.randomFile();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
 }

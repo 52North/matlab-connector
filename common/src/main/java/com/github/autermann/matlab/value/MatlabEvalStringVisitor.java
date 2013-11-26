@@ -16,6 +16,7 @@
  */
 package com.github.autermann.matlab.value;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
@@ -30,14 +31,17 @@ import com.google.common.primitives.Doubles;
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class StringVisitor implements ReturningMatlabValueVisitor<String>,
-                                      Function<MatlabValue, String> {
+public class MatlabEvalStringVisitor
+        implements ReturningMatlabValueVisitor<String>,
+                   Function<MatlabValue, String> {
     private static final String BOOL_FALSE = "0";
     private static final String BOOL_TRUE = "1";
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
-    private static final MapJoiner STRUCT_JOINER = COMMA_JOINER.withKeyValueSeparator(", ");
+    private static final MapJoiner STRUCT_JOINER = COMMA_JOINER
+            .withKeyValueSeparator(", ");
+    private final MapTransformer mapTransformer = new MapTransformer();
 
-    private StringVisitor() {
+    private MatlabEvalStringVisitor() {
     }
 
     @Override
@@ -53,7 +57,6 @@ public class StringVisitor implements ReturningMatlabValueVisitor<String>,
         return value.value() ? BOOL_TRUE : BOOL_FALSE;
     }
 
-
     @Override
     public String visit(MatlabCell value) {
         StringBuilder sb = new StringBuilder().append("{ ");
@@ -63,7 +66,8 @@ public class StringVisitor implements ReturningMatlabValueVisitor<String>,
 
     @Override
     public String visit(MatlabMatrix value) {
-        StringBuilder builder = new StringBuilder().append("[ ");
+        StringBuilder builder = new StringBuilder();
+        builder.append("[ ");
         double[][] matrix = value.value();
         for (int i = 0; i < matrix.length; ++i) {
             COMMA_JOINER.appendTo(builder, Doubles.asList(matrix[i]));
@@ -71,7 +75,8 @@ public class StringVisitor implements ReturningMatlabValueVisitor<String>,
                 builder.append("; ");
             }
         }
-        return builder.append(" ]").toString();
+        builder.append(" ]");
+        return builder.toString();
     }
 
     @Override
@@ -86,24 +91,44 @@ public class StringVisitor implements ReturningMatlabValueVisitor<String>,
 
     @Override
     public String visit(MatlabStruct value) {
-        StringBuilder sb = new StringBuilder().append("struct(");
-        STRUCT_JOINER.appendTo(sb, Iterables.transform(value.value().entrySet(),
-                            new Function<Entry<MatlabString, MatlabValue>, Entry<String, String>>() {
-                @Override
-                public Entry<String, String> apply(Entry<MatlabString, MatlabValue> input) {
-                            return Maps.immutableEntry(
-                                    StringVisitor.this.apply(input.getKey()),
-                                    StringVisitor.this.apply(input.getValue()));
-                        }
-            }));
-        return sb.append(')').toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("struct(");
+        STRUCT_JOINER.appendTo(builder, Iterables
+                .transform(value.value().entrySet(), mapTransformer()));
+        builder.append(')');
+        return builder.toString();
     }
+
     @Override
     public String apply(MatlabValue input) {
         return input.accept(this);
     }
 
-    public static StringVisitor create() {
-        return new StringVisitor();
+    @Override
+    public String visit(MatlabFile file) {
+        if (file.isLoaded()) {
+            return Arrays.toString(file.getContent());
+        } else {
+            return file.getFile().getAbsolutePath();
+        }
+    }
+
+    public MapTransformer mapTransformer() {
+        return mapTransformer;
+    }
+
+    public static MatlabEvalStringVisitor create() {
+        return new MatlabEvalStringVisitor();
+    }
+
+    private class MapTransformer implements
+            Function<Entry<? extends MatlabValue, ? extends MatlabValue>, Entry<String, String>> {
+        @Override
+        public Entry<String, String> apply(
+                Entry<? extends MatlabValue, ? extends MatlabValue> input) {
+            return Maps.immutableEntry(
+                    input.getKey().accept(MatlabEvalStringVisitor.this),
+                    input.getValue().accept(MatlabEvalStringVisitor.this));
+        }
     }
 }

@@ -19,6 +19,7 @@ package com.github.autermann.matlab.json;
 import java.lang.reflect.Type;
 
 import com.github.autermann.matlab.MatlabRequest;
+import com.github.autermann.matlab.value.MatlabValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -32,7 +33,7 @@ import com.google.gson.JsonParseException;
  * @author Richard Jones
  *
  */
-public class MatlabRequestDeserializer extends MatlabValueDeserializer implements
+public class MatlabRequestDeserializer implements
         JsonDeserializer<MatlabRequest> {
 
     @Override
@@ -58,7 +59,9 @@ public class MatlabRequestDeserializer extends MatlabValueDeserializer implement
         JsonArray parameters = json.get(MatlabJSONConstants.PARAMETERS)
                 .getAsJsonArray();
         for (JsonElement parameter : parameters) {
-            request.addParameter(deserializeValue(parameter));
+            MatlabValue value = ctx
+                    .deserialize(parameter, MatlabValue.class);
+            request.addParameter(value);
         }
 
         // return request

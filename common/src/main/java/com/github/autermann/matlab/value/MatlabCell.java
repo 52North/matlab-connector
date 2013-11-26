@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -30,7 +31,7 @@ import com.google.common.collect.Lists;
  *
  * @author Richard Jones
  */
-public class MatlabCell extends MatlabValue {
+public class MatlabCell extends MatlabValue implements Iterable<MatlabValue> {
     private final List<MatlabValue> value;
 
     /**
@@ -62,6 +63,10 @@ public class MatlabCell extends MatlabValue {
         return Collections.unmodifiableList(value);
     }
 
+    public int size() {
+        return value.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabCell) {
@@ -77,16 +82,6 @@ public class MatlabCell extends MatlabValue {
     }
 
     @Override
-    public MatlabCell asCell() {
-        return this;
-    }
-
-    @Override
-    public boolean isCell() {
-        return true;
-    }
-
-    @Override
     public void accept(MatlabValueVisitor visitor) {
         visitor.visit(this);
     }
@@ -94,5 +89,15 @@ public class MatlabCell extends MatlabValue {
     @Override
     public <T> T accept(ReturningMatlabValueVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public MatlabType getType() {
+        return MatlabType.CELL;
+    }
+
+    @Override
+    public Iterator<MatlabValue> iterator() {
+        return value().iterator();
     }
 }

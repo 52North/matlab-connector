@@ -19,6 +19,7 @@ package com.github.autermann.matlab.yaml.represent;
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.value.MatlabString;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
@@ -32,7 +33,7 @@ public class MatlabStringRepresent extends TypeSafeRepresent<MatlabString> {
 
     @Override
     protected Node represent(MatlabString t) {
-        return delegate(t.value());
+        return delegate(MatlabYAMLConstants.MATLAB_STRING_TAG, t.value());
     }
 
 }

@@ -97,4 +97,9 @@ public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar
     public boolean isScalar() {
         return true;
     }
+
+    @Override
+    public MatlabType getType() {
+        return MatlabType.SCALAR;
+    }
 }

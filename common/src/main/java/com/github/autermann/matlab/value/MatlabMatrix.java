@@ -90,12 +90,7 @@ public class MatlabMatrix extends MatlabValue {
     }
 
     @Override
-    public MatlabMatrix asMatrix() {
-        return this;
-    }
-
-    @Override
-    public boolean isMatrix() {
-        return true;
+    public MatlabType getType() {
+        return MatlabType.MATRIX;
     }
 }

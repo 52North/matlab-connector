@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import com.github.autermann.matlab.MatlabResult;
+import com.github.autermann.matlab.value.MatlabValue;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -32,7 +33,7 @@ import com.google.gson.JsonParseException;
  * @author Richard Jones
  *
  */
-public class MatlabResultDeserializer extends MatlabValueDeserializer implements
+public class MatlabResultDeserializer implements
         JsonDeserializer<MatlabResult> {
 
     @Override
@@ -40,11 +41,13 @@ public class MatlabResultDeserializer extends MatlabValueDeserializer implements
                                     JsonDeserializationContext ctx)
             throws JsonParseException {
         MatlabResult mlresult = new MatlabResult();
-        JsonObject results = elem.getAsJsonObject().get(MatlabJSONConstants.RESULTS).getAsJsonObject();
+        JsonObject results = elem.getAsJsonObject()
+                .get(MatlabJSONConstants.RESULTS).getAsJsonObject();
 
         for (Entry<String, JsonElement> result : results.entrySet()) {
-            mlresult.addResult(result.getKey(),
-                               deserializeValue(result.getValue()));
+            MatlabValue value = ctx
+                    .deserialize(result.getValue(), MatlabValue.class);
+            mlresult.addResult(result.getKey(), value);
         }
         return mlresult;
     }

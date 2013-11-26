@@ -27,6 +27,14 @@ import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
+import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabFile;
+import com.github.autermann.matlab.value.MatlabMatrix;
+import com.github.autermann.matlab.value.MatlabScalar;
+import com.github.autermann.matlab.value.MatlabString;
+import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -90,14 +98,34 @@ public class MatlabGSON implements MatlabEncoding {
         private static final Gson GSON = create();
 
         private static Gson create() {
+            MatlabValueSerializer valueSerializer = new MatlabValueSerializer();
+            MatlabValueDeserializer valueDeserializer = new MatlabValueDeserializer();
             return new GsonBuilder()
+                    .disableHtmlEscaping()
                     .serializeSpecialFloatingPointValues()
                     .registerTypeAdapter(MatlabException.class, new MatlabExceptionDeserializer())
                     .registerTypeAdapter(MatlabException.class, new MatlabExceptionSerializer())
                     .registerTypeAdapter(IOException.class, new IOExceptionDeserializer())
                     .registerTypeAdapter(MatlabRequest.class, new MatlabRequestDeserializer())
                     .registerTypeAdapter(MatlabResult.class, new MatlabResultDeserializer())
-                    .registerTypeAdapter(MatlabValue.class, new MatlabValueSerializer())
+                    .registerTypeAdapter(MatlabValue.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabArray.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabBoolean.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabCell.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabFile.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabMatrix.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabScalar.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabString.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabStruct.class, valueDeserializer)
+                    .registerTypeAdapter(MatlabValue.class, valueSerializer)
+                    .registerTypeAdapter(MatlabArray.class, valueSerializer)
+                    .registerTypeAdapter(MatlabBoolean.class, valueSerializer)
+                    .registerTypeAdapter(MatlabCell.class, valueSerializer)
+                    .registerTypeAdapter(MatlabFile.class, valueSerializer)
+                    .registerTypeAdapter(MatlabMatrix.class, valueSerializer)
+                    .registerTypeAdapter(MatlabScalar.class, valueSerializer)
+                    .registerTypeAdapter(MatlabString.class, valueSerializer)
+                    .registerTypeAdapter(MatlabStruct.class, valueSerializer)
                     .create();
         }
     }

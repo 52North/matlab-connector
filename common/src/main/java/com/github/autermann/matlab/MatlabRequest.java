@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.autermann.matlab.value.MatlabValue;
+import com.github.autermann.matlab.value.MatlabValueVisitor;
 import com.google.common.base.Objects;
 
 /**
@@ -116,6 +117,7 @@ public class MatlabRequest {
         this.results.add(name);
         return this;
     }
+
     public MatlabRequest addResult(Iterable<? extends String> names) {
         checkArgument(names != null);
         for (String name : names) {
@@ -138,6 +140,7 @@ public class MatlabRequest {
         return Objects.hashCode(getFunction(), getParameters());
 
     }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof MatlabRequest) {
@@ -154,5 +157,11 @@ public class MatlabRequest {
             return Collections.singletonList(DEFAULT_RESULT_NAME);
         }
         return Collections.unmodifiableList(results);
+    }
+
+    public void visitParameters(MatlabValueVisitor visitor) {
+        for (MatlabValue value : getParameters()) {
+            value.accept(visitor);
+        }
     }
 }
