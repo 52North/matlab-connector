@@ -105,7 +105,10 @@ public class MatlabFile extends MatlabValue {
         return file;
     }
 
-    public byte[] getContent() {
+    public byte[] getContent() throws IOException {
+        if (!isLoaded()) {
+            load();
+        }
         return content;
     }
 
@@ -114,23 +117,22 @@ public class MatlabFile extends MatlabValue {
         if (o instanceof MatlabFile) {
             MatlabFile that = (MatlabFile) o;
             try {
-                if (!this.isLoaded()) {
-                    this.load();
-                }
-                if (!that.isLoaded()) {
-                    that.load();
-                }
+                return Arrays.equals(this.getContent(), that.getContent());
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            return Arrays.equals(this.getContent(), that.getContent());
+            
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getFile(), getContent());
+        try {
+            return Objects.hashCode(getFile(), getContent());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public static MatlabFile load(File file) throws IOException {
