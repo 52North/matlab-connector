@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
+import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.github.autermann.matlab.value.MatlabArray;
@@ -31,12 +32,17 @@ import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.value.ReturningMatlabValueVisitor;
 import com.google.common.io.BaseEncoding;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
@@ -46,7 +52,8 @@ import com.google.gson.JsonSerializer;
  * @author Richard Jones
  *
  */
-public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
+public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
+                                              JsonDeserializer<MatlabValue> {
     @Override
     public JsonElement serialize(MatlabValue value, Type type,
                                  JsonSerializationContext ctx) {
@@ -59,6 +66,122 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
         object.add(MatlabJSONConstants.VALUE,
                    value.accept(new VisitingSerializer(ctx)));
         return object;
+    }
+
+    @Override
+    public MatlabValue deserialize(JsonElement json, Type typeOfT,
+                                   JsonDeserializationContext context)
+            throws JsonParseException {
+        return deserializeValue(json);
+    }
+
+    /**
+     * Deserializes an {@link MatlabValue} from a {@link JsonElement}.
+     *
+     * @param element the <code>JsonElement</code> containing a
+     *                serialized <code>MatlabValue</code>
+     *
+     * @return the deserialized <code>MatlabValue</code>
+     */
+    public MatlabValue deserializeValue(JsonElement element) {
+        if (!element.isJsonObject()) {
+            throw new JsonParseException("expected JSON object");
+        }
+        JsonObject json = element.getAsJsonObject();
+        MatlabType type = getType(json);
+        JsonElement value = json.get(MatlabJSONConstants.VALUE);
+        switch (type) {
+            case ARRAY:
+                return parseMatlabArray(value);
+            case BOOLEAN:
+                return parseMatlabBoolean(value);
+            case CELL:
+                return parseMatlabCell(value);
+            case FILE:
+                return parseMatlabFile(value);
+            case MATRIX:
+                return parseMatlabMatrix(value);
+            case SCALAR:
+                return parseMatlabScalar(value);
+            case STRING:
+                return parseMatlabString(value);
+            case STRUCT:
+                return parseMatlabStruct(value);
+            case DATE_TIME:
+                return parseMatlabDateTime(value);
+            default:
+                throw new JsonParseException("Unknown type: " + type);
+        }
+    }
+
+    private MatlabType getType(JsonObject json) throws JsonParseException {
+        String type = json.get(MatlabJSONConstants.TYPE).getAsString();
+        try {
+            return MatlabType.fromString(type);
+        } catch (IllegalArgumentException e) {
+            throw new JsonParseException("Unknown type: " + type);
+        }
+    }
+
+    private MatlabMatrix parseMatlabMatrix(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
+        double[][] values = new double[array.size()][array.get(0)
+                .getAsJsonArray().size()];
+        for (int i = 0; i < array.size(); i++) {
+            JsonArray innerArray = array.get(i).getAsJsonArray();
+            for (int j = 0; j < innerArray.size(); j++) {
+                values[i][j] = innerArray.get(j).getAsDouble();
+            }
+        }
+        return new MatlabMatrix(values);
+    }
+
+    private MatlabArray parseMatlabArray(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
+        double[] values = new double[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            values[i] = array.get(i).getAsDouble();
+        }
+        return new MatlabArray(values);
+    }
+
+    private MatlabStruct parseMatlabStruct(JsonElement value) {
+        MatlabStruct struct = new MatlabStruct();
+        for (Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
+            struct.set(e.getKey(), deserializeValue(e.getValue()));
+        }
+        return struct;
+    }
+
+    private MatlabCell parseMatlabCell(JsonElement value) {
+        JsonArray array = value.getAsJsonArray();
+        MatlabValue[] cell = new MatlabValue[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            cell[i] = deserializeValue(array.get(i));
+        }
+        return new MatlabCell(cell);
+    }
+
+    private MatlabScalar parseMatlabScalar(JsonElement value) {
+        return new MatlabScalar(value.getAsDouble());
+    }
+
+    private MatlabBoolean parseMatlabBoolean(JsonElement value) {
+        return MatlabBoolean.fromBoolean(value.getAsBoolean());
+    }
+
+    private MatlabString parseMatlabString(JsonElement value) {
+        return new MatlabString(value.getAsString());
+    }
+
+    private MatlabFile parseMatlabFile(JsonElement value) {
+        return new MatlabFile(BaseEncoding.base64().decode(value.getAsString()));
+    }
+
+    private MatlabDateTime parseMatlabDateTime(JsonElement value) {
+        DateTime dt = ISODateTimeFormat.dateTime()
+                .parseDateTime(value.getAsString());
+        return new MatlabDateTime(dt);
     }
 
     private class VisitingSerializer implements
@@ -124,7 +247,9 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
 
         @Override
         public JsonElement visit(MatlabDateTime time) {
-            return ctx.serialize(ISODateTimeFormat.dateTime().print(time.value()));
+            return ctx.serialize(ISODateTimeFormat.dateTime()
+                    .print(time.value()));
         }
     }
+
 }

@@ -19,8 +19,11 @@ package com.github.autermann.matlab.json;
 import java.lang.reflect.Type;
 
 import com.github.autermann.matlab.MatlabException;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
@@ -30,8 +33,9 @@ import com.google.gson.JsonSerializer;
  * @author Richard Jones
  *
  */
-public class MatlabExceptionSerializer implements
-        JsonSerializer<MatlabException> {
+public class MatlabExceptionSerializer
+        implements JsonSerializer<MatlabException>,
+                   JsonDeserializer<MatlabException> {
 
     @Override
     public JsonElement serialize(MatlabException e, Type type,
@@ -39,6 +43,14 @@ public class MatlabExceptionSerializer implements
         JsonObject object = new JsonObject();
         object.add(MatlabJSONConstants.EXCEPTION, ctx.serialize(e.getMessage()));
         return object;
+    }
+
+    @Override
+    public MatlabException deserialize(JsonElement elem, Type type,
+                                       JsonDeserializationContext ctx)
+            throws JsonParseException {
+        return new MatlabException(elem.getAsJsonObject()
+                .get(MatlabJSONConstants.EXCEPTION).getAsString());
     }
 
 }

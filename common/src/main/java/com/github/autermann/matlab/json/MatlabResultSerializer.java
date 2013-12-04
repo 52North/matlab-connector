@@ -26,6 +26,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 /**
  * {@link MatlabResult} deserializer.
@@ -33,8 +35,8 @@ import com.google.gson.JsonParseException;
  * @author Richard Jones
  *
  */
-public class MatlabResultDeserializer implements
-        JsonDeserializer<MatlabResult> {
+public class MatlabResultSerializer implements JsonDeserializer<MatlabResult>,
+                                               JsonSerializer<MatlabResult> {
 
     @Override
     public MatlabResult deserialize(JsonElement elem, Type type,
@@ -45,10 +47,24 @@ public class MatlabResultDeserializer implements
                 .get(MatlabJSONConstants.RESULTS).getAsJsonObject();
 
         for (Entry<String, JsonElement> result : results.entrySet()) {
-            MatlabValue value = ctx
-                    .deserialize(result.getValue(), MatlabValue.class);
+            MatlabValue value = ctx.deserialize(result.getValue(),
+                                                MatlabValue.class);
             mlresult.addResult(result.getKey(), value);
         }
         return mlresult;
+    }
+
+    @Override
+    public JsonElement serialize(MatlabResult src, Type typeOfSrc,
+                                 JsonSerializationContext context) {
+
+        JsonObject o = new JsonObject();
+        JsonObject results = new JsonObject();
+        for (Entry<String, MatlabValue> result : src.getResults().entrySet()) {
+            results.add(result.getKey(), context.serialize(result.getValue()));
+        }
+        o.add(MatlabJSONConstants.RESULTS, results);
+
+        return o;
     }
 }

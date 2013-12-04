@@ -16,7 +16,6 @@
  */
 package com.github.autermann.matlab.json;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -36,7 +35,6 @@ import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
-import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -113,21 +111,16 @@ public class MatlabGSON implements MatlabEncoding {
 
         private static Gson create() {
             MatlabValueSerializer valueSerializer = new MatlabValueSerializer();
-            MatlabValueDeserializer valueDeserializer
-                    = new MatlabValueDeserializer();
             GsonBuilder builder = new GsonBuilder();
 
-            builder
-                    .registerTypeAdapter(MatlabException.class, new MatlabExceptionDeserializer())
-                    .registerTypeAdapter(MatlabException.class, new MatlabExceptionSerializer())
-                    .registerTypeAdapter(IOException.class, new IOExceptionDeserializer())
-                    .registerTypeAdapter(MatlabRequest.class, new MatlabRequestDeserializer())
-                    .registerTypeAdapter(MatlabResult.class, new MatlabResultDeserializer())
-                    .registerTypeAdapter(MatlabType.class, new MatlabTypeDeserializer())
-                    .registerTypeAdapter(MatlabType.class, new MatlabTypeSerializer());
+            builder.registerTypeAdapter(MatlabException.class,
+                                        new MatlabExceptionSerializer())
+                    .registerTypeAdapter(MatlabRequest.class,
+                                         new MatlabRequestSerializer())
+                    .registerTypeAdapter(MatlabResult.class,
+                                         new MatlabResultSerializer());
 
             for (Class<?> c : VALUE_CLASSES) {
-                builder.registerTypeAdapter(c, valueDeserializer);
                 builder.registerTypeAdapter(c, valueSerializer);
             }
 

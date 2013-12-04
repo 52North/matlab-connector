@@ -28,6 +28,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 /**
  * {@link MatlabRequest} deserializer.
@@ -35,8 +38,8 @@ import com.google.gson.JsonParseException;
  * @author Richard Jones
  *
  */
-public class MatlabRequestDeserializer implements
-        JsonDeserializer<MatlabRequest> {
+public class MatlabRequestSerializer implements JsonSerializer<MatlabRequest>,
+                                                JsonDeserializer<MatlabRequest> {
 
     @Override
     public MatlabRequest deserialize(JsonElement elem, Type type,
@@ -46,12 +49,12 @@ public class MatlabRequestDeserializer implements
         String function = json.get(MatlabJSONConstants.FUNCTION).getAsString();
         MatlabRequest request = new MatlabRequest(function);
 
-        JsonObject results = json.get(MatlabJSONConstants.RESULTS).getAsJsonObject();
+        JsonObject results = json.get(MatlabJSONConstants.RESULTS)
+                .getAsJsonObject();
         for (Entry<String, JsonElement> result : results.entrySet()) {
-            request.addResult(result.getKey(), getType(result.getValue()));
+            request.addResult(result.getKey(), parseType(result.getValue()));
         }
 
-        // add parameters
         JsonArray parameters = json.get(MatlabJSONConstants.PARAMETERS)
                 .getAsJsonArray();
         for (JsonElement parameter : parameters) {
@@ -60,16 +63,44 @@ public class MatlabRequestDeserializer implements
             request.addParameter(value);
         }
 
-        // return request
         return request;
     }
 
-     private MatlabType getType(JsonElement json) throws JsonParseException {
+    private MatlabType parseType(JsonElement json) throws JsonParseException {
         String type = json.getAsString();
         try {
             return MatlabType.fromString(type);
         } catch (IllegalArgumentException e) {
             throw new JsonParseException("Unknown type: " + type);
         }
+    }
+
+    @Override
+    public JsonElement serialize(MatlabRequest req, Type type,
+                                 JsonSerializationContext ctx) {
+        JsonObject o = new JsonObject();
+        o.addProperty(MatlabJSONConstants.FUNCTION, req.getFunction());
+        o.add(MatlabJSONConstants.PARAMETERS, serializeParameters(req, ctx));
+        o.add(MatlabJSONConstants.RESULTS, serializeResults(req));
+        return o;
+    }
+
+    private JsonObject serializeResults(MatlabRequest req) {
+        JsonObject results = new JsonObject();
+        for (Entry<String, MatlabType> result : req.getResults().entrySet()) {
+            results.add(result.getKey(),
+                        new JsonPrimitive(result.getValue().toString()));
+        }
+        return results;
+    }
+
+    private JsonArray serializeParameters(MatlabRequest req,
+                                          JsonSerializationContext ctx) {
+        JsonArray parameters = new JsonArray();
+        for (MatlabValue parameter : req.getParameters()) {
+            parameters.add(ctx.serialize(parameter));
+        }
+        return parameters;
+
     }
 }
