@@ -40,6 +40,7 @@ public class MatlabRepresenter extends Representer {
         register(new MatlabBooleanRepresent(this));
         register(new MatlabFileRepresent(this));
         register(new MatlabDateTimeRepresent(this));
+        register(new MatlabTypeRepresent(this));
     }
 
     public Node delegate(Object data) {

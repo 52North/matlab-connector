@@ -123,6 +123,8 @@ public class MatlabValues {
     }
 
     public static MatlabDateTime randomDateTime() {
-        return new MatlabDateTime(new DateTime(random.nextLong()));
+        DateTime now = DateTime.now();
+        long offset = (long) (Math.random() * (now.getMillis() + 1));
+        return new MatlabDateTime(now.minus(offset));
     }
 }

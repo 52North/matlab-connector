@@ -18,6 +18,8 @@ package com.github.autermann.matlab.value;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Objects;
 import com.google.common.primitives.Doubles;
 
@@ -101,5 +103,13 @@ public class MatlabScalar extends MatlabValue implements Comparable<MatlabScalar
     @Override
     public MatlabType getType() {
         return MatlabType.SCALAR;
+    }
+
+    public MatlabBoolean toBoolean() {
+        return MatlabBoolean.fromBoolean(value() != 0);
+    }
+
+    public MatlabDateTime toDateTime() {
+        return new MatlabDateTime(new DateTime(((Double) value()).longValue()));
     }
 }

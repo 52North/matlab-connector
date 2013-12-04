@@ -20,12 +20,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.value.MatlabValueVisitor;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Represents a MATLAB function execution request.
@@ -37,7 +41,7 @@ public class MatlabRequest {
     private static final String DEFAULT_RESULT_NAME = "result";
     private final String function;
     private final List<MatlabValue> parameters;
-    private final List<String> results;
+    private final Map<String, MatlabType> results;
 
     /**
      * Creates a new <code>MLRequest</code> instance for the given function
@@ -51,8 +55,8 @@ public class MatlabRequest {
     public MatlabRequest(String function) {
         checkArgument(function != null && !function.isEmpty());
         this.function = function;
-        this.results = new LinkedList<String>();
-        this.parameters = new LinkedList<MatlabValue>();
+        this.results = Maps.newLinkedHashMap();
+        this.parameters = Lists.newLinkedList();
     }
 
     /**
@@ -111,17 +115,17 @@ public class MatlabRequest {
         return this.parameters.size();
     }
 
-    public MatlabRequest addResult(String name) {
+    public MatlabRequest addResult(String name, MatlabType type) {
         checkArgument(name != null && !name.isEmpty());
-        checkArgument(!this.results.contains(name));
-        this.results.add(name);
+        checkArgument(!this.results.containsKey(name));
+        this.results.put(name, type);
         return this;
     }
 
-    public MatlabRequest addResult(Iterable<? extends String> names) {
-        checkArgument(names != null);
-        for (String name : names) {
-            addResult(name);
+    public MatlabRequest addResult(Map<String, MatlabType> results) {
+        checkArgument(results != null);
+        for (Entry<String, MatlabType> result : results.entrySet()) {
+            addResult(result.getKey(), result.getValue());
         }
         return this;
     }
@@ -152,11 +156,8 @@ public class MatlabRequest {
 
     }
 
-    public List<String> getResults() {
-        if (results.isEmpty()) {
-            return Collections.singletonList(DEFAULT_RESULT_NAME);
-        }
-        return Collections.unmodifiableList(results);
+    public Map<String, MatlabType> getResults() {
+        return Collections.unmodifiableMap(results);
     }
 
     public void visitParameters(MatlabValueVisitor visitor) {

@@ -20,6 +20,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 
+import org.joda.time.DateTime;
+
 /**
  * Represents a MATLAB array.
  *
@@ -96,5 +98,18 @@ public class MatlabArray extends MatlabValue {
     @Override
     public MatlabType getType() {
         return MatlabType.ARRAY;
+    }
+
+    public MatlabDateTime toDateTime() {
+        if (value().length != 6) {
+            throw new UnsupportedOperationException("invalid array length");
+        }
+        return new MatlabDateTime(new DateTime(
+                Double.valueOf(value()[0]).intValue(),
+                Double.valueOf(value()[1]).intValue(),
+                Double.valueOf(value()[2]).intValue(),
+                Double.valueOf(value()[3]).intValue(),
+                Double.valueOf(value()[4]).intValue(),
+                Double.valueOf(value()[5]).intValue()));
     }
 }

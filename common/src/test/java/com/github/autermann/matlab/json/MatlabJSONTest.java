@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.value.MatlabBoolean;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.values.MatlabValues;
 import com.google.gson.Gson;
@@ -56,9 +57,9 @@ public class MatlabJSONTest {
     @Test
     public void testRequest() throws IOException {
         MatlabRequest request = new MatlabRequest("add")
-                .addResult("result1")
-                .addResult("result2")
-                .addResult("result3");
+                .addResult("result1", MatlabType.ARRAY)
+                .addResult("result2", MatlabType.BOOLEAN)
+                .addResult("result3", MatlabType.STRING);
         request.addParameter(MatlabValues.randomMatlabArray(3));
         request.addParameter(MatlabBoolean.fromBoolean(true));
         request.addParameter(MatlabBoolean.fromBoolean(false));

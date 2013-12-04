@@ -17,8 +17,10 @@
 package com.github.autermann.matlab.json;
 
 import java.lang.reflect.Type;
+import java.util.Map.Entry;
 
 import com.github.autermann.matlab.MatlabRequest;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -44,15 +46,9 @@ public class MatlabRequestDeserializer implements
         String function = json.get(MatlabJSONConstants.FUNCTION).getAsString();
         MatlabRequest request = new MatlabRequest(function);
 
-        if (json.has(MatlabJSONConstants.RESULTS)) {
-            JsonElement results = json.get(MatlabJSONConstants.RESULTS);
-            if (results.isJsonPrimitive()) {
-                request.addResult(results.getAsJsonPrimitive().getAsString());
-            } else if (results.isJsonArray()) {
-                for (JsonElement e : results.getAsJsonArray()) {
-                    request.addResult(e.getAsString());
-                }
-            }
+        JsonObject results = json.get(MatlabJSONConstants.RESULTS).getAsJsonObject();
+        for (Entry<String, JsonElement> result : results.entrySet()) {
+            request.addResult(result.getKey(), getType(result.getValue()));
         }
 
         // add parameters
@@ -66,5 +62,14 @@ public class MatlabRequestDeserializer implements
 
         // return request
         return request;
+    }
+
+     private MatlabType getType(JsonElement json) throws JsonParseException {
+        String type = json.getAsString();
+        try {
+            return MatlabType.fromString(type);
+        } catch (IllegalArgumentException e) {
+            throw new JsonParseException("Unknown type: " + type);
+        }
     }
 }

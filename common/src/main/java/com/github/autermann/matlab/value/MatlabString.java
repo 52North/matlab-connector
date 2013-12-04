@@ -18,6 +18,9 @@ package com.github.autermann.matlab.value;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.google.common.base.Objects;
 
 public class MatlabString extends MatlabValue implements
@@ -75,6 +78,24 @@ public class MatlabString extends MatlabValue implements
     @Override
     public MatlabType getType() {
         return MatlabType.STRING;
+    }
+
+    public MatlabBoolean toBoolean() {
+        return MatlabBoolean.fromBoolean(Boolean.valueOf(value()));
+    }
+
+    public MatlabDateTime toDateTime() {
+        // FIXME matlab date time parsing
+        throw new UnsupportedOperationException();
+    }
+
+    public MatlabFile toFile(boolean delete) throws IOException {
+        MatlabFile file = new MatlabFile(new File(value()));
+        file.load();
+        if (delete) {
+            file.delete();
+        }
+        return file;
     }
 
 }

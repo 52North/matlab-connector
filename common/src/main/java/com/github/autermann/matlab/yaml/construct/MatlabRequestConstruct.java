@@ -18,10 +18,12 @@ package com.github.autermann.matlab.yaml.construct;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.yaml.snakeyaml.nodes.Node;
 
 import com.github.autermann.matlab.MatlabRequest;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
@@ -41,15 +43,10 @@ public class MatlabRequestConstruct extends MatlabConstruct {
         String function = constructString(
                 map.get(MatlabYAMLConstants.FUNCTION_KEY));
         MatlabRequest req = new MatlabRequest(function);
-        if (map.containsKey(MatlabYAMLConstants.RESULTS)) {
-            if (map.get(MatlabYAMLConstants.RESULTS) instanceof List) {
-                List<?> list = (List) map.get(MatlabYAMLConstants.RESULTS);
-                for (Object o : list) {
-                    req.addResult(constructString(o));
-                }
-            } else {
-                req.addResult(constructString(map.get(MatlabYAMLConstants.RESULTS)));
-            }
+        Map<?,?> list = (Map) map.get(MatlabYAMLConstants.RESULTS);
+        for (Entry<?,?> o : list.entrySet()) {
+            req.addResult(constructString(o.getKey()),
+                          MatlabType.fromString((String) o.getValue()));
         }
         List<MatlabValue> parameters = constructValueList(
                         map.get(MatlabYAMLConstants.PARAMETERS_KEY));

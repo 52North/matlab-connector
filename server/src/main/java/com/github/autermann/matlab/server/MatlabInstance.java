@@ -39,6 +39,7 @@ import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
+import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
@@ -119,11 +120,11 @@ public class MatlabInstance {
     }
 
     protected Map<String, MatlabValue> feval(String function,
-                                             List<String> results,
+                                             Map<String, MatlabType> results,
                                              List<MatlabValue> parameters)
             throws MatlabInvocationException, MatlabException {
         final int length = results.size();
-        final String[] rarray = results.toArray(new String[length]);
+        final String[] rarray = results.keySet().toArray(new String[length]);
         final String[] varray = genvarnames(rarray);
         final String cmd = buildFEval(function, varray, parameters);
         log.debug("Evaluation: {}", cmd);
@@ -131,7 +132,7 @@ public class MatlabInstance {
         log.info("Evaluation complete, parsing results...");
         final Map<String, MatlabValue> result = Maps.newLinkedHashMap();
         for (int i = 0; i < length; ++i) {
-            result.put(rarray[i], parseValue(varray[i]));
+            result.put(rarray[i], parseValue(varray[i], results.get(rarray[i])));
         }
         return result;
     }
@@ -203,21 +204,68 @@ public class MatlabInstance {
         }
     }
 
+    private MatlabValue parseValue(String varName, MatlabType toType)
+            throws MatlabException {
+        MatlabValue value = parseValue(varName);
+        MatlabType fromType = value.getType();
+        if (fromType == toType) {
+            return value;
+        }
+        String message = String.format("can not convert from %s to %s",
+                                       fromType, toType);
+        switch (fromType) {
+            case SCALAR:
+                switch (toType) {
+                    case BOOLEAN:
+                        return value.asScalar().toBoolean();
+                    case DATE_TIME:
+                        return value.asScalar().toDateTime();
+                    default:
+                        throw new MatlabException(message);
+                }
+            case STRING:
+                switch (toType) {
+                    case BOOLEAN:
+                        return value.asString().toBoolean();
+                    case DATE_TIME:
+                        return value.asString().toDateTime();
+                    case FILE:
+                        try {
+                            return value.asString().toFile(true);
+                        } catch (IOException ex) {
+                            throw new MatlabException("error loading file", ex);
+                        }
+                    default:
+                        throw new MatlabException(message);
+                }
+            case ARRAY:
+                switch (toType) {
+                    case DATE_TIME:
+                        return value.asArray().toDateTime();
+                    default:
+                        throw new MatlabException(message);
+                }
+            default:
+                throw new MatlabException(message);
+        }
+
+    }
+
     private MatlabValue parseValue(String varName) throws
             MatlabException {
         try {
-            String type = getType(varName);
-            if (type.equals(DOUBLE_TYPE)) {
+            String clazz = getType(varName);
+            if (clazz.equals(DOUBLE_TYPE)) {
                 return parseDoubleValue(varName);
-            } else if (type.equals(CHAR_TYPE)) {
+            } else if (clazz.equals(CHAR_TYPE)) {
                 return parseCharValue(varName);
-            } else if (type.equals(CELL_TYPE)) {
+            } else if (clazz.equals(CELL_TYPE)) {
                 return parseCellValue(varName);
-            } else if (type.equals(STRUCT_TYPE)) {
+            } else if (clazz.equals(STRUCT_TYPE)) {
                 return parseStructValue(varName);
             } else {
                 throw new MatlabException("Unable to parse value of type " +
-                                          type + ", unsupported.");
+                                          clazz + ", unsupported.");
             }
         } catch (MatlabInvocationException e) {
             throw new MatlabException("Unable to parse value.", e);
