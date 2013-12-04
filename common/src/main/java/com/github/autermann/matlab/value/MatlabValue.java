@@ -116,6 +116,16 @@ public abstract class MatlabValue {
     }
 
     /**
+     * Checks if this value is a date time.
+     *
+     * @return <code>true</code> if this value is a file, <code>false</code>
+     *         otherwise
+     */
+    public boolean isDateTime() {
+        return getType() == MatlabType.DATE_TIME;
+    }
+
+    /**
      * Returns this value as a scalar. Will throw a
      * {@link UnsupportedOperationException}
      * if this value is not a scalar.
@@ -227,13 +237,28 @@ public abstract class MatlabValue {
     /**
      * Returns this value as a file. Will throw a
      * {@link UnsupportedOperationException}
-     * if this value is not a boolean.
+     * if this value is not a file.
      *
-     * @return this value as a {@link MatlabBoolean}
+     * @return this value as a {@link MatlabFile}
      */
     public MatlabFile asFile() {
         if (isFile()) {
             return (MatlabFile) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Returns this value as a file. Will throw a
+     * {@link UnsupportedOperationException}
+     * if this value is not a date time.
+     *
+     * @return this value as a {@link MatlabDateTime}
+     */
+    public MatlabDateTime asDateTime() {
+        if (isDateTime()) {
+            return (MatlabDateTime) this;
         } else {
             throw new UnsupportedOperationException();
         }
