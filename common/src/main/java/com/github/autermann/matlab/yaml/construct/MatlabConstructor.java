@@ -59,6 +59,8 @@ public class MatlabConstructor extends SafeConstructor {
                  new MatlabBooleanConstruct(this));
         register(MatlabYAMLConstants.MATLAB_FILE_TAG,
                  new MatlabFileConstruct(this));
+        register(MatlabYAMLConstants.MATLAB_DATE_TIME_TAG,
+                 new MatlabDateTimeConstruct(this));
     }
 
     private void register(Tag tag, Construct construct) {

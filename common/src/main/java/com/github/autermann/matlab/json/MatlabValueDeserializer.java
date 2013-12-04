@@ -19,9 +19,13 @@ package com.github.autermann.matlab.json;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
+
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabDateTime;
 import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
@@ -84,6 +88,8 @@ public class MatlabValueDeserializer implements JsonDeserializer<MatlabValue> {
                 return parseMatlabString(value);
             case STRUCT:
                 return parseMatlabStruct(value);
+            case DATE_TIME:
+                return parseMatlabDateTime(value);
             default:
                 throw new JsonParseException("Unknown type: " + type);
         }
@@ -151,5 +157,11 @@ public class MatlabValueDeserializer implements JsonDeserializer<MatlabValue> {
 
     private MatlabFile parseMatlabFile(JsonElement value) {
         return new MatlabFile(BaseEncoding.base64().decode(value.getAsString()));
+    }
+
+    private MatlabDateTime parseMatlabDateTime(JsonElement value) {
+        DateTime dt = ISODateTimeFormat.dateTime()
+                .parseDateTime(value.getAsString());
+        return new MatlabDateTime(dt);
     }
 }

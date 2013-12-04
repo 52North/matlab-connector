@@ -54,6 +54,7 @@ public class MatlabYAMLTest {
         request.addParameter(MatlabValues.randomMatlabString());
         request.addParameter(MatlabValues.randomStruct());
         request.addParameter(MatlabValues.randomFile());
+        request.addParameter(MatlabValues.randomDateTime());
         MatlabRequest prequest = readWrite(request);
         assertThat(prequest, is(equalTo(request)));
     }
@@ -81,6 +82,7 @@ public class MatlabYAMLTest {
         response.addResult("result7", MatlabValues.randomMatlabString());
         response.addResult("result8", MatlabValues.randomStruct());
         response.addResult("result9", MatlabValues.randomFile());
+        response.addResult("result10", MatlabValues.randomDateTime());
         MatlabResult presponse = readWrite(response);
         assertThat(presponse, is(equalTo(response)));
 

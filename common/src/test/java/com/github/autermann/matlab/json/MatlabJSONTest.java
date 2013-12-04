@@ -46,6 +46,7 @@ public class MatlabJSONTest {
     }
 
     private <T> T readWrite(T t) {
+        @SuppressWarnings("unchecked")
         Class<T> c = (Class<T>) t.getClass();
         String s = gson.toJson(t);
         System.out.println(s);
@@ -67,6 +68,7 @@ public class MatlabJSONTest {
         request.addParameter(MatlabValues.randomMatlabString());
         request.addParameter(MatlabValues.randomStruct());
         request.addParameter(MatlabValues.randomFile());
+        request.addParameter(MatlabValues.randomDateTime());
         MatlabRequest prequest = readWrite(request);
         assertThat(prequest, is(equalTo(request)));
     }
@@ -83,6 +85,7 @@ public class MatlabJSONTest {
         response.addResult("result7", MatlabValues.randomMatlabString());
         response.addResult("result8", MatlabValues.randomStruct());
         response.addResult("result9", MatlabValues.randomFile());
+        response.addResult("result10", MatlabValues.randomDateTime());
         MatlabResult presponse = readWrite(response);
         assertThat(presponse, is(equalTo(response)));
     }
@@ -138,6 +141,12 @@ public class MatlabJSONTest {
     @Test
     public void testMatlabFile() throws IOException {
         MatlabValue value = MatlabValues.randomFile();
+        assertThat(readWrite(value), is(equalTo(value)));
+    }
+
+    @Test
+    public void testMatlabDateTime() throws IOException {
+        MatlabValue value = MatlabValues.randomDateTime();
         assertThat(readWrite(value), is(equalTo(value)));
     }
 }

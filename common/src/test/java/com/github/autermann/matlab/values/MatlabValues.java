@@ -21,9 +21,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Random;
 
+import org.joda.time.DateTime;
+
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabDateTime;
 import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
@@ -117,5 +120,9 @@ public class MatlabValues {
         random.nextBytes(bytes);
         ByteStreams.write(bytes, Files.newOutputStreamSupplier(file));
         return new MatlabFile(file);
+    }
+
+    public static MatlabDateTime randomDateTime() {
+        return new MatlabDateTime(new DateTime(random.nextLong()));
     }
 }

@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
+import org.joda.time.format.ISODateTimeFormat;
+
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabDateTime;
 import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
@@ -117,6 +120,11 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue> {
             }
             return ctx
                     .serialize(BaseEncoding.base64().encode(file.getContent()));
+        }
+
+        @Override
+        public JsonElement visit(MatlabDateTime time) {
+            return ctx.serialize(ISODateTimeFormat.dateTime().print(time.value()));
         }
     }
 }

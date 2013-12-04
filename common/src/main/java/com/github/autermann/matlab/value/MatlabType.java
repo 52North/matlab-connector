@@ -29,7 +29,8 @@ public enum MatlabType {
     MATRIX,
     SCALAR,
     STRING,
-    STRUCT;
+    STRUCT,
+    DATE_TIME;
 
     @Override
     public String toString() {

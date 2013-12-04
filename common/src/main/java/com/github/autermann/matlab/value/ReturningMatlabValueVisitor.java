@@ -38,4 +38,6 @@ public interface ReturningMatlabValueVisitor<T> {
     T visit(MatlabStruct struct);
 
     T visit(MatlabFile file);
+
+    T visit(MatlabDateTime time);
 }

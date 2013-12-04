@@ -14,30 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.value;
+package com.github.autermann.matlab.yaml.represent;
+
+import org.joda.time.format.ISODateTimeFormat;
+import org.yaml.snakeyaml.nodes.Node;
+
+import com.github.autermann.matlab.value.MatlabDateTime;
+import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
 /**
  * TODO JavaDoc
- *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann
  */
-public interface MatlabValueVisitor {
+public class MatlabDateTimeRepresent extends TypeSafeRepresent<MatlabDateTime> {
 
-    void visit(MatlabArray array);
+    public MatlabDateTimeRepresent(MatlabRepresenter delegate) {
+        super(delegate, MatlabDateTime.class);
+    }
 
-    void visit(MatlabBoolean bool);
+    @Override
+    protected Node represent(MatlabDateTime t) {
+        String value = ISODateTimeFormat.dateTime().print(t.value());
+        return delegate(MatlabYAMLConstants.MATLAB_DATE_TIME_TAG, value);
+    }
 
-    void visit(MatlabCell cell);
-
-    void visit(MatlabMatrix matrix);
-
-    void visit(MatlabScalar scalar);
-
-    void visit(MatlabString string);
-
-    void visit(MatlabStruct struct);
-
-    void visit(MatlabFile file);
-
-    void visit(MatlabDateTime time);
 }

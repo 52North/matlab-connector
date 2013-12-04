@@ -51,4 +51,8 @@ public class AbstractMatlabValueVisitor implements MatlabValueVisitor {
     public void visit(MatlabFile file) {
     }
 
+    @Override
+    public void visit(MatlabDateTime time) {
+    }
+
 }

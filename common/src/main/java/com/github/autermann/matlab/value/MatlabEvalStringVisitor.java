@@ -19,6 +19,8 @@ package com.github.autermann.matlab.value;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
+import org.joda.time.DateTimeZone;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
@@ -115,6 +117,11 @@ public class MatlabEvalStringVisitor
 
     public MapTransformer mapTransformer() {
         return mapTransformer;
+    }
+
+    @Override
+    public String visit(MatlabDateTime time) {
+        return String.valueOf(time.value().toDateTime(DateTimeZone.UTC).getMillis());
     }
 
     public static MatlabEvalStringVisitor create() {

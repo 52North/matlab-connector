@@ -19,17 +19,19 @@ package com.github.autermann.matlab.values;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
+import com.github.autermann.matlab.value.MatlabDateTime;
+import com.github.autermann.matlab.value.MatlabEvalStringVisitor;
 import com.github.autermann.matlab.value.MatlabMatrix;
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabStruct;
-import com.github.autermann.matlab.value.MatlabEvalStringVisitor;
 
 /**
  * TODO JavaDoc
@@ -95,5 +97,12 @@ public class StringVisitorTest {
                 .set("field3", MatlabBoolean.yes());
 
         assertThat(visitor.apply(value), is("struct('fiel''d1', [ 1.1, 1.2; 1.3, 1.4 ], 'field2', 1.1, 'field3', 1)"));
+    }
+
+     @Test
+    public void testMatlabDateTime() {
+        DateTime now = DateTime.now();
+        MatlabDateTime value = new MatlabDateTime(now);
+        assertThat(visitor.apply(value), is(String.valueOf(now.getMillis())));
     }
 }
