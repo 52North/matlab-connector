@@ -17,7 +17,9 @@
 package com.github.autermann.matlab.yaml.represent;
 
 import java.io.IOException;
+
 import org.yaml.snakeyaml.nodes.Node;
+
 import com.github.autermann.matlab.value.MatlabFile;
 import com.github.autermann.matlab.yaml.MatlabYAMLConstants;
 
@@ -34,14 +36,11 @@ public class MatlabFileRepresent extends TypeSafeRepresent<MatlabFile> {
 
     @Override
     protected Node represent(MatlabFile t) {
-        if (!t.isLoaded()) {
-            try {
-                t.load();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+        try {
+            return delegate(MatlabYAMLConstants.MATLAB_FILE_TAG, t.getContent());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-        return delegate(MatlabYAMLConstants.MATLAB_FILE_TAG, t.getContent());
     }
 
 }

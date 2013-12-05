@@ -16,6 +16,7 @@
  */
 package com.github.autermann.matlab.value;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
@@ -109,7 +110,11 @@ public class MatlabEvalStringVisitor
     @Override
     public String visit(MatlabFile file) {
         if (file.isLoaded()) {
-            return Arrays.toString(file.getContent());
+            try {
+                return Arrays.toString(file.getContent());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         } else {
             return file.getFile().getAbsolutePath();
         }

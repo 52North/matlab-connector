@@ -234,15 +234,11 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
 
         @Override
         public JsonElement visit(MatlabFile file) {
-            if (!file.isLoaded()) {
-                try {
-                    file.load();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+            try {
+                return ctx.serialize(BaseEncoding.base64().encode(file.getContent()));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
-            return ctx
-                    .serialize(BaseEncoding.base64().encode(file.getContent()));
         }
 
         @Override
