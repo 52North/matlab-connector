@@ -141,13 +141,13 @@
             <dependency>
                 <groupId>com.github.autermann</groupId>
                 <artifactId>sockets</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.autermann</groupId>
                 <artifactId>utils</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
