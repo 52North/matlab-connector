@@ -50,7 +50,6 @@ public class MatlabJSONTest {
         @SuppressWarnings("unchecked")
         Class<T> c = (Class<T>) t.getClass();
         String s = gson.toJson(t);
-        System.out.println(s);
         return gson.fromJson(s, c);
     }
 

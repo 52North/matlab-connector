@@ -38,7 +38,6 @@ import com.google.common.collect.Maps;
  *
  */
 public class MatlabRequest {
-    private static final String DEFAULT_RESULT_NAME = "result";
     private final String function;
     private final List<MatlabValue> parameters;
     private final Map<String, MatlabType> results;

@@ -66,7 +66,6 @@ public class MatlabYAMLTest {
         Yaml yaml = new MatlabYAML().createYAML();
         yaml.dump(t, w);
         String string = w.toString();
-        System.out.println(string);
         T read = (T) yaml.load(new StringReader(string));
         return read;
     }
@@ -86,7 +85,6 @@ public class MatlabYAMLTest {
         response.addResult("result10", MatlabValues.randomDateTime());
         MatlabResult presponse = readWrite(response);
         assertThat(presponse, is(equalTo(response)));
-
     }
 
 }
