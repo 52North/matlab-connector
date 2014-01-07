@@ -34,7 +34,7 @@ import com.github.autermann.sockets.server.RequestSocketServerHandler;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autexceptionrmann <c.autexceptionrmann@52north.org>
+ * @author Christian Autexceptionrmann <c.autermann@52north.org>
  */
 class MatlabServerResponseHandler implements
         RequestSocketServerHandler<MatlabRequest, MatlabResponse>,

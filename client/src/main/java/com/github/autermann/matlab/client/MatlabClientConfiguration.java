@@ -35,7 +35,6 @@ public class MatlabClientConfiguration {
     private final ClientSocketFactory socketFactory;
     private final InetSocketAddress address;
     private final int timeOut;
-    private final int attempts;
 
     private MatlabClientConfiguration(ClientSocketFactory socketFactory,
                                       InetSocketAddress address, int timeOut,
@@ -43,7 +42,6 @@ public class MatlabClientConfiguration {
         this.socketFactory = socketFactory;
         this.address = address;
         this.timeOut = timeOut;
-        this.attempts = attempts;
     }
 
     public ClientSocketFactory getSocketFactory() {
@@ -56,10 +54,6 @@ public class MatlabClientConfiguration {
 
     public int getTimeOut() {
         return timeOut;
-    }
-
-    public int getAttempts() {
-        return attempts;
     }
 
     public static Builder builder() {

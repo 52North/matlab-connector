@@ -36,7 +36,6 @@ public class MatlabClient {
     public MatlabClient(MatlabClientConfiguration options) {
         client = SocketClientBuilder.create()
                 .withAddress(options.getAddress())
-                .withAttempts(options.getAttempts())
                 .withSocketFactory(options.getSocketFactory())
                 .withTimeout(options.getTimeOut())
                 .build(new MatlabClientRequestHandler());
@@ -49,6 +48,9 @@ public class MatlabClient {
             throw (MatlabException) response;
         }
         return (MatlabResult) response;
+    }
 
+    public void close() {
+        this.client.close();
     }
 }

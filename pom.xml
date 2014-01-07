@@ -6,7 +6,7 @@
     <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>matlab-connector</name>
-    <url>http://www.uncertweb.org</url>
+    <url>https://github.com/autermann/matlab-connector</url>
     <inceptionYear>2012</inceptionYear>
     <description>Provides the ability to run MATLAB functions remotely.</description>
     <licenses>
@@ -142,7 +142,7 @@
             <dependency>
                 <groupId>com.github.autermann</groupId>
                 <artifactId>sockets</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.2-SNAPSHOT</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
