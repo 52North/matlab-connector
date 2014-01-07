@@ -18,8 +18,6 @@ package com.github.autermann.matlab.server;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.github.autermann.sockets.ssl.SSLConfiguration;
-import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc
@@ -30,7 +28,6 @@ public class MatlabServerConfiguration {
     private int port;
     private int threads;
     private String path;
-    private SSLConfiguration sslConfiguration;
     private boolean debug;
 
     public int getPort() {
@@ -60,15 +57,6 @@ public class MatlabServerConfiguration {
     public MatlabServerConfiguration setPath(String path) {
         checkArgument(path != null && !path.isEmpty());
         this.path = path;
-        return this;
-    }
-
-    public Optional<SSLConfiguration> getSSLConfiguration() {
-        return Optional.fromNullable(this.sslConfiguration);
-    }
-
-    public MatlabServerConfiguration setSSLConfiguration(SSLConfiguration c) {
-        this.sslConfiguration = c;
         return this;
     }
 

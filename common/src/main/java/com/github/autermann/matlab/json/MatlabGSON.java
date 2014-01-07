@@ -19,7 +19,9 @@ package com.github.autermann.matlab.json;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 import com.github.autermann.matlab.MatlabEncoding;
 import com.github.autermann.matlab.MatlabException;
@@ -65,14 +67,8 @@ public class MatlabGSON implements MatlabEncoding {
         MatlabDateTime.class
     };
 
-    @Override
-    public MatlabRequest decodeRequest(InputStream is) {
-        return getGson().fromJson(decode(is), MatlabRequest.class);
-    }
-
-    @Override
-    public MatlabResponse decodeResponse(InputStream is) {
-        JsonElement json = decode(is);
+    private MatlabResponse toResponse(JsonElement json)
+            throws JsonParseException {
         try {
             return getGson().fromJson(json, MatlabResult.class);
         } catch (JsonParseException e1) {
@@ -84,26 +80,96 @@ public class MatlabGSON implements MatlabEncoding {
         }
     }
 
-    @Override
-    public void encodeRequest(MatlabRequest request, OutputStream os) {
-        print(request, os);
+    private MatlabRequest toRequest(JsonElement json) {
+        return getGson().fromJson(json, MatlabRequest.class);
     }
 
-    @Override
-    public void encodeResponse(MatlabResponse response, OutputStream out) {
-        print(response, out);
+    private JsonElement decode(InputStream is) {
+        return decode(new InputStreamReader(is, Charsets.UTF_8));
     }
 
-    private JsonElement decode(InputStream is) throws JsonParseException {
-        return new JsonParser().parse(new InputStreamReader(is, Charsets.UTF_8));
+    private JsonElement decode(Reader is) {
+        return new JsonParser().parse(is);
     }
 
-    private void print(Object o, OutputStream os) {
-        new PrintWriter(os, true).println(getGson().toJson(o));
+    private JsonElement decode(String json) {
+        return new JsonParser().parse(json);
+    }
+
+    private void encode(Object o, Writer os) {
+        getGson().toJson(o, os);
+    }
+
+    private void encode(Object o, OutputStream os) {
+        encode(o, new OutputStreamWriter(os, Charsets.UTF_8));
+    }
+
+    private String encode(Object o) {
+        return getGson().toJson(o);
     }
 
     public Gson getGson() {
         return Holder.GSON;
+    }
+
+    @Override
+    public MatlabRequest decodeRequest(InputStream is) {
+        return toRequest(decode(is));
+    }
+
+    @Override
+    public MatlabResponse decodeResponse(InputStream is) {
+        return toResponse(decode(is));
+    }
+
+    @Override
+    public void encodeRequest(MatlabRequest request, OutputStream os) {
+        encode(request, os);
+    }
+
+    @Override
+    public void encodeResponse(MatlabResponse response, OutputStream out) {
+        encode(response, out);
+    }
+
+    @Override
+    public MatlabRequest decodeRequest(String request) {
+        return toRequest(decode(request));
+    }
+
+    @Override
+    public MatlabResponse decodeResponse(String response) {
+        return toResponse(decode(response));
+    }
+
+    @Override
+    public String encodeRequest(MatlabRequest request) {
+        return encode(request);
+    }
+
+    @Override
+    public String encodeResponse(MatlabResponse response) {
+        return encode(response);
+    }
+
+    @Override
+    public MatlabRequest decodeRequest(Reader is) {
+        return toRequest(decode(is));
+    }
+
+    @Override
+    public MatlabResponse decodeResponse(Reader is) {
+        return toResponse(decode(is));
+    }
+
+    @Override
+    public void encodeRequest(MatlabRequest request, Writer os) {
+        encode(request, os);
+    }
+
+    @Override
+    public void encodeResponse(MatlabResponse response, Writer os) {
+        encode(response, os);
     }
 
     private static class Holder {

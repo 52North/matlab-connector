@@ -21,17 +21,14 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.autermann.matlab.MatlabException;
 
 public class MatlabInstancePool {
     private static final Logger log = LoggerFactory
             .getLogger(MatlabInstancePool.class);
     private final GenericObjectPool<MatlabInstance> pool;
 
-    public MatlabInstancePool(MatlabInstancePoolConfiguration config) throws
-            MatlabException {
-        final InstanceFactory factory = new InstanceFactory(config
-                .getInstanceConfig());
+    public MatlabInstancePool(MatlabInstancePoolConfiguration config) {
+        final InstanceFactory factory = new InstanceFactory(config.getInstanceConfig());
         this.pool = new GenericObjectPool<MatlabInstance>(factory);
         this.pool.setMaxActive(config.getNumThreads());
         this.pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);

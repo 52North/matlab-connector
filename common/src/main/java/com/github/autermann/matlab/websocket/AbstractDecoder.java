@@ -14,41 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.client;
+package com.github.autermann.matlab.websocket;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.websocket.Decoder;
+import javax.websocket.EndpointConfig;
 
 import com.github.autermann.matlab.MatlabEncoding;
-import com.github.autermann.matlab.MatlabRequest;
-import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.json.MatlabGSON;
-import com.github.autermann.sockets.client.RequestSocketClientHandler;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author Christian Autermann
  */
-class MatlabClientRequestHandler implements
-        RequestSocketClientHandler<MatlabRequest, MatlabResponse> {
+public abstract class AbstractDecoder<T> implements Decoder.TextStream<T> {
 
     private final MatlabEncoding delegate = new MatlabGSON();
 
-    @Override
-    public void encode(MatlabRequest request,
-                       OutputSupplier<OutputStream> out)
-            throws IOException {
-        delegate.encodeRequest(request, out.getOutput());
+    public MatlabEncoding getDelegate() {
+        return delegate;
     }
 
     @Override
-    public MatlabResponse decode(InputSupplier<InputStream> in)
-            throws IOException {
-        return delegate.decodeResponse(in.getInput());
+    public void init(EndpointConfig config) {
+    }
+
+    @Override
+    public void destroy() {
     }
 
 }

@@ -17,40 +17,109 @@
 package com.github.autermann.matlab.client;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+
+import javax.websocket.ClientEndpoint;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.EncodeException;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+
+import org.eclipse.jetty.websocket.jsr356.ClientContainer;
 
 import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
-import com.github.autermann.sockets.client.RequestSocketClient;
-import com.github.autermann.sockets.client.SocketClientBuilder;
+import com.github.autermann.matlab.websocket.MatlabRequestDecoder;
+import com.github.autermann.matlab.websocket.MatlabRequestEncoder;
+import com.github.autermann.matlab.websocket.MatlabResponseDecoder;
+import com.github.autermann.matlab.websocket.MatlabResponseEncoder;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Queues;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
-public class MatlabClient {
-    private final RequestSocketClient<MatlabRequest, MatlabResponse> client;
+public class MatlabClient /*implements Runnable*/ {
+    private final MatlabClientConfiguration options;
+//    private final Thread thread = new Thread(this);
+    private MatlabClientEndpoint endpoint;
+    private WebSocketContainer container;
+    private Session session;
 
-    public MatlabClient(MatlabClientConfiguration options) {
-        client = SocketClientBuilder.create()
-                .withAddress(options.getAddress())
-                .withSocketFactory(options.getSocketFactory())
-                .withTimeout(options.getTimeOut())
-                .build(new MatlabClientRequestHandler());
+    public MatlabClient(MatlabClientConfiguration options) throws
+            DeploymentException, IOException {
+        this.options = options;
+        endpoint = new MatlabClientEndpoint();
+        container = ContainerProvider.getWebSocketContainer();
+        session = container.connectToServer(endpoint, options.getAddress());
     }
 
-    public MatlabResult exec(MatlabRequest request) throws IOException,
-                                                           MatlabException {
-        MatlabResponse response = client.exec(request);
+    public synchronized  MatlabResult exec(MatlabRequest request)
+            throws IOException, MatlabException {
+        Preconditions.checkState(session != null &&
+                                 session.isOpen());
+        try {
+            session.getBasicRemote().sendObject(request);
+        } catch (EncodeException ex) {
+            throw new RuntimeException(ex);
+        }
+        MatlabResponse response = endpoint.getResponse();
         if (response instanceof MatlabException) {
             throw (MatlabException) response;
         }
         return (MatlabResult) response;
     }
 
+    public MatlabClient start() throws DeploymentException, IOException {
+
+        return this;
+    }
+
     public void close() {
-        this.client.close();
+        try {
+            session.close();
+            ((ClientContainer) container).stop();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @ClientEndpoint(decoders = { MatlabRequestDecoder.class,
+                                 MatlabResponseDecoder.class },
+                    encoders = { MatlabRequestEncoder.class,
+                                 MatlabResponseEncoder.class })
+    public class MatlabClientEndpoint {
+        private final BlockingQueue<MatlabResponse> responses
+                = Queues.newLinkedBlockingQueue();
+
+        @OnMessage
+        public void onMessage(MatlabResponse response) {
+            this.responses.add(response);
+        }
+
+        @OnError
+        public void onError(Throwable thr) {
+            if (thr instanceof MatlabException) {
+                this.responses.add((MatlabException) thr);
+            } else {
+                this.responses
+                        .add(new MatlabException("Could not execute request", thr));
+            }
+        }
+
+        public MatlabResponse getResponse() {
+            try {
+                return responses.take();
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

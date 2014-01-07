@@ -63,22 +63,25 @@ public class MatlabRequest {
      *
      * @param parameter the parameter <code>MatlabValue</code> to add
      */
-    public void addParameter(MatlabValue parameter) {
+    public MatlabRequest addParameter(MatlabValue parameter) {
         this.parameters.add(checkNotNull(parameter));
+        return this;
     }
 
-    public void addParameters(Iterable<? extends MatlabValue> parameters) {
+    public MatlabRequest addParameters(Iterable<? extends MatlabValue> parameters) {
         for (MatlabValue parameter : parameters) {
             addParameter(parameter);
         }
+        return this;
     }
 
     /**
      * Clears all parameters from this request.
      *
      */
-    public void clearParameters() {
+    public MatlabRequest clearParameters() {
         this.parameters.clear();
+        return this;
     }
 
     /**

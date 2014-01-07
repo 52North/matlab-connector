@@ -20,11 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.net.InetSocketAddress;
-
-import com.github.autermann.sockets.client.ClientSocketFactory;
-import com.github.autermann.sockets.ssl.SSLClientSocketFactory;
-import com.github.autermann.sockets.ssl.SSLConfiguration;
+import java.net.URI;
 
 /**
  * TODO JavaDoc
@@ -32,28 +28,14 @@ import com.github.autermann.sockets.ssl.SSLConfiguration;
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public class MatlabClientConfiguration {
-    private final ClientSocketFactory socketFactory;
-    private final InetSocketAddress address;
-    private final int timeOut;
+    private final URI address;
 
-    private MatlabClientConfiguration(ClientSocketFactory socketFactory,
-                                      InetSocketAddress address, int timeOut,
-                                      int attempts) {
-        this.socketFactory = socketFactory;
+    private MatlabClientConfiguration(URI address) {
         this.address = address;
-        this.timeOut = timeOut;
     }
 
-    public ClientSocketFactory getSocketFactory() {
-        return socketFactory;
-    }
-
-    public InetSocketAddress getAddress() {
+    public URI getAddress() {
         return address;
-    }
-
-    public int getTimeOut() {
-        return timeOut;
     }
 
     public static Builder builder() {
@@ -61,56 +43,28 @@ public class MatlabClientConfiguration {
     }
 
     public static class Builder {
-        private static final int DEFAULT_TIMEOUT = 10 * 1000;
-        public static final int DEFAULT_ATTEMPTS = 3;
-        private InetSocketAddress address;
-        private ClientSocketFactory socketFactory;
-        private int timeout = DEFAULT_TIMEOUT;
-        private int attempts = DEFAULT_ATTEMPTS;
+        private URI address;
 
         private Builder() {
         }
 
-        public Builder withAddress(InetSocketAddress address) {
-            this.address = checkNotNull(address);
+        public Builder withAddress(URI address) {
+            checkNotNull(address);
+            checkArgument(address.getScheme().equals("ws") ||
+                          address.getScheme().equals("wss"));
+            this.address = address;
             return this;
         }
 
         public Builder withAddress(String host, int port) {
             checkNotNull(host);
             checkArgument(port > 0);
-            return withAddress(new InetSocketAddress(host, port));
-        }
-
-        public Builder withSocketFactory(ClientSocketFactory socketFactory) {
-            this.socketFactory = checkNotNull(socketFactory);
-            return this;
-        }
-
-        public Builder withSSL(SSLConfiguration config) {
-            checkNotNull(config);
-            return withSocketFactory(new SSLClientSocketFactory(config));
-        }
-
-        public Builder withTimeout(int timeout) {
-            checkArgument(timeout > 0);
-            this.timeout = timeout;
-            return this;
-        }
-
-        public Builder withAttempts(int attempts) {
-            checkArgument(attempts > 0);
-            this.attempts = attempts;
-            return this;
+            return withAddress(URI.create(String.format("ws://%s:%s", host, port)));
         }
 
         public MatlabClientConfiguration build() {
             checkState(address != null);
-            if (socketFactory == null) {
-                socketFactory = ClientSocketFactory.getDefault();
-            }
-            return new MatlabClientConfiguration(socketFactory, address,
-                                                 timeout, attempts);
+            return new MatlabClientConfiguration(address);
         }
     }
 }

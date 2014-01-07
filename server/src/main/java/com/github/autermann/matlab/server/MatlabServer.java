@@ -20,16 +20,23 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 
-import com.github.autermann.matlab.MatlabException;
-import com.github.autermann.matlab.MatlabRequest;
-import com.github.autermann.matlab.MatlabResponse;
-import com.github.autermann.sockets.server.RequestSocketServer;
-import com.github.autermann.sockets.server.SocketServerBuilder;
-import com.github.autermann.sockets.server.StreamingSocketServer;
+import javax.websocket.DeploymentException;
+import javax.websocket.server.ServerEndpointConfig;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
+import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MatlabServer {
-    private RequestSocketServer<MatlabRequest,MatlabResponse> server;
+    private static final Logger log = LoggerFactory
+            .getLogger(MatlabServer.class);
     private final MatlabServerConfiguration options;
+    private Server server;
 
     public MatlabServer(MatlabServerConfiguration options) {
         this.options = options;
@@ -39,35 +46,63 @@ public class MatlabServer {
         return this.options;
     }
 
-    public void start() throws IOException, MatlabException {
-        setup().start(true);
+    public void start() throws Exception {
+        synchronized (this) {
+            if (this.server == null) {
+                this.server = setup();
+            }
+        }
+        this.server.start();
     }
 
-    private StreamingSocketServer setup() throws IOException, MatlabException {
+    public void stop() throws Exception {
+        synchronized (this) {
+            if (this.server == null) {
+                return;
+            }
+        }
+        this.server.stop();
+    }
+
+    private Server setup() throws IOException, DeploymentException {
         synchronized (this) {
             checkState(server == null, "Server already started.");
         }
-        final MatlabInstancePool pool = createInstancePool();
-        final MatlabInstancePoolDestroyer destroyer = new MatlabInstancePoolDestroyer(pool);
-        final MatlabServerResponseHandler handler = new MatlabServerResponseHandler(pool);
-        Runtime.getRuntime().addShutdownHook(new Thread(destroyer));
-        return this.server = SocketServerBuilder.create()
-                .withShutdownHook(destroyer)
-                .atPort(getOptions().getPort())
-                .withSSL(getOptions().getSSLConfiguration().orNull())
-                .build(handler,handler);
+        MatlabInstancePool pool
+                = new MatlabInstancePool(MatlabInstancePoolConfiguration
+                        .builder()
+                        .withMaximalNumInstances(getOptions().getThreads())
+                        .withInstanceConfig(MatlabInstanceConfiguration
+                                .builder()
+                                .withBaseDir(getOptions().getPath())
+                                .hidden()
+                                .build())
+                        .build());
+        Server jetty = new Server(getOptions().getPort());
+        ServletContextHandler handler
+                = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        handler.setContextPath("/");
+        jetty.setHandler(handler);
+        handler.addLifeCycleListener(new MatlabInstancePoolDestroyer(pool));
+        ServerContainer sc = WebSocketServerContainerInitializer
+                .configureContext(handler);
+        sc.addEndpoint(ServerEndpointConfig.Builder.create(MatlabServerEndpoint.class, "/")
+                .configurator(new MatlabServerEndpointConfigurator(pool)).build());
+        return jetty;
     }
 
-    private MatlabInstancePool createInstancePool() throws MatlabException {
-        // create out matlab instance instancePool
-        MatlabInstanceConfiguration instanceConfig = MatlabInstanceConfiguration.builder()
-                    .withBaseDir(getOptions().getPath())
-                    .hidden()
-                    .build();
-        MatlabInstancePoolConfiguration poolConfig = MatlabInstancePoolConfiguration.builder()
-                    .withMaximalNumInstances(getOptions().getThreads())
-                    .withInstanceConfig(instanceConfig)
-                    .build();
-        return new MatlabInstancePool(poolConfig);
+    private class MatlabInstancePoolDestroyer extends AbstractLifeCycleListener {
+        private final MatlabInstancePool pool;
+
+        MatlabInstancePoolDestroyer(MatlabInstancePool pool) {
+            this.pool = pool;
+        }
+
+        @Override
+        public void lifeCycleStopped(LifeCycle event) {
+            log.info("Destroying Matlab instance pool...");
+            pool.destroy();
+            log.info("Destroyed Matlab instance pool...");
+        }
     }
 }

@@ -14,31 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.server;
+package com.github.autermann.matlab.websocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.websocket.Encoder;
+import javax.websocket.EndpointConfig;
+
+
+import com.github.autermann.matlab.MatlabEncoding;
+import com.github.autermann.matlab.json.MatlabGSON;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author Christian Autermann
  */
-class MatlabInstancePoolDestroyer implements Runnable {
-    private static final Logger log = LoggerFactory
-            .getLogger(MatlabInstancePoolDestroyer.class);
+public abstract class AbstractEncoder<T> implements Encoder.TextStream<T> {
 
-    private final MatlabInstancePool pool;
+    private final MatlabEncoding delegate = new MatlabGSON();
 
-    MatlabInstancePoolDestroyer(MatlabInstancePool pool) {
-        this.pool = pool;
+    public MatlabEncoding getDelegate() {
+        return delegate;
     }
 
     @Override
-    public void run() {
-        log.info("Destroying MATLAB instance pool...");
-        pool.destroy();
-        log.info("Shutdown complete.");
+    public void init(EndpointConfig config) {
+    }
+
+    @Override
+    public void destroy() {
     }
 
 }

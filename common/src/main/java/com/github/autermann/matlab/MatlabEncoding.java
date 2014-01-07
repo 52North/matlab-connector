@@ -18,7 +18,8 @@ package com.github.autermann.matlab;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * TODO JavaDoc
@@ -37,6 +38,24 @@ public interface MatlabEncoding {
     MatlabRequest decodeRequest(InputStream is);
 
     /**
+     * Parses a {@link MatlabRequest} from an {@link Reader}.
+     *
+     * @param is the <code>Reader</code> to parse from
+     *
+     * @return the parsed <code>MatlabRequest</code>
+     */
+    MatlabRequest decodeRequest(Reader is);
+
+    /**
+     * Parses a {@link MatlabRequest} from an {@link String}.
+     *
+     * @param request the <code>String</code> to parse from
+     *
+     * @return the parsed <code>MatlabRequest</code>
+     */
+    MatlabRequest decodeRequest(String request);
+
+    /**
      * Parses a {@link MatlabResponse} from an {@link InputStream}.
      *
      * @param is the <code>InputStream</code> to parse from
@@ -44,6 +63,24 @@ public interface MatlabEncoding {
      * @return the parsed <code>MatlabResponse</code>
      */
     MatlabResponse decodeResponse(InputStream is);
+
+    /**
+     * Parses a {@link MatlabResponse} from an {@link Reader}.
+     *
+     * @param is the <code>Reader</code> to parse from
+     *
+     * @return the parsed <code>MatlabResponse</code>
+     */
+    MatlabResponse decodeResponse(Reader is);
+
+    /**
+     * Parses a {@link MatlabResponse} from an {@link String}.
+     *
+     * @param response the <code>String</code> to parse from
+     *
+     * @return the parsed <code>MatlabResponse</code>
+     */
+    MatlabResponse decodeResponse(String response);
 
     /**
      * Outputs a {@link MatlabRequest} to an {@link OutputStream}.
@@ -54,11 +91,45 @@ public interface MatlabEncoding {
     void encodeRequest(MatlabRequest request, OutputStream os);
 
     /**
+     * Outputs a {@link MatlabRequest} to an {@link Writer}.
+     *
+     * @param request the <code>MatlabRequest</code> to output
+     * @param os      the <code>Writer</code> to output to
+     */
+    void encodeRequest(MatlabRequest request, Writer os);
+
+    /**
+     * Outputs a {@link MatlabRequest} to an {@link OutputStream}.
+     *
+     * @param request the <code>MatlabRequest</code> to output
+     *
+     * @return the encoded <code>MatlabRequest</code>
+     */
+    String encodeRequest(MatlabRequest request);
+
+    /**
      * Outputs a {@link MatlabResponse} to an {@link OutputStream}.
      *
      * @param response the <code>MatlabResponse</code> to output
      * @param os       the <code>OutputStream</code> to output to
      */
     void encodeResponse(MatlabResponse response, OutputStream os);
+
+    /**
+     * Outputs a {@link MatlabResponse} to an {@link Writer}.
+     *
+     * @param response the <code>MatlabResponse</code> to output
+     * @param os       the <code>Writer</code> to output to
+     */
+    void encodeResponse(MatlabResponse response, Writer os);
+
+    /**
+     * Outputs a {@link MatlabResponse} to an {@link OutputStream}.
+     *
+     * @param response the <code>MatlabResponse</code> to output
+     *
+     * @return the encoded <code>MatlabResponse</code>
+     */
+    String encodeResponse(MatlabResponse response);
 
 }

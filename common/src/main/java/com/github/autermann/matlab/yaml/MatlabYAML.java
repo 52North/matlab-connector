@@ -19,6 +19,8 @@ package com.github.autermann.matlab.yaml;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
@@ -34,12 +36,6 @@ import com.github.autermann.matlab.yaml.construct.MatlabConstructor;
 import com.github.autermann.matlab.yaml.represent.MatlabRepresenter;
 import com.google.common.base.Charsets;
 
-/**
- * TODO JavaDoc
- *
- * @author Chrequestistian Auterequestmann
- * <c.auterequestmann@52norequestth.orequestg>
- */
 public class MatlabYAML implements MatlabEncoding {
 
     @Override
@@ -48,8 +44,48 @@ public class MatlabYAML implements MatlabEncoding {
     }
 
     @Override
+    public MatlabRequest decodeRequest(Reader is) {
+        return decode(is, MatlabRequest.class);
+    }
+
+    @Override
+    public MatlabRequest decodeRequest(String request) {
+        return decode(request, MatlabRequest.class);
+    }
+
+    @Override
     public MatlabResponse decodeResponse(InputStream is) {
         return decode(is, MatlabResponse.class);
+    }
+
+    @Override
+    public MatlabResponse decodeResponse(Reader is) {
+        return decode(is, MatlabResponse.class);
+    }
+
+    @Override
+    public MatlabResponse decodeResponse(String response) {
+        return decode(response, MatlabResponse.class);
+    }
+
+    @Override
+    public void encodeRequest(MatlabRequest request, Writer os) {
+        encode(request, os);
+    }
+
+    @Override
+    public String encodeRequest(MatlabRequest request) {
+        return encode(request);
+    }
+
+    @Override
+    public void encodeResponse(MatlabResponse response, Writer os) {
+        encode(response, os);
+    }
+
+    @Override
+    public String encodeResponse(MatlabResponse response) {
+        return encode(response);
     }
 
     @Override
@@ -63,11 +99,30 @@ public class MatlabYAML implements MatlabEncoding {
     }
 
     private <T> void encode(T t, OutputStream os) {
-        createYAML().dump(t, new OutputStreamWriter(os, Charsets.UTF_8));
+        encode(t, new OutputStreamWriter(os, Charsets.UTF_8));
     }
 
-    private <T> T decode(InputStream is, Class<T> type) throws RuntimeException {
-        Object o = createYAML().load(is);
+    private <T> void encode(T t, Writer os) {
+        createYAML().dump(t, os);
+    }
+
+    private <T> String encode(T t) {
+        return createYAML().dump(t);
+    }
+
+    private <T> T decode(InputStream is, Class<T> type) {
+        return cast(createYAML().load(is), type);
+    }
+
+    private <T> T decode(String yaml, Class<T> type) {
+        return cast(createYAML().load(yaml), type);
+    }
+
+    private <T> T decode(Reader is, Class<T> type) {
+        return cast(createYAML().load(is), type);
+    }
+
+    private <T> T cast(Object o, Class<T> type) {
         if (o != null && type.isAssignableFrom(o.getClass())) {
             return type.cast(o);
         } else {
