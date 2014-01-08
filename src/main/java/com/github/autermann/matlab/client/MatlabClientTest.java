@@ -17,6 +17,7 @@
 package com.github.autermann.matlab.client;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
 import com.github.autermann.matlab.MatlabException;
@@ -39,9 +40,8 @@ public class MatlabClientTest {
     private MatlabClient client;
 
     public void run() throws Exception {
-        client = new MatlabClient(MatlabClientConfiguration
-                .builder().withAddress("localhost", 7000).build())
-                .start();
+        client = MatlabClient.create(URI.create("ws://localhost:7000"));
+//        client = MatlabClient.create(new File("/home/auti/Source/matlab-wps/src/main/resources"));
         startThreads();
         latch.await();
         checkResults();

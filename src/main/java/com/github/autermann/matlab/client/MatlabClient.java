@@ -16,7 +16,10 @@
  */
 package com.github.autermann.matlab.client;
 
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.BlockingQueue;
 
 import javax.websocket.ClientEndpoint;
@@ -34,6 +37,8 @@ import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
+import com.github.autermann.matlab.server.MatlabInstance;
+import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
 import com.github.autermann.matlab.websocket.MatlabRequestDecoder;
 import com.github.autermann.matlab.websocket.MatlabRequestEncoder;
 import com.github.autermann.matlab.websocket.MatlabResponseDecoder;
@@ -46,79 +51,142 @@ import com.google.common.collect.Queues;
  *
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
-public class MatlabClient /*implements Runnable*/ {
-    private final MatlabClientConfiguration options;
-//    private final Thread thread = new Thread(this);
-    private MatlabClientEndpoint endpoint;
-    private WebSocketContainer container;
-    private Session session;
+public abstract class MatlabClient implements Closeable {
 
-    public MatlabClient(MatlabClientConfiguration options) throws
-            DeploymentException, IOException {
-        this.options = options;
-        endpoint = new MatlabClientEndpoint();
-        container = ContainerProvider.getWebSocketContainer();
-        session = container.connectToServer(endpoint, options.getAddress());
+    public abstract MatlabResult exec(MatlabRequest request)
+            throws MatlabException, IOException;
+
+    public static MatlabClient create() throws MatlabException, IOException {
+        return create(MatlabClientConfiguration.builder().build());
     }
 
-    public synchronized  MatlabResult exec(MatlabRequest request)
-            throws IOException, MatlabException {
-        Preconditions.checkState(session != null &&
-                                 session.isOpen());
-        try {
-            session.getBasicRemote().sendObject(request);
-        } catch (EncodeException ex) {
-            throw new RuntimeException(ex);
-        }
-        MatlabResponse response = endpoint.getResponse();
-        if (response instanceof MatlabException) {
-            throw (MatlabException) response;
-        }
-        return (MatlabResult) response;
+    public static MatlabClient create(File basedir) throws MatlabException,
+                                                           IOException {
+        return create(MatlabClientConfiguration.builder().withDirectory(basedir)
+                .build());
     }
 
-    public MatlabClient start() throws DeploymentException, IOException {
-
-        return this;
+    public static MatlabClient create(URI remote) throws MatlabException,
+                                                         IOException {
+        return create(MatlabClientConfiguration.builder().withAddress(remote)
+                .build());
     }
 
-    public void close() {
-        try {
-            session.close();
-            ((ClientContainer) container).stop();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+    public static MatlabClient create(MatlabInstanceConfiguration conf)
+            throws MatlabException, IOException {
+        return create(MatlabClientConfiguration.builder()
+                .withInstanceConfiguration(conf).build());
+    }
+
+    public static MatlabClient create(MatlabClientConfiguration options) throws
+            MatlabException, IOException {
+        if (options instanceof MatlabClientConfiguration.Local) {
+            return new Local((MatlabClientConfiguration.Local) options);
+        } else if (options instanceof MatlabClientConfiguration.Remote) {
+            return new Remote((MatlabClientConfiguration.Remote) options);
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 
-    @ClientEndpoint(decoders = { MatlabRequestDecoder.class,
-                                 MatlabResponseDecoder.class },
-                    encoders = { MatlabRequestEncoder.class,
-                                 MatlabResponseEncoder.class })
-    public class MatlabClientEndpoint {
-        private final BlockingQueue<MatlabResponse> responses
-                = Queues.newLinkedBlockingQueue();
+    private static class Remote extends MatlabClient {
+        private final MatlabClientEndpoint endpoint;
+        private final WebSocketContainer container;
+        private final Session session;
 
-        @OnMessage
-        public void onMessage(MatlabResponse response) {
-            this.responses.add(response);
-        }
-
-        @OnError
-        public void onError(Throwable thr) {
-            if (thr instanceof MatlabException) {
-                this.responses.add((MatlabException) thr);
-            } else {
-                this.responses
-                        .add(new MatlabException("Could not execute request", thr));
+        private Remote(MatlabClientConfiguration.Remote options)
+                throws MatlabException, IOException {
+            try {
+                endpoint = new MatlabClientEndpoint();
+                container = ContainerProvider.getWebSocketContainer();
+                session = container.connectToServer(endpoint, options
+                        .getAddress());
+            } catch (DeploymentException ex) {
+                throw new MatlabException("Error connecting to server", ex);
             }
         }
 
-        public MatlabResponse getResponse() {
+        @Override
+        public synchronized MatlabResult exec(MatlabRequest request)
+                throws MatlabException, IOException {
+            Preconditions.checkState(session != null &&
+                                     session.isOpen());
             try {
-                return responses.take();
-            } catch (InterruptedException ex) {
+                session.getBasicRemote().sendObject(request);
+            } catch (EncodeException ex) {
                 throw new RuntimeException(ex);
+            }
+            MatlabResponse response = endpoint.getResponse();
+            if (response instanceof MatlabException) {
+                throw (MatlabException) response;
+            }
+            return (MatlabResult) response;
+        }
+
+        @Override
+        public void close() {
+            try {
+                session.close();
+                ((ClientContainer) container).stop();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        @ClientEndpoint(decoders = { MatlabRequestDecoder.class,
+                                     MatlabResponseDecoder.class },
+                        encoders = { MatlabRequestEncoder.class,
+                                     MatlabResponseEncoder.class })
+        public class MatlabClientEndpoint {
+            private final BlockingQueue<MatlabResponse> responses
+                    = Queues.newLinkedBlockingQueue();
+
+            @OnMessage
+            public void onMessage(MatlabResponse response) {
+                this.responses.add(response);
+            }
+
+            @OnError
+            public void onError(Throwable thr) {
+                if (thr instanceof MatlabException) {
+                    this.responses.add((MatlabException) thr);
+                } else {
+                    this.responses
+                            .add(new MatlabException("Could not execute request", thr));
+                }
+            }
+
+            public MatlabResponse getResponse() {
+                try {
+                    return responses.take();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
+    private static class Local extends MatlabClient {
+        private final MatlabInstance instance;
+
+        public Local(MatlabClientConfiguration.Local options) throws
+                MatlabException {
+            this.instance = new MatlabInstance(options
+                    .getInstanceConfiguration());
+        }
+
+        @Override
+        public synchronized MatlabResult exec(MatlabRequest request)
+                throws MatlabException {
+            return this.instance.handle(request);
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                this.instance.destroy();
+            } catch (MatlabException ex) {
+                throw new IOException(ex);
             }
         }
     }
