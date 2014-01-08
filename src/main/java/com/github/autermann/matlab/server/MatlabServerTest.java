@@ -21,7 +21,7 @@ package com.github.autermann.matlab.server;
  *
  * @author Christian Autermann
  */
-public class Main {
+public class MatlabServerTest {
 
     public static void main(String[] args) throws Exception {
         new MatlabServer(new MatlabServerConfiguration()

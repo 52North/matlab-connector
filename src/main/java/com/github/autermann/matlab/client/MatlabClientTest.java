@@ -30,7 +30,7 @@ import com.github.autermann.matlab.value.MatlabType;
  *
  * @author Christian Autermann
  */
-public class Tester {
+public class MatlabClientTest {
     private static final int THEADS = 10;
     private static final int REQUESTS_PER_THREAD = 40;
     private static final int REQUESTS = THEADS * REQUESTS_PER_THREAD;
@@ -83,7 +83,7 @@ public class Tester {
     }
 
     public static void main(String[] args) throws Exception {
-        new Tester().run();
+        new MatlabClientTest().run();
     }
 
     private class RunnableImpl implements Runnable {
