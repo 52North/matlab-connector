@@ -17,7 +17,6 @@
 package com.github.autermann.matlab.client;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;
@@ -38,7 +37,7 @@ import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.server.MatlabInstance;
-import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
+import com.github.autermann.matlab.server.MatlabInstancePool;
 import com.github.autermann.matlab.websocket.MatlabRequestDecoder;
 import com.github.autermann.matlab.websocket.MatlabRequestEncoder;
 import com.github.autermann.matlab.websocket.MatlabResponseDecoder;
@@ -60,22 +59,10 @@ public abstract class MatlabClient implements Closeable {
         return create(MatlabClientConfiguration.builder().build());
     }
 
-    public static MatlabClient create(File basedir) throws MatlabException,
-                                                           IOException {
-        return create(MatlabClientConfiguration.builder().withDirectory(basedir)
-                .build());
-    }
-
     public static MatlabClient create(URI remote) throws MatlabException,
                                                          IOException {
         return create(MatlabClientConfiguration.builder().withAddress(remote)
                 .build());
-    }
-
-    public static MatlabClient create(MatlabInstanceConfiguration conf)
-            throws MatlabException, IOException {
-        return create(MatlabClientConfiguration.builder()
-                .withInstanceConfiguration(conf).build());
     }
 
     public static MatlabClient create(MatlabClientConfiguration options) throws
@@ -167,27 +154,26 @@ public abstract class MatlabClient implements Closeable {
     }
 
     private static class Local extends MatlabClient {
-        private final MatlabInstance instance;
+        private final MatlabInstancePool pool;
 
-        public Local(MatlabClientConfiguration.Local options) throws
-                MatlabException {
-            this.instance = new MatlabInstance(options
-                    .getInstanceConfiguration());
+        public Local(MatlabClientConfiguration.Local options) throws MatlabException {
+            this.pool = new MatlabInstancePool(options.getInstanceConfiguration());
         }
 
         @Override
-        public synchronized MatlabResult exec(MatlabRequest request)
+        public MatlabResult exec(MatlabRequest request)
                 throws MatlabException {
-            return this.instance.handle(request);
+            MatlabInstance instance = this.pool.getInstance();
+            try {
+                return instance.handle(request);
+            } finally {
+                this.pool.returnInstance(instance);
+            }
         }
 
         @Override
         public void close() throws IOException {
-            try {
-                this.instance.destroy();
-            } catch (MatlabException ex) {
-                throw new IOException(ex);
-            }
+            this.pool.destroy();
         }
     }
 }

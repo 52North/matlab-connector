@@ -19,10 +19,10 @@ package com.github.autermann.matlab.client;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.File;
 import java.net.URI;
 
 import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
+import com.github.autermann.matlab.server.MatlabInstancePoolConfiguration;
 import com.google.common.base.Preconditions;
 
 /**
@@ -37,13 +37,13 @@ public abstract class MatlabClientConfiguration {
     }
 
     public static class Local extends MatlabClientConfiguration {
-        private final MatlabInstanceConfiguration instanceConfiguration;
+        private final MatlabInstancePoolConfiguration instanceConfiguration;
 
-        public Local(MatlabInstanceConfiguration conf) {
+        public Local(MatlabInstancePoolConfiguration conf) {
             this.instanceConfiguration = conf;
         }
 
-        public MatlabInstanceConfiguration getInstanceConfiguration() {
+        public MatlabInstancePoolConfiguration getInstanceConfiguration() {
             return this.instanceConfiguration;
         }
     }
@@ -62,7 +62,8 @@ public abstract class MatlabClientConfiguration {
 
     public static class Builder {
         private URI address;
-        private MatlabInstanceConfiguration instanceConfiguration;
+        private int numInstances = 1;
+        private MatlabInstancePoolConfiguration instancePoolConfiguration;
 
         private Builder() {
         }
@@ -82,20 +83,9 @@ public abstract class MatlabClientConfiguration {
                     .format("ws://%s:%s", host, port)));
         }
 
-        public Builder withDirectory(String directory) {
-            return withDirectory(new File(directory));
-        }
-
-        public Builder withDirectory(File directory) {
-            checkNotNull(directory);
-            checkArgument(directory.exists());
-            return withInstanceConfiguration(MatlabInstanceConfiguration
-                    .builder().hidden().withBaseDir(directory).build());
-        }
-
-        public Builder withInstanceConfiguration(
-                MatlabInstanceConfiguration options) {
-            this.instanceConfiguration = Preconditions.checkNotNull(options);
+        public Builder withInstancePoolConfiguration(
+                MatlabInstancePoolConfiguration options) {
+            this.instancePoolConfiguration = Preconditions.checkNotNull(options);
             this.address = null;
             return this;
         }
@@ -104,11 +94,14 @@ public abstract class MatlabClientConfiguration {
             if (address != null) {
                 return new MatlabClientConfiguration.Remote(address);
             } else {
-                if (instanceConfiguration == null) {
-                    instanceConfiguration = MatlabInstanceConfiguration
-                            .builder().hidden().build();
+                if (instancePoolConfiguration == null) {
+                    instancePoolConfiguration = MatlabInstancePoolConfiguration
+                            .builder()
+                            .withInstanceConfig(MatlabInstanceConfiguration
+                                    .builder().hidden().build())
+                            .withMaximalNumInstances(1).build();
                 }
-                return new MatlabClientConfiguration.Local(instanceConfiguration);
+                return new MatlabClientConfiguration.Local(instancePoolConfiguration);
             }
         }
     }

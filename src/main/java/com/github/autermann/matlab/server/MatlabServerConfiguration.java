@@ -29,6 +29,7 @@ public class MatlabServerConfiguration {
     private int threads;
     private String path;
     private boolean debug;
+    private boolean hidden;
 
     public int getPort() {
         return this.port;
@@ -66,6 +67,15 @@ public class MatlabServerConfiguration {
 
     public MatlabServerConfiguration setDebug(boolean debug) {
         this.debug = debug;
+        return this;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public MatlabServerConfiguration setHidden(boolean hidden) {
+        this.hidden = hidden;
         return this;
     }
 

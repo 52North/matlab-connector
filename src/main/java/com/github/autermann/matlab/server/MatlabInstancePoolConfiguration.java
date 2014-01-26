@@ -49,7 +49,7 @@ public class MatlabInstancePoolConfiguration {
     }
 
     public static class Builder {
-        private int numThreads;
+        private int numThreads = 1;
         private MatlabInstanceConfiguration instanceConfig;
 
         public Builder withMaximalNumInstances(int numThreads) {

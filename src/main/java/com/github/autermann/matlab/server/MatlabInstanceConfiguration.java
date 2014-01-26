@@ -81,7 +81,11 @@ public class MatlabInstanceConfiguration {
         }
 
         public Builder hidden() {
-            this.hidden = true;
+            return hidden(true);
+        }
+
+        public Builder hidden(boolean hidden) {
+            this.hidden = hidden;
             return this;
         }
 

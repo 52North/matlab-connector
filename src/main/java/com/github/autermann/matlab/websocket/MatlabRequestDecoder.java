@@ -21,7 +21,10 @@ import java.io.Reader;
 
 import javax.websocket.DecodeException;
 
+import org.slf4j.LoggerFactory;
+
 import com.github.autermann.matlab.MatlabRequest;
+import com.google.common.io.CharStreams;
 
 /**
  * TODO JavaDoc
@@ -33,7 +36,9 @@ public class MatlabRequestDecoder extends AbstractDecoder<MatlabRequest> {
     @Override
     public MatlabRequest decode(Reader reader)
             throws DecodeException, IOException {
-        return getDelegate().decodeRequest(reader);
+        String s = CharStreams.toString(reader);
+        LoggerFactory.getLogger(getClass()).info("Request: {}", s);
+        return getDelegate().decodeRequest(s);
     }
 
 }

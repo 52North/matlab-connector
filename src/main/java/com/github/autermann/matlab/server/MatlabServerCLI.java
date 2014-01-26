@@ -90,7 +90,8 @@ public class MatlabServerCLI {
                 .setPath(options.getPath())
                 .setPort(options.getPort())
                 .setThreads(options.getThreads())
-                .setDebug(options.isDebug());
+                .setDebug(options.isDebug())
+                .setHidden(!options.isShowInstances());
     }
 
     private static <T> T printAndExit(Throwable e) {
@@ -115,7 +116,9 @@ public class MatlabServerCLI {
         @Parameter(names = { "-h", "--help" }, help = true,
                    description = "Display this help message.")
         private Boolean help;
-
+        @Parameter(names = { "--no-hidden" },
+                   description = "Don't start hidden Matlab instances.")
+        private boolean showInstances = false;
         public int getPort() {
             return port;
         }
@@ -161,6 +164,15 @@ public class MatlabServerCLI {
 
         public MatlabServerCLIOptions setHelp(boolean help) {
             this.help = help;
+            return this;
+        }
+
+        public boolean isShowInstances() {
+            return showInstances;
+        }
+
+        public MatlabServerCLIOptions setShowInstances(boolean showInstances) {
+            this.showInstances = showInstances;
             return this;
         }
 

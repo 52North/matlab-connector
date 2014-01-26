@@ -75,7 +75,7 @@ public class MatlabServer {
                         .withInstanceConfig(MatlabInstanceConfiguration
                                 .builder()
                                 .withBaseDir(getOptions().getPath())
-                                .hidden()
+                                .hidden(getOptions().isHidden())
                                 .build())
                         .build());
         Server jetty = new Server(getOptions().getPort());

@@ -21,6 +21,8 @@ import java.io.Writer;
 
 import javax.websocket.EncodeException;
 
+import org.slf4j.LoggerFactory;
+
 import com.github.autermann.matlab.MatlabRequest;
 
 /**
@@ -33,7 +35,9 @@ public class MatlabRequestEncoder extends AbstractEncoder<MatlabRequest> {
     @Override
     public void encode(MatlabRequest object, Writer writer)
             throws EncodeException, IOException {
-        getDelegate().encodeRequest(object, writer);
+        String s = getDelegate().encodeRequest(object);
+        LoggerFactory.getLogger(this.getClass()).info("Request:\n{}", s);
+        writer.write(s);
     }
 
 }
