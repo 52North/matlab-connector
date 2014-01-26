@@ -16,9 +16,13 @@
  */
 package com.github.autermann.matlab.json;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -36,6 +40,7 @@ import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.matlab.value.ReturningMatlabValueVisitor;
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -181,7 +186,45 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
     }
 
     private MatlabFile parseMatlabFile(JsonElement value) {
-        return new MatlabFile(BaseEncoding.base64().decode(value.getAsString()));
+        return new MatlabFile(gunzip(value.getAsString()));
+    }
+
+    private byte[] gunzip(String value) {
+        GZIPInputStream in = null;
+        try {
+            byte[] gzipped = BaseEncoding.base64().decode(value);
+            in = new GZIPInputStream(new ByteArrayInputStream(gzipped));
+            return ByteStreams.toByteArray(in);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+    private String gzip(byte[] bytes) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPOutputStream out = null;
+        try {
+            out = new GZIPOutputStream(baos);
+            out.write(bytes);
+            out.finish();
+            return BaseEncoding.base64().encode(baos.toByteArray());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ex) {
+            }
+        }
     }
 
     private MatlabDateTime parseMatlabDateTime(JsonElement value) {
@@ -246,7 +289,7 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
         @Override
         public JsonElement visit(MatlabFile file) {
             try {
-                return ctx.serialize(BaseEncoding.base64().encode(file.getContent()));
+                return ctx.serialize(gzip(file.getContent()));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
