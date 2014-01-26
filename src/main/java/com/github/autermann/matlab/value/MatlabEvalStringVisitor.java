@@ -39,6 +39,9 @@ public class MatlabEvalStringVisitor
                    Function<MatlabValue, String> {
     private static final String BOOL_FALSE = "0";
     private static final String BOOL_TRUE = "1";
+    private static final String NaN = "NaN";
+    private static final String POSITIVE_INFINITY = "Inf";
+    private static final String NEGATIVE_INFINITY = "-Inf";
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
     private static final MapJoiner STRUCT_JOINER = COMMA_JOINER
             .withKeyValueSeparator(", ");
@@ -50,8 +53,7 @@ public class MatlabEvalStringVisitor
     @Override
     public String visit(MatlabArray value) {
         StringBuilder sb = new StringBuilder("[ ");
-        Joiner joiner = Joiner.on(", ");
-        joiner.appendTo(sb, Doubles.asList(value.value()));
+        COMMA_JOINER.appendTo(sb, toString(value.value()));
         return sb.append(" ]").toString();
     }
 
@@ -73,7 +75,7 @@ public class MatlabEvalStringVisitor
         builder.append("[ ");
         double[][] matrix = value.value();
         for (int i = 0; i < matrix.length; ++i) {
-            COMMA_JOINER.appendTo(builder, Doubles.asList(matrix[i]));
+            COMMA_JOINER.appendTo(builder, toString(matrix[i]));
             if (i < matrix.length - 1) {
                 builder.append("; ");
             }
@@ -82,21 +84,38 @@ public class MatlabEvalStringVisitor
         return builder.toString();
     }
 
-    @Override
-    public String visit(MatlabScalar value) {
-        double v = value.value();
-        if (Double.isNaN(v)) {
-            return "NaN";
-        } else if (Double.isInfinite(v)) {
-            return v < 0 ? "-Inf" : "Inf";
+    private Iterable<String> toString(double[] values) {
+        return Iterables.transform(Doubles.asList(values),
+                                   new Function<Double, String>() {
+            @Override
+            public String apply(Double input) {
+                return MatlabEvalStringVisitor.this.toString(input);
+            }
+        });
+    }
+
+    private String toString(Double v) {
+        if (v.isNaN()) {
+            return NaN;
+        } else if (v.isInfinite()) {
+            return v < 0 ? NEGATIVE_INFINITY : POSITIVE_INFINITY;
         } else {
-            return String.valueOf(v);
+            return v.toString();
         }
     }
 
     @Override
+    public String visit(MatlabScalar value) {
+        return toString(value.value());
+    }
+
+    @Override
     public String visit(MatlabString value) {
-        return "'" + value.value().replace("'", "''") + "'";
+        return toString(value.value());
+    }
+
+    private String toString(String value) {
+        return "'" + value.replace("'", "''") + "'";
     }
 
     @Override
@@ -123,7 +142,7 @@ public class MatlabEvalStringVisitor
                 throw new RuntimeException(ex);
             }
         } else {
-            return file.getFile().getAbsolutePath();
+            return toString(file.getFile().getAbsolutePath());
         }
     }
 
