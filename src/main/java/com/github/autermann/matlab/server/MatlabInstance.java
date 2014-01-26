@@ -185,14 +185,11 @@ public class MatlabInstance {
             }
 
             FileDeletingVisitor delV = new FileDeletingVisitor(true);
-
             MatlabResult result = new MatlabResult();
             for (Entry<String, MatlabValue> e : results.entrySet()) {
                 e.getValue().accept(delV);
                 result.addResult(e.getKey(), e.getValue());
             }
-
-            request.visitParameters(delV);
 
             return result;
         } catch (MatlabInvocationException e) {
@@ -405,10 +402,10 @@ public class MatlabInstance {
         @Override
         public void visit(MatlabFile file) {
             try {
-                if (load && !file.isLoaded()) {
-                    file.load();
-                }
                 if (file.isSaved()) {
+                    if (load && !file.isLoaded()) {
+                        file.load();
+                    }
                     file.delete();
                 }
             } catch (IOException ex) {
