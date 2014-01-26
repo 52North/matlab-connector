@@ -152,7 +152,6 @@ public class MatlabInstance {
 
     protected String buildFEval(String function, String[] varray,
                                 List<MatlabValue> parameters) {
-        // buildFEval cmd
         StringBuilder sb = new StringBuilder();
         COMMA_JOINER.appendTo(sb.append('['), varray).append("]");
         sb.append(" = ");
@@ -162,7 +161,6 @@ public class MatlabInstance {
                     parameters, MatlabEvalStringVisitor.create()));
         }
         sb.append(')');
-        // evaluate
         return sb.toString();
     }
 
@@ -175,13 +173,18 @@ public class MatlabInstance {
         File temp = Files.createTempDir();
         try {
             request.visitParameters(new FileSavingVisitor(temp));
-
+            Map<String, MatlabValue> results;
+            try {
             log.info("Evaluating function {}...", request.getFunction());
-            Map<String, MatlabValue> results = feval(request.getFunction(),
-                                                     request.getResults(),
-                                                     request.getParameters());
 
-            FileDeletingVisitor delV = new FileDeletingVisitor();
+                results = feval(request.getFunction(),
+                                request.getResults(),
+                                request.getParameters());
+            } finally {
+                request.visitParameters(new FileDeletingVisitor(false));
+            }
+
+            FileDeletingVisitor delV = new FileDeletingVisitor(true);
 
             MatlabResult result = new MatlabResult();
             for (Entry<String, MatlabValue> e : results.entrySet()) {
@@ -379,6 +382,11 @@ public class MatlabInstance {
     }
 
     private static class FileDeletingVisitor extends AbstractMatlabValueVisitor {
+        private final boolean load;
+
+        public FileDeletingVisitor(boolean load) {
+            this.load = load;
+        }
 
         @Override
         public void visit(MatlabCell cell) {
@@ -397,8 +405,10 @@ public class MatlabInstance {
         @Override
         public void visit(MatlabFile file) {
             try {
-                if (!file.isLoaded()) {
+                if (load && !file.isLoaded()) {
                     file.load();
+                }
+                if (file.isSaved()) {
                     file.delete();
                 }
             } catch (IOException ex) {
