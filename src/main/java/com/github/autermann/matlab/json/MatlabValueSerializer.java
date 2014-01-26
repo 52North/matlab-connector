@@ -43,6 +43,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
@@ -163,7 +164,12 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
     }
 
     private MatlabScalar parseMatlabScalar(JsonElement value) {
-        return new MatlabScalar(value.getAsDouble());
+        JsonPrimitive p = (JsonPrimitive) value;
+        if (p.isString()) {
+            return new MatlabScalar(Double.valueOf(p.getAsString()));
+        } else {
+            return new MatlabScalar(p.getAsDouble());
+        }
     }
 
     private MatlabBoolean parseMatlabBoolean(JsonElement value) {
@@ -214,7 +220,12 @@ public class MatlabValueSerializer implements JsonSerializer<MatlabValue>,
 
         @Override
         public JsonElement visit(MatlabScalar scalar) {
-            return ctx.serialize(scalar.value());
+            if (Double.isNaN(scalar.value())||
+                Double.isInfinite(scalar.value())) {
+                return ctx.serialize(Double.toString(scalar.value()));
+            } else {
+                return ctx.serialize(scalar.value());
+            }
         }
 
         @Override

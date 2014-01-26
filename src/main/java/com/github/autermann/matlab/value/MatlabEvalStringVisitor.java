@@ -84,7 +84,14 @@ public class MatlabEvalStringVisitor
 
     @Override
     public String visit(MatlabScalar value) {
-        return String.valueOf(value.value());
+        double v = value.value();
+        if (Double.isNaN(v)) {
+            return "NaN";
+        } else if (Double.isInfinite(v)) {
+            return v < 0 ? "-Inf" : "Inf";
+        } else {
+            return String.valueOf(v);
+        }
     }
 
     @Override
