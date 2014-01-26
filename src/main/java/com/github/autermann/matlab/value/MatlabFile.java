@@ -135,6 +135,19 @@ public class MatlabFile extends MatlabValue {
         }
     }
 
+    @Override
+    public String toString() {
+        if (isLoaded()) {
+            return String.format("%s[length=%s]",
+                                 getClass().getSimpleName(),
+                                 this.content.length);
+        } else {
+            return String.format("%s[location=%s]",
+                                 getClass().getSimpleName(),
+                                 this.file.getAbsolutePath());
+        }
+    }
+
     public static MatlabFile load(File file) throws IOException {
         return new MatlabFile(file).load();
     }
