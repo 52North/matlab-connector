@@ -49,6 +49,7 @@ import com.github.autermann.matlab.websocket.MatlabResponseEncoder;
                 encoders = { MatlabRequestEncoder.class,
                              MatlabResponseEncoder.class })
 public class MatlabServerEndpoint {
+    public static final int MAX_MESSAGE_SIZE = 5 * 1024 * 1024;
     private final Logger log = LoggerFactory
             .getLogger(MatlabServerEndpoint.class);
 
@@ -61,6 +62,7 @@ public class MatlabServerEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         log.info("Session {} opened.", session.getId());
+        session.setMaxTextMessageBufferSize(MAX_MESSAGE_SIZE);
     }
 
     @OnClose

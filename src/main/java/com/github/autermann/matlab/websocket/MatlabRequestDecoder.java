@@ -16,15 +16,9 @@
  */
 package com.github.autermann.matlab.websocket;
 
-import java.io.IOException;
-import java.io.Reader;
-
 import javax.websocket.DecodeException;
 
-import org.slf4j.LoggerFactory;
-
 import com.github.autermann.matlab.MatlabRequest;
-import com.google.common.io.CharStreams;
 
 /**
  * TODO JavaDoc
@@ -34,11 +28,13 @@ import com.google.common.io.CharStreams;
 public class MatlabRequestDecoder extends AbstractDecoder<MatlabRequest> {
 
     @Override
-    public MatlabRequest decode(Reader reader)
-            throws DecodeException, IOException {
-        String s = CharStreams.toString(reader);
-        LoggerFactory.getLogger(getClass()).info("Request: {}", s);
+    public MatlabRequest decode(String s) throws DecodeException {
         return getDelegate().decodeRequest(s);
+    }
+
+    @Override
+    public boolean willDecode(String s) {
+        return s.startsWith("{");
     }
 
 }

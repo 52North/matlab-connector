@@ -19,7 +19,6 @@ package com.github.autermann.matlab.websocket;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-
 import com.github.autermann.matlab.MatlabEncoding;
 import com.github.autermann.matlab.json.MatlabGSON;
 
@@ -28,7 +27,7 @@ import com.github.autermann.matlab.json.MatlabGSON;
  *
  * @author Christian Autermann
  */
-public abstract class AbstractEncoder<T> implements Encoder.TextStream<T> {
+public abstract class AbstractEncoder<T> implements Encoder.Text<T> {
 
     private final MatlabEncoding delegate = new MatlabGSON();
 

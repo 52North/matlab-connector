@@ -16,9 +16,6 @@
  */
 package com.github.autermann.matlab.websocket;
 
-import java.io.IOException;
-import java.io.Reader;
-
 import javax.websocket.DecodeException;
 
 import com.github.autermann.matlab.MatlabResponse;
@@ -31,9 +28,13 @@ import com.github.autermann.matlab.MatlabResponse;
 public class MatlabResponseDecoder extends AbstractDecoder<MatlabResponse> {
 
     @Override
-    public MatlabResponse decode(Reader reader)
-            throws DecodeException, IOException {
-        return getDelegate().decodeResponse(reader);
+    public MatlabResponse decode(String s) throws DecodeException {
+        return getDelegate().decodeResponse(s);
+    }
+
+    @Override
+    public boolean willDecode(String s) {
+        return s.startsWith("{");
     }
 
 }

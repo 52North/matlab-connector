@@ -16,12 +16,7 @@
  */
 package com.github.autermann.matlab.websocket;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import javax.websocket.EncodeException;
-
-import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.MatlabRequest;
 
@@ -31,13 +26,9 @@ import com.github.autermann.matlab.MatlabRequest;
  * @author Christian Autermann
  */
 public class MatlabRequestEncoder extends AbstractEncoder<MatlabRequest> {
-
     @Override
-    public void encode(MatlabRequest object, Writer writer)
-            throws EncodeException, IOException {
-        String s = getDelegate().encodeRequest(object);
-        LoggerFactory.getLogger(this.getClass()).info("Request:\n{}", s);
-        writer.write(s);
+    public String encode(MatlabRequest object) throws EncodeException {
+        return getDelegate().encodeRequest(object);
     }
 
 }

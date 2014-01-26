@@ -27,7 +27,7 @@ import com.github.autermann.matlab.json.MatlabGSON;
  *
  * @author Christian Autermann
  */
-public abstract class AbstractDecoder<T> implements Decoder.TextStream<T> {
+public abstract class AbstractDecoder<T> implements Decoder.Text<T> {
 
     private final MatlabEncoding delegate = new MatlabGSON();
 

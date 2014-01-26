@@ -16,9 +16,6 @@
  */
 package com.github.autermann.matlab.websocket;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import javax.websocket.EncodeException;
 
 import com.github.autermann.matlab.MatlabResponse;
@@ -31,9 +28,8 @@ import com.github.autermann.matlab.MatlabResponse;
 public class MatlabResponseEncoder extends AbstractEncoder<MatlabResponse> {
 
     @Override
-    public void encode(MatlabResponse object, Writer writer)
-            throws EncodeException, IOException {
-        getDelegate().encodeResponse(object, writer);
+    public String encode(MatlabResponse object) throws EncodeException {
+        return getDelegate().encodeResponse(object);
     }
 
 }

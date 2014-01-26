@@ -38,6 +38,7 @@ import com.github.autermann.matlab.MatlabResponse;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.server.MatlabInstance;
 import com.github.autermann.matlab.server.MatlabInstancePool;
+import com.github.autermann.matlab.server.MatlabServerEndpoint;
 import com.github.autermann.matlab.websocket.MatlabRequestDecoder;
 import com.github.autermann.matlab.websocket.MatlabRequestEncoder;
 import com.github.autermann.matlab.websocket.MatlabResponseDecoder;
@@ -88,6 +89,7 @@ public abstract class MatlabClient implements Closeable {
                 container = ContainerProvider.getWebSocketContainer();
                 session = container.connectToServer(endpoint, options
                         .getAddress());
+                session.setMaxTextMessageBufferSize(MatlabServerEndpoint.MAX_MESSAGE_SIZE);
             } catch (DeploymentException ex) {
                 throw new MatlabException("Error connecting to server", ex);
             }
