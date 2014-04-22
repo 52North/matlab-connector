@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import org.joda.time.DateTimeZone;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
@@ -152,7 +150,17 @@ public class MatlabEvalStringVisitor
 
     @Override
     public String visit(MatlabDateTime time) {
-        return String.valueOf(time.value().toDateTime(DateTimeZone.UTC).getMillis());
+        double[] a = time.toArray();
+        int max = a.length - 1;
+        StringBuilder b = new StringBuilder();
+        b.append("datenum([");
+        for (int i = 0; ; i++) {
+            b.append(a[i]);
+            if (i == max) {
+                return b.append("])").toString();
+            }
+            b.append(", ");
+        }
     }
 
     public static MatlabEvalStringVisitor create() {

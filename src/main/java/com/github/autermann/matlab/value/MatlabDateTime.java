@@ -16,7 +16,9 @@
  */
 package com.github.autermann.matlab.value;
 
+
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.google.common.base.Preconditions;
 
@@ -63,5 +65,18 @@ public class MatlabDateTime extends MatlabValue {
 
     public DateTime value() {
         return time;
+    }
+
+    public double[] toArray() {
+        DateTime utc = time.toDateTime(DateTimeZone.UTC);
+        return new double[] {
+            (double) utc.getYear(),
+            (double) utc.getMonthOfYear(),
+            (double) utc.getDayOfMonth(),
+            (double) utc.getHourOfDay(),
+            (double) utc.getMinuteOfHour(),
+            (double) utc.getSecondOfMinute()
+            + (double) utc.getMillisOfSecond() / 1000, };
+
     }
 }
