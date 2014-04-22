@@ -37,8 +37,8 @@ import com.google.common.primitives.Doubles;
 public class MatlabEvalStringVisitor
         implements ReturningMatlabValueVisitor<String>,
                    Function<MatlabValue, String> {
-    private static final String BOOL_FALSE = "0";
-    private static final String BOOL_TRUE = "1";
+    private static final String BOOL_FALSE = "logical(0)";
+    private static final String BOOL_TRUE = "logical(1)";
     private static final String NaN = "NaN";
     private static final String POSITIVE_INFINITY = "Inf";
     private static final String NEGATIVE_INFINITY = "-Inf";

@@ -32,6 +32,7 @@ import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.value.AbstractMatlabValueVisitor;
 import com.github.autermann.matlab.value.MatlabArray;
+import com.github.autermann.matlab.value.MatlabBoolean;
 import com.github.autermann.matlab.value.MatlabCell;
 import com.github.autermann.matlab.value.MatlabEvalStringVisitor;
 import com.github.autermann.matlab.value.MatlabFile;
@@ -58,8 +59,8 @@ public class MatlabInstance {
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
     private static final String CHAR_TYPE = "char";
     private static final String CELL_TYPE = "cell";
-    private static final String DOUBLE_TYPE = "double";
     private static final String STRUCT_TYPE = "struct";
+    private static final String LOGICAL_TYPE = "logical";
     private final Logger log = LoggerFactory.getLogger(MatlabInstance.class);
     private final MatlabProxy proxy;
     private final MatlabTypeConverter processor;
@@ -254,9 +255,13 @@ public class MatlabInstance {
     private MatlabValue parseValue(String varName) throws
             MatlabException {
         try {
-            String clazz = getType(varName);
-            if (clazz.equals(DOUBLE_TYPE)) {
+
+            if (isNumerical(varName)) {
                 return parseDoubleValue(varName);
+            }
+            String clazz = getType(varName);
+            if (clazz.equals(LOGICAL_TYPE)) {
+                return parseBooleanValue(varName);
             } else if (clazz.equals(CHAR_TYPE)) {
                 return parseCharValue(varName);
             } else if (clazz.equals(CELL_TYPE)) {
@@ -275,6 +280,11 @@ public class MatlabInstance {
     private String getType(String varName) throws MatlabInvocationException {
         String cmd = String.format("class(%s)", varName);
         return (String) proxy.returningEval(cmd, 1)[0];
+    }
+
+    private boolean isNumerical(String varName) throws MatlabInvocationException {
+        String cmd = String.format("isnumeric(%s)", varName);
+        return (Boolean) proxy.returningEval(cmd, 1)[0];
     }
 
     private void clearAll() throws MatlabInvocationException {
@@ -313,6 +323,11 @@ public class MatlabInstance {
         } else {
             return new MatlabMatrix(realArray);
         }
+    }
+       private MatlabBoolean parseBooleanValue(String varName)
+            throws MatlabInvocationException {
+        boolean[] variable = (boolean[]) proxy.getVariable(varName);
+        return MatlabBoolean.fromBoolean(variable[0]);
     }
 
     private MatlabString parseCharValue(String varName)
@@ -381,7 +396,7 @@ public class MatlabInstance {
     private static class FileDeletingVisitor extends AbstractMatlabValueVisitor {
         private final boolean load;
 
-        public FileDeletingVisitor(boolean load) {
+        FileDeletingVisitor(boolean load) {
             this.load = load;
         }
 
