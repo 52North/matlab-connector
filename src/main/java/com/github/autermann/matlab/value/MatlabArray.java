@@ -104,12 +104,13 @@ public class MatlabArray extends MatlabValue {
         if (value().length != 6) {
             throw new UnsupportedOperationException("invalid array length");
         }
-        return new MatlabDateTime(new DateTime(
-                Double.valueOf(value()[0]).intValue(),
-                Double.valueOf(value()[1]).intValue(),
-                Double.valueOf(value()[2]).intValue(),
-                Double.valueOf(value()[3]).intValue(),
-                Double.valueOf(value()[4]).intValue(),
-                Double.valueOf(value()[5]).intValue()));
+        int year = (int) array[0];
+        int month = (int) array[1];
+        int day = (int) array[2];
+        int hour = (int) array[3];
+        int minute = (int) array[4];
+        int second = (int) Math.floor(array[5]);
+        int millis = (int) ((array[5] - second) * 1000);
+        return new MatlabDateTime(new DateTime(year, month, day, hour, minute, second, millis));
     }
 }
