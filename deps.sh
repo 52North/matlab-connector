@@ -28,5 +28,3 @@ function install_github {
 # sockets
 
 install_matlab_control
-install_github "autermann/java-utils"
-install_github "autermann/java-sockets"
