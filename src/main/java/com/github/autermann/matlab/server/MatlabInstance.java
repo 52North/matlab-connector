@@ -262,17 +262,18 @@ public class MatlabInstance {
                 return parseDoubleValue(varName);
             }
             String clazz = getType(varName);
-            if (clazz.equals(LOGICAL_TYPE)) {
-                return parseBooleanValue(varName);
-            } else if (clazz.equals(CHAR_TYPE)) {
-                return parseCharValue(varName);
-            } else if (clazz.equals(CELL_TYPE)) {
-                return parseCellValue(varName);
-            } else if (clazz.equals(STRUCT_TYPE)) {
-                return parseStructValue(varName);
-            } else {
-                throw new MatlabException("Unable to parse value of type " +
-                                          clazz + ", unsupported.");
+            switch (clazz) {
+                case LOGICAL_TYPE:
+                    return parseBooleanValue(varName);
+                case CHAR_TYPE:
+                    return parseCharValue(varName);
+                case CELL_TYPE:
+                    return parseCellValue(varName);
+                case STRUCT_TYPE:
+                    return parseStructValue(varName);
+                default:
+                    throw new MatlabException("Unable to parse value of type " +
+                                              clazz + ", unsupported.");
             }
         } catch (MatlabInvocationException e) {
             throw new MatlabException("Unable to parse value.", e);
