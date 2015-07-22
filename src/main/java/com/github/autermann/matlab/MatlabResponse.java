@@ -22,4 +22,7 @@ package com.github.autermann.matlab;
  * @author Christian Autermann <autermann@uni-muenster.de>
  */
 public interface MatlabResponse {
+
+    long getId();
+
 }

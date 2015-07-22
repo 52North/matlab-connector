@@ -38,14 +38,21 @@ import com.google.common.collect.Maps;
 public class MatlabResult implements Iterable<MatlabValue>, MatlabResponse {
     private static final MapJoiner JOINER = Joiner.on(", ").withKeyValueSeparator(" = ");
     private final LinkedHashMap<String, MatlabValue> results;
+    private final long id;
 
     /**
-     * Creates a new <code>MLResult</code> instance.
+     * Creates a new <code>MatlabResult</code> instance.
      *
-     * @param request
+     * @param id the request id
      */
-    public MatlabResult() {
+    public MatlabResult(long id) {
         this.results = Maps.newLinkedHashMap();
+        this.id = id;
+    }
+
+    @Override
+    public long getId() {
+        return this.id;
     }
 
     /**

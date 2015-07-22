@@ -67,8 +67,7 @@ public class MatlabServerEndpoint {
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
-        log.info("Session {} closed because of {}.",
-                 session.getId(), closeReason);
+        log.info("Session {} closed because of {}.", session.getId(), closeReason);
     }
 
     @OnMessage
@@ -83,6 +82,9 @@ public class MatlabServerEndpoint {
             log.info("Handled request for session {} successfully.",
                      session.getId());
             return response;
+        } catch (MatlabException e) {
+            e.setId(request.getId());
+            throw e;
         } finally {
             this.pool.returnInstance(instance);
         }
@@ -91,8 +93,7 @@ public class MatlabServerEndpoint {
     @OnError
     public void onError(Session session, Throwable t)
             throws IOException, EncodeException {
-        log.error("Caught exception while handling request for session " +
-                  session.getId(), t);
+        log.error("Caught exception while handling request for session " + session.getId(), t);
         if (t instanceof MatlabException) {
             session.getBasicRemote().sendObject(t);
         } else {

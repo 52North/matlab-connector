@@ -53,7 +53,7 @@ public class MatlabArray extends MatlabValue {
         checkNotNull(array);
         double[] values = new double[array.length];
         for (int i = 0; i < array.length; i++) {
-            values[i] = checkNotNull(array[i]).doubleValue();
+            values[i] = checkNotNull(array[i]);
         }
         this.array = values;
     }

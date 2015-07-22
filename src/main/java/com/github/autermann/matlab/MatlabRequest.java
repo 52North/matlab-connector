@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.matlab.value.MatlabValue;
@@ -38,6 +39,8 @@ import com.google.common.collect.Maps;
  *
  */
 public class MatlabRequest {
+    private static final AtomicLong ids = new AtomicLong();
+    private final long id;
     private final String function;
     private final List<MatlabValue> parameters;
     private final Map<String, MatlabType> results;
@@ -52,16 +55,37 @@ public class MatlabRequest {
      * @param function the name of the function to execute
      */
     public MatlabRequest(String function) {
+        this(ids.incrementAndGet(), function);
+    }
+
+    /**
+     * Creates a new <code>MLRequest</code> instance for the given function
+     * name. This constructor will assume
+     * you are only expecting/requesting a single result value - use
+     * {@link #MLRequest(String, int)} or
+     * {@link #setResultCount(int)} if you wish for more.
+     *
+     * @param id       the id
+     * @param function the name of the function to execute
+     */
+    public MatlabRequest(long id, String function) {
         checkArgument(function != null && !function.isEmpty());
         this.function = function;
         this.results = Maps.newLinkedHashMap();
         this.parameters = Lists.newLinkedList();
+        this.id = ids.incrementAndGet();
+    }
+
+    public long getId() {
+        return this.id;
     }
 
     /**
      * Adds a parameter {@link MatlabValue} to this request.
      *
      * @param parameter the parameter <code>MatlabValue</code> to add
+     *
+     * @return {@code this}
      */
     public MatlabRequest addParameter(MatlabValue parameter) {
         this.parameters.add(checkNotNull(parameter));
@@ -78,6 +102,7 @@ public class MatlabRequest {
     /**
      * Clears all parameters from this request.
      *
+     * @return{@code this}
      */
     public MatlabRequest clearParameters() {
         this.parameters.clear();

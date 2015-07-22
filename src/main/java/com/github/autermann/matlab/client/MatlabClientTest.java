@@ -72,7 +72,7 @@ public class MatlabClientTest {
 
     private void startThreads() {
         for (int threads = 0; threads < THEADS; ++threads) {
-            
+
             int offset = threads * REQUESTS_PER_THREAD;
             System.out.printf("Starting Thraed for %d-%d\n",
                               threads, offset+REQUESTS_PER_THREAD-1);
@@ -98,7 +98,7 @@ public class MatlabClientTest {
             try {
                 for (int j = offset; j < offset + REQUESTS_PER_THREAD; ++j) {
                     MatlabRequest request = buildRequest(j);
-                    MatlabResult response = client.exec(request);
+                    MatlabResult response = client.execSync(request);
                     System.out.printf("%s -> %s\n", request, response);
                     results[j] = response.getResult("result").asScalar().value();
                 }

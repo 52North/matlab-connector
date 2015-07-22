@@ -42,9 +42,9 @@ public class MatlabResultSerializer implements JsonDeserializer<MatlabResult>,
     public MatlabResult deserialize(JsonElement elem, Type type,
                                     JsonDeserializationContext ctx)
             throws JsonParseException {
-        MatlabResult mlresult = new MatlabResult();
-        JsonObject results = elem.getAsJsonObject()
-                .get(MatlabJSONConstants.RESULTS).getAsJsonObject();
+        JsonObject json = elem.getAsJsonObject();
+        MatlabResult mlresult = new MatlabResult(json.get(MatlabJSONConstants.ID).getAsLong());
+        JsonObject results = json.get(MatlabJSONConstants.RESULTS).getAsJsonObject();
 
         for (Entry<String, JsonElement> result : results.entrySet()) {
             MatlabValue value = ctx.deserialize(result.getValue(),

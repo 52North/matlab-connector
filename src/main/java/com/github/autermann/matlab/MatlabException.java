@@ -25,6 +25,7 @@ package com.github.autermann.matlab;
 public class MatlabException extends Exception implements MatlabResponse {
 
     private static final long serialVersionUID = 1L;
+    private long id = -1;
 
     /**
      * Creates a new <code>MLException</code> instance with the given message.
@@ -38,4 +39,14 @@ public class MatlabException extends Exception implements MatlabResponse {
     public MatlabException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    @Override
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 }

@@ -186,7 +186,9 @@ public class MatlabInstance {
             }
 
             FileDeletingVisitor delV = new FileDeletingVisitor(true);
-            MatlabResult result = new MatlabResult();
+            MatlabResult result = new MatlabResult(request.getId());
+
+
             for (Entry<String, MatlabValue> e : results.entrySet()) {
                 e.getValue().accept(delV);
                 result.addResult(e.getKey(), e.getValue());
@@ -282,9 +284,15 @@ public class MatlabInstance {
         return (String) proxy.returningEval(cmd, 1)[0];
     }
 
-    private boolean isNumerical(String varName) throws MatlabInvocationException {
+    private boolean isNumerical(String varName)
+            throws MatlabInvocationException {
         String cmd = String.format("isnumeric(%s)", varName);
-        return (Boolean) proxy.returningEval(cmd, 1)[0];
+        Object ret = proxy.returningEval(cmd, 1)[0];
+        if (ret instanceof boolean[]) {
+            return ((boolean[]) ret)[0];
+        } else {
+            return (boolean) ret;
+        }
     }
 
     private void clearAll() throws MatlabInvocationException {
@@ -369,16 +377,12 @@ public class MatlabInstance {
 
         @Override
         public void visit(MatlabCell cell) {
-            for (MatlabValue v : cell) {
-                v.accept(this);
-            }
+            cell.stream().forEach(v -> v.accept(this));
         }
 
         @Override
         public void visit(MatlabStruct struct) {
-            for (MatlabValue v : struct.value().values()) {
-                v.accept(this);
-            }
+            struct.value().values().forEach(v -> v.accept(this));
         }
 
         @Override
@@ -402,16 +406,12 @@ public class MatlabInstance {
 
         @Override
         public void visit(MatlabCell cell) {
-            for (MatlabValue v : cell) {
-                v.accept(this);
-            }
+            cell.stream().forEach(v -> v.accept(this));
         }
 
         @Override
         public void visit(MatlabStruct struct) {
-            for (MatlabValue v : struct.value().values()) {
-                v.accept(this);
-            }
+            struct.value().values().forEach(v -> v.accept(this));
         }
 
         @Override

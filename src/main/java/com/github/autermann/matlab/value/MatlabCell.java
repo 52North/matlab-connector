@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -99,5 +100,9 @@ public class MatlabCell extends MatlabValue implements Iterable<MatlabValue> {
     @Override
     public Iterator<MatlabValue> iterator() {
         return value().iterator();
+    }
+
+    public Stream<MatlabValue> stream() {
+        return value().stream();
     }
 }

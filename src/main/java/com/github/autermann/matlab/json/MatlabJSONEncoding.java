@@ -53,7 +53,7 @@ import com.google.gson.JsonParser;
  * @author Richard Jones
  *
  */
-public class MatlabGSON implements MatlabEncoding {
+public class MatlabJSONEncoding implements MatlabEncoding {
     private static final Class<?>[] VALUE_CLASSES = new Class<?>[] {
         MatlabValue.class,
         MatlabArray.class,
@@ -173,25 +173,21 @@ public class MatlabGSON implements MatlabEncoding {
     }
 
     private static class Holder {
-        private static final Gson GSON = create();
+        private static final Gson GSON;
 
-        private static Gson create() {
+        static {
             MatlabValueSerializer valueSerializer = new MatlabValueSerializer();
             GsonBuilder builder = new GsonBuilder();
 
-            builder.registerTypeAdapter(MatlabException.class,
-                                        new MatlabExceptionSerializer())
-                    .registerTypeAdapter(MatlabRequest.class,
-                                         new MatlabRequestSerializer())
-                    .registerTypeAdapter(MatlabResult.class,
-                                         new MatlabResultSerializer());
+            builder.registerTypeAdapter(MatlabException.class, new MatlabExceptionSerializer());
+            builder.registerTypeAdapter(MatlabRequest.class, new MatlabRequestSerializer());
+            builder.registerTypeAdapter(MatlabResult.class, new MatlabResultSerializer());
 
             for (Class<?> c : VALUE_CLASSES) {
                 builder.registerTypeAdapter(c, valueSerializer);
             }
 
-            return builder
-                    .disableHtmlEscaping()
+            GSON = builder.disableHtmlEscaping()
                     .serializeSpecialFloatingPointValues()
                     .create();
         }

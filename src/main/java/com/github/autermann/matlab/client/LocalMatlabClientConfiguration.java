@@ -14,19 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.json;
+package com.github.autermann.matlab.client;
+
+import com.github.autermann.matlab.server.MatlabInstancePoolConfiguration;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author Christian Autermann
  */
-public interface MatlabJSONConstants {
-    String EXCEPTION = "exception";
-    String FUNCTION = "function";
-    String RESULTS = "results";
-    String PARAMETERS = "parameters";
-    String TYPE = "type";
-    String VALUE = "value";
-    String ID = "id";
+public class LocalMatlabClientConfiguration extends MatlabClientConfiguration {
+
+    private final MatlabInstancePoolConfiguration instanceConfiguration;
+
+    public LocalMatlabClientConfiguration(MatlabInstancePoolConfiguration conf) {
+        this.instanceConfiguration = conf;
+    }
+
+    public MatlabInstancePoolConfiguration getInstanceConfiguration() {
+        return this.instanceConfiguration;
+    }
+
 }

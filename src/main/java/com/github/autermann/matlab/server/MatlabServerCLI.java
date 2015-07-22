@@ -25,7 +25,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.github.autermann.matlab.MatlabException;
-import com.github.autermann.utils.StandardSystemProperties;
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Strings;
 
 /**
@@ -42,7 +42,7 @@ public class MatlabServerCLI {
         MatlabServerCLIOptions options = new MatlabServerCLIOptions()
                 .setPort(DEFAULT_PORT)
                 .setThreads(DEFAULT_THREADS)
-                .setPath(StandardSystemProperties.USER_DIR);
+                .setPath(StandardSystemProperty.USER_DIR.value());
         JCommander cli = new JCommander(options);
         cli.setProgramName("java " + MatlabServerCLI.class.getName());
         MatlabServerConfiguration config = null;

@@ -14,19 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.autermann.matlab.json;
+package com.github.autermann.matlab.client;
+
+import java.net.URI;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <autermann@uni-muenster.de>
+ * @author Christian Autermann
  */
-public interface MatlabJSONConstants {
-    String EXCEPTION = "exception";
-    String FUNCTION = "function";
-    String RESULTS = "results";
-    String PARAMETERS = "parameters";
-    String TYPE = "type";
-    String VALUE = "value";
-    String ID = "id";
+public class RemoteMatlabClientConfiguration extends MatlabClientConfiguration {
+
+    private final URI address;
+
+    public RemoteMatlabClientConfiguration(URI address) {
+        this.address = address;
+    }
+
+    public URI getAddress() {
+        return address;
+    }
+
 }

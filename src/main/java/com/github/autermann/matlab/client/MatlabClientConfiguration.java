@@ -36,33 +36,8 @@ public abstract class MatlabClientConfiguration {
         return new Builder();
     }
 
-    public static class Local extends MatlabClientConfiguration {
-        private final MatlabInstancePoolConfiguration instanceConfiguration;
-
-        public Local(MatlabInstancePoolConfiguration conf) {
-            this.instanceConfiguration = conf;
-        }
-
-        public MatlabInstancePoolConfiguration getInstanceConfiguration() {
-            return this.instanceConfiguration;
-        }
-    }
-
-    public static class Remote extends MatlabClientConfiguration {
-        private final URI address;
-
-        private Remote(URI address) {
-            this.address = address;
-        }
-
-        public URI getAddress() {
-            return address;
-        }
-    }
-
     public static class Builder {
         private URI address;
-        private int numInstances = 1;
         private MatlabInstancePoolConfiguration instancePoolConfiguration;
 
         private Builder() {
@@ -91,18 +66,21 @@ public abstract class MatlabClientConfiguration {
         }
 
         public MatlabClientConfiguration build() {
-            if (address != null) {
-                return new MatlabClientConfiguration.Remote(address);
-            } else {
-                if (instancePoolConfiguration == null) {
-                    instancePoolConfiguration = MatlabInstancePoolConfiguration
-                            .builder()
-                            .withInstanceConfig(MatlabInstanceConfiguration
-                                    .builder().hidden().build())
-                            .withMaximalNumInstances(1).build();
-                }
-                return new MatlabClientConfiguration.Local(instancePoolConfiguration);
+            return this.address == null ? buildLocal() : buildRemote();
+        }
+
+        private MatlabClientConfiguration buildLocal() {
+            if (instancePoolConfiguration == null) {
+                instancePoolConfiguration = MatlabInstancePoolConfiguration.builder()
+                        .withInstanceConfig(MatlabInstanceConfiguration
+                                .builder().hidden().build())
+                        .withMaximalNumInstances(1).build();
             }
+            return new LocalMatlabClientConfiguration(instancePoolConfiguration);
+        }
+
+        private MatlabClientConfiguration buildRemote() {
+            return new RemoteMatlabClientConfiguration(address);
         }
     }
 }

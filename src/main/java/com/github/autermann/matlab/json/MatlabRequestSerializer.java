@@ -47,10 +47,10 @@ public class MatlabRequestSerializer implements JsonSerializer<MatlabRequest>,
             throws JsonParseException {
         JsonObject json = elem.getAsJsonObject();
         String function = json.get(MatlabJSONConstants.FUNCTION).getAsString();
-        MatlabRequest request = new MatlabRequest(function);
+        long id = json.get(MatlabJSONConstants.ID).getAsLong();
+        MatlabRequest request = new MatlabRequest(id, function);
 
-        JsonObject results = json.get(MatlabJSONConstants.RESULTS)
-                .getAsJsonObject();
+        JsonObject results = json.get(MatlabJSONConstants.RESULTS).getAsJsonObject();
         for (Entry<String, JsonElement> result : results.entrySet()) {
             request.addResult(result.getKey(), parseType(result.getValue()));
         }
@@ -79,6 +79,7 @@ public class MatlabRequestSerializer implements JsonSerializer<MatlabRequest>,
     public JsonElement serialize(MatlabRequest req, Type type,
                                  JsonSerializationContext ctx) {
         JsonObject o = new JsonObject();
+        o.addProperty(MatlabJSONConstants.ID, req.getId());
         o.addProperty(MatlabJSONConstants.FUNCTION, req.getFunction());
         o.add(MatlabJSONConstants.PARAMETERS, serializeParameters(req, ctx));
         o.add(MatlabJSONConstants.RESULTS, serializeResults(req));

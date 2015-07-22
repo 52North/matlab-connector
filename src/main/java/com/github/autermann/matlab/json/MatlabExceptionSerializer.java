@@ -41,6 +41,7 @@ public class MatlabExceptionSerializer
     public JsonElement serialize(MatlabException e, Type type,
                                  JsonSerializationContext ctx) {
         JsonObject object = new JsonObject();
+        object.add(MatlabJSONConstants.ID, ctx.serialize(e.getId()));
         object.add(MatlabJSONConstants.EXCEPTION, ctx.serialize(e.getMessage()));
         return object;
     }
@@ -49,8 +50,11 @@ public class MatlabExceptionSerializer
     public MatlabException deserialize(JsonElement elem, Type type,
                                        JsonDeserializationContext ctx)
             throws JsonParseException {
-        return new MatlabException(elem.getAsJsonObject()
-                .get(MatlabJSONConstants.EXCEPTION).getAsString());
+        JsonObject o = elem.getAsJsonObject();
+        String message = o.get(MatlabJSONConstants.EXCEPTION).getAsString();
+        MatlabException exception = new MatlabException(message);
+        exception.setId(o.get(MatlabJSONConstants.ID).getAsLong());
+        return exception;
     }
 
 }

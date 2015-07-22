@@ -20,7 +20,7 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import com.github.autermann.matlab.MatlabEncoding;
-import com.github.autermann.matlab.json.MatlabGSON;
+import com.github.autermann.matlab.json.MatlabJSONEncoding;
 
 /**
  * TODO JavaDoc
@@ -29,7 +29,7 @@ import com.github.autermann.matlab.json.MatlabGSON;
  */
 public abstract class AbstractDecoder<T> implements Decoder.Text<T> {
 
-    private final MatlabEncoding delegate = new MatlabGSON();
+    private final MatlabEncoding delegate = new MatlabJSONEncoding();
 
     public MatlabEncoding getDelegate() {
         return delegate;
