@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.autermann</groupId>
+    <groupId>org.n52.matlab</groupId>
     <artifactId>matlab-connector</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -9,10 +9,10 @@
         <module>client</module>
         <module>server</module>
     </modules>
-    <name>matlab-connector</name>
-    <url>https://github.com/autermann/matlab-connector</url>
-    <inceptionYear>2012</inceptionYear>
+    <name>MATLAB Connector Parent</name>
     <description>Provides the ability to run MATLAB functions remotely.</description>
+    <url>https://github.com/52North/matlab-connector</url>
+    <inceptionYear>2012</inceptionYear>
     <licenses>
         <license>
             <name>GNU General Public License (GPL) v3</name>
@@ -33,42 +33,58 @@
             <email>autermann@uni-muenster.de</email>
         </developer>
     </developers>
+    
     <scm>
-        <connection>scm:git:https://github.com/autermann/matlab-connector.git</connection>
-        <developerConnection>scm:git:https://github.com/autermann/matlab-connector.git</developerConnection>
-        <url>https://github.com/autermann/matlab-connector</url>
+        <connection>scm:git:https://github.com/52North/matlab-connector.git</connection>
+        <developerConnection>scm:git:https://github.com/52North/matlab-connector.git</developerConnection>
+        <url>https://github.com/52North/matlab-connector</url>
         <tag>HEAD</tag>
     </scm>
+    
     <issueManagement>
         <system>GitHub Issue Management</system>
-        <url>https://github.com/autermann/matlab-connector/issues</url>
+        <url>https://github.com/52North/matlab-connector/issues</url>
     </issueManagement>
+    
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/autermann/matlab-connector</url>
+        <url>https://travis-ci.org/52North/matlab-connector</url>
     </ciManagement>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.3.1.v20150714</jetty-version>
         <java-version>1.8</java-version>
     </properties>
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-releases</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    
     <dependencyManagement>
         <dependencies>
 
             <dependency>
-                <groupId>com.github.autermann</groupId>
+                <groupId>org.n52.matlab</groupId>
                 <artifactId>matlab-connector-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.autermann</groupId>
+                <groupId>org.n52.matlab</groupId>
                 <artifactId>matlab-connector-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.autermann</groupId>
+                <groupId>org.n52.matlab</groupId>
                 <artifactId>matlab-connector-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -92,9 +108,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.googlecode.matlabcontrol</groupId>
-                <artifactId>matlabcontrol</artifactId>
-                <version>4.1.0</version>
+                <groupId>org.n52.matlab</groupId>
+                <artifactId>matlab-control</artifactId>
+                <version>5.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -304,12 +320,24 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <dependencyConvergence/>
+                                <!-- <reactorModuleConvergence /> -->
+                                <requireNoRepositories>
+                                    <banRepositories>true</banRepositories>
+                                    <banPluginRepositories>false</banPluginRepositories>
+                                    <allowSnapshotRepositories>false</allowSnapshotRepositories>
+                                    <allowSnapshotPluginRepositories>false</allowSnapshotPluginRepositories>
+                                    <allowedRepositories>
+                                        <id>sonatype-nexus-snapshots</id>
+                                    </allowedRepositories>
+                                    <allowedPluginRepositories></allowedPluginRepositories>
+                                </requireNoRepositories>
                                 <requireJavaVersion>
-                                    <version>${java-version}</version>
+                                    <version>[${java-version},)</version>
                                 </requireJavaVersion>
                                 <requirePluginVersions>
-                                    <message>Best Practice is to always define plugin versions!</message>
-                                    <banLatest>true</banLatest>
+                                    <!-- org.sonatype.oss:oss-parent uses LATEST -->
+                                    <banLatest>false</banLatest>
                                     <banRelease>true</banRelease>
                                     <banSnapshots>true</banSnapshots>
                                     <phases>clean,deploy</phases>
