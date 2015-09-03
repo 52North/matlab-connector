@@ -1,4 +1,4 @@
-# Matlab Connector [![Build Status](https://travis-ci.org/autermann/matlab-connector.png?branch=master)](https://travis-ci.org/autermann/matlab-connector)
+# Matlab Connector [![Build Status](https://travis-ci.org/52North/matlab-connector.png?branch=master)](https://travis-ci.org/52North/matlab-connector)
 
 **This project is not part of the 52°North managed code base.**
 
