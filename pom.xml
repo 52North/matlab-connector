@@ -117,7 +117,7 @@
             <dependency>
                 <groupId>org.n52.matlab</groupId>
                 <artifactId>matlab-control</artifactId>
-                <version>5.0.0-SNAPSHOT</version>
+                <version>5.0.0</version>
             </dependency>
 
             <dependency>
