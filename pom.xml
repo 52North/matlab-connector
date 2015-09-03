@@ -33,30 +33,30 @@
             <email>autermann@uni-muenster.de</email>
         </developer>
     </developers>
-    
+
     <scm>
         <connection>scm:git:https://github.com/52North/matlab-connector.git</connection>
         <developerConnection>scm:git:https://github.com/52North/matlab-connector.git</developerConnection>
         <url>https://github.com/52North/matlab-connector</url>
         <tag>HEAD</tag>
     </scm>
-    
+
     <issueManagement>
         <system>GitHub Issue Management</system>
         <url>https://github.com/52North/matlab-connector/issues</url>
     </issueManagement>
-    
+
     <ciManagement>
         <system>Travis CI</system>
         <url>https://travis-ci.org/52North/matlab-connector</url>
     </ciManagement>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.3.1.v20150714</jetty-version>
         <java-version>1.8</java-version>
     </properties>
-    
+
     <distributionManagement>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
@@ -67,7 +67,14 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-    
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
 
