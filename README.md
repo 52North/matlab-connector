@@ -1,5 +1,7 @@
 # Matlab Connector [![Build Status](https://travis-ci.org/autermann/matlab-connector.png?branch=master)](https://travis-ci.org/autermann/matlab-connector)
 
+**This project is not part of the 52°North managed code base.**
+
 The matlab-connector library enables function execution on a remote MATLAB instance.
 
 JSON is used as a platform and language independent.
@@ -57,46 +59,7 @@ MLResult result = client.sendRequest("localhost", 44444, request);
 System.out.println(result.toString());
 ```
 
-### Use SSL client authentication
-
-To enable SSL encryption of the connection you can use the following example:
-```java
-// should the connection only be SSL secured
-// or does the server also neeeds authentication
-boolean requireClientAuth = true;
-
-// create a SSL Configuration from key, certificate and trusted certificates
-SSLConfiguration config = new PemFileSSLConfiguration(
-    "/path/to/the/key/file.pem",
-    "/path/to/the/certificate/file.pem",
-    "/path/to/the/trust/file.pem",
-    requireClientAuth);
-
-// Create client instance
-MLClient client = new MLClient(new SSLSocketFactory(config));
-
-// Build request
-MLRequest request = new MLRequest("do_a_sum");
-request.addParameter(new MLScalar(2));
-request.addParameter(new MLScalar(2));
-
-// Send request
-MLResult result = client.sendRequest("localhost", 44444, request);
-
-// Print result
-System.out.println(result.toString());
-```
-
-
 ## Build
-
-If you wish to build the project from source, the [matlabcontrol 4.1.0](http://code.google.com/p/matlabcontrol/) library is required. As this is currently unavailable on most Maven repositories, you can instead [manually download the JAR file](http://code.google.com/p/matlabcontrol/downloads/detail?name=matlabcontrol-4.1.0.jar&can=1&q=) and install locally:
-
-```bash
-chmod +x deps.sh && ./deps.sh
-```
-
-Then build:
 
 ```bash
 mvn clean install
