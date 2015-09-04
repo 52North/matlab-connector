@@ -16,6 +16,8 @@
  */
 package org.n52.matlab.connector.server;
 
+import org.n52.matlab.connector.instance.MatlabInstancePool;
+
 import javax.websocket.server.ServerEndpointConfig;
 
 

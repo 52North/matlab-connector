@@ -25,5 +25,17 @@
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.matlab</groupId>
+            <artifactId>matlab-control</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
     </dependencies>
 </project>

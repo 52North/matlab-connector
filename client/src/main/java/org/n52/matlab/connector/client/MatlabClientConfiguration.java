@@ -21,8 +21,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
-import org.n52.matlab.connector.server.MatlabInstanceConfiguration;
-import org.n52.matlab.connector.server.MatlabInstancePoolConfiguration;
+import org.n52.matlab.connector.instance.MatlabInstanceConfiguration;
+import org.n52.matlab.connector.instance.MatlabInstancePoolConfiguration;
 
 import com.google.common.base.Preconditions;
 

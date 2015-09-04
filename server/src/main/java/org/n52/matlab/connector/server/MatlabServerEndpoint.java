@@ -33,7 +33,9 @@ import org.slf4j.LoggerFactory;
 import org.n52.matlab.connector.MatlabException;
 import org.n52.matlab.connector.MatlabRequest;
 import org.n52.matlab.connector.MatlabResponse;
-
+import org.n52.matlab.connector.instance.MatlabInstance;
+import org.n52.matlab.connector.instance.MatlabInstancePool;
+import org.n52.matlab.connector.websocket.Configuration;
 import org.n52.matlab.connector.websocket.MatlabRequestDecoder;
 import org.n52.matlab.connector.websocket.MatlabRequestEncoder;
 import org.n52.matlab.connector.websocket.MatlabResponseDecoder;
@@ -50,7 +52,6 @@ import org.n52.matlab.connector.websocket.MatlabResponseEncoder;
                 encoders = { MatlabRequestEncoder.class,
                              MatlabResponseEncoder.class })
 public class MatlabServerEndpoint {
-    public static final int MAX_MESSAGE_SIZE = 5 * 1024 * 1024;
     private final Logger log = LoggerFactory
             .getLogger(MatlabServerEndpoint.class);
 
@@ -63,7 +64,7 @@ public class MatlabServerEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         log.info("Session {} opened.", session.getId());
-        session.setMaxTextMessageBufferSize(MAX_MESSAGE_SIZE);
+        session.setMaxTextMessageBufferSize(Configuration.MAX_MESSAGE_SIZE);
     }
 
     @OnClose

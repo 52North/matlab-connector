@@ -24,8 +24,8 @@ import java.util.concurrent.Future;
 import org.n52.matlab.connector.MatlabException;
 import org.n52.matlab.connector.MatlabRequest;
 import org.n52.matlab.connector.MatlabResult;
-import org.n52.matlab.connector.server.MatlabInstance;
-import org.n52.matlab.connector.server.MatlabInstancePool;
+import org.n52.matlab.connector.instance.MatlabInstance;
+import org.n52.matlab.connector.instance.MatlabInstancePool;
 
 /**
  * TODO JavaDoc

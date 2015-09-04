@@ -38,8 +38,7 @@ import org.n52.matlab.connector.MatlabException;
 import org.n52.matlab.connector.MatlabRequest;
 import org.n52.matlab.connector.MatlabResponse;
 import org.n52.matlab.connector.MatlabResult;
-import org.n52.matlab.connector.server.MatlabServerEndpoint;
-
+import org.n52.matlab.connector.websocket.Configuration;
 import org.n52.matlab.connector.websocket.MatlabRequestDecoder;
 import org.n52.matlab.connector.websocket.MatlabRequestEncoder;
 import org.n52.matlab.connector.websocket.MatlabResponseDecoder;
@@ -66,7 +65,7 @@ public class RemoteMatlabClient extends MatlabClient {
             this.endpoint = new MatlabClientEndpoint();
             this.container = ContainerProvider.getWebSocketContainer();
             this.session = this.container.connectToServer(endpoint, options.getAddress());
-            this.session.setMaxTextMessageBufferSize(MatlabServerEndpoint.MAX_MESSAGE_SIZE);
+            this.session.setMaxTextMessageBufferSize(Configuration.MAX_MESSAGE_SIZE);
         } catch (DeploymentException ex) {
             throw new MatlabException("Error connecting to server", ex);
         }

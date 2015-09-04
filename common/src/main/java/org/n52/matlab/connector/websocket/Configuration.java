@@ -14,25 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.n52.matlab.connector.client;
-
-import org.n52.matlab.connector.instance.MatlabInstancePoolConfiguration;
+package org.n52.matlab.connector.websocket;
 
 /**
- * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class LocalMatlabClientConfiguration extends MatlabClientConfiguration {
-
-    private final MatlabInstancePoolConfiguration instanceConfiguration;
-
-    public LocalMatlabClientConfiguration(MatlabInstancePoolConfiguration conf) {
-        this.instanceConfiguration = conf;
-    }
-
-    public MatlabInstancePoolConfiguration getInstanceConfiguration() {
-        return this.instanceConfiguration;
-    }
-
+public interface Configuration {
+    int MAX_MESSAGE_SIZE = 5 * 1024 * 1024;
 }

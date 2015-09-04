@@ -16,6 +16,10 @@
  */
 package org.n52.matlab.connector.server;
 
+import org.n52.matlab.connector.instance.MatlabInstanceConfiguration;
+import org.n52.matlab.connector.instance.MatlabInstancePool;
+import org.n52.matlab.connector.instance.MatlabInstancePoolConfiguration;
+
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
